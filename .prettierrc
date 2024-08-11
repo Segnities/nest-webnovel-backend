@@ -1,4 +1,14 @@
 {
   "singleQuote": true,
-  "trailingComma": "all"
+  "trailingComma": "all",
+  "prettier/prettier": [
+    "warn",
+    {
+      "singleQuote": true,
+      "parser": "flow"
+    },
+    {
+      "usePrettierrc": false
+    }
+  ]
 }
