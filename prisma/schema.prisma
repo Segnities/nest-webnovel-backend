@@ -12,3 +12,117 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Novel {
+  id                  Int                @id @default(autoincrement())
+  title               String
+  description         String
+  img                 String
+  releaseYear         Int
+  coverImg            String?
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+  views               Int                @default(0)
+  country             Country            @relation(fields: [countryId], references: [id])
+  countryId           Int
+  status              Status             @relation(fields: [statusId], references: [id])
+  statusId            Int
+  authorId            Int
+  author              Author             @relation(fields: [authorId], references: [id])
+  translationStatusId Int
+  translationStatus   TranslationStatus  @relation(fields: [translationStatusId], references: [id])
+  formatId            Int
+  format              Format             @relation(fields: [formatId], references: [id])
+  tags                Tag[]
+  genres              Genre[]
+  alternativeTitles   AlternativeTitle[]
+  chapters            Chapter[]
+
+  @@map("novel")
+}
+
+model Chapter {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  likes     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  novelId   Int
+  novel     Novel    @relation(fields: [novelId], references: [id])
+}
+//novels + chapters
+model Team {
+  id        Int      @id @default(autoincrement())
+  name      String
+  chapters_count Int @default(0)
+  books_count Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Format {
+  id     Int     @id @default(autoincrement())
+  title  String
+  novels Novel[]
+
+  @@map("format")
+}
+
+model TranslationStatus {
+  id     Int     @id @default(autoincrement())
+  title  String
+  novels Novel[]
+
+  @@map("translation_status")
+}
+
+model AlternativeTitle {
+  id      Int    @id @default(autoincrement())
+  title   String
+  novelId Int
+  novel   Novel  @relation(fields: [novelId], references: [id])
+
+  @@map("alternative_title")
+}
+
+model Tag {
+  id     Int     @id @default(autoincrement())
+  title  String
+  novels Novel[]
+
+  @@map("tag")
+}
+
+model Genre {
+  id     Int     @id @default(autoincrement())
+  title  String  @unique
+  novels Novel[]
+
+  @@map("genre")
+}
+
+model Country {
+  id     Int     @id @default(autoincrement())
+  title  String  @unique
+  novels Novel[]
+
+  @@map("country")
+}
+
+model Status {
+  id     Int     @id @default(autoincrement())
+  title  String  @unique
+  novels Novel[]
+
+  @@map("status")
+}
+
+model Author {
+  id     Int     @id @default(autoincrement())
+  name   String
+  img    String
+  novels Novel[]
+
+  @@map("author")
+}
