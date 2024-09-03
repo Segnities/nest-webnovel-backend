@@ -18,6 +18,7 @@ model Novel {
   title               String
   description         String
   img                 String
+  isAdult             Boolean
   releaseYear         Int
   coverImg            String?
   createdAt           DateTime           @default(now())
@@ -33,32 +34,85 @@ model Novel {
   translationStatus   TranslationStatus  @relation(fields: [translationStatusId], references: [id])
   formatId            Int
   format              Format             @relation(fields: [formatId], references: [id])
+  commendableTypeId   Int
+  commendableType     CommendableType    @relation(fields: [commendableTypeId], references: [id])
   tags                Tag[]
   genres              Genre[]
   alternativeTitles   AlternativeTitle[]
   chapters            Chapter[]
+  reviews             Review[]
 
   @@map("novel")
 }
 
-model Chapter {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  likes     Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  novelId   Int
-  novel     Novel    @relation(fields: [novelId], references: [id])
+model Review {
+  id                Int             @id @default(autoincrement())
+  title             String
+  body              String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  likes             Int
+  views             Int
+  userId            Int
+  novelId           Int
+  novel             Novel           @relation(fields: [novelId], references: [id])
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
 }
+
+model Comment {
+  id                Int             @id @default(autoincrement())
+  userId            Int
+  nestedLevel       Int?
+  body              String
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  replyToId         Int?
+
+  replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
+  replies Comment[] @relation(name: "CommentReplies")
+
+  @@map("comment")
+}
+
+model CommendableType {
+  id       Int       @id @default(autoincrement())
+  name     String
+  novels   Novel[]
+  chapters Chapter[]
+  reviews  Review[]
+  comments Comment[]
+
+  @@map("comandable_type")
+}
+
+model Chapter {
+  id                Int             @id @default(autoincrement())
+  title             String
+  content           String
+  likes             Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  novelId           Int
+  novel             Novel           @relation(fields: [novelId], references: [id])
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+
+  @@map("chapter")
+}
+
 //novels + chapters
 model Team {
-  id        Int      @id @default(autoincrement())
-  name      String
-  chapters_count Int @default(0)
-  books_count Int @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  name           String
+  chapters_count Int      @default(0)
+  books_count    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("team")
 }
 
 model Format {
