@@ -16,6 +16,7 @@ datasource db {
 model Novel {
   id                  Int                @id @default(autoincrement())
   title               String
+  original_title      String
   description         String
   img                 String
   isAdult             Boolean
@@ -43,6 +44,15 @@ model Novel {
   reviews             Review[]
 
   @@map("novel")
+}
+
+model Bookmark {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  chapterId Int
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+
+  @@map("bookmark")
 }
 
 model Review {
@@ -99,6 +109,7 @@ model Chapter {
   novel             Novel           @relation(fields: [novelId], references: [id])
   commendableTypeId Int
   commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  bookmarks         Bookmark[]
 
   @@map("chapter")
 }
