@@ -13,6 +13,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Provider {
+  GOOGLE
+  EMAIL_AND_PASSWORD
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  provider  Provider
+  img       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  users       User[]
+  permissions Permission[]
+}
+
+model Permission {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  roleId      Int
+  role        Role   @relation(fields: [roleId], references: [id])
+}
+
+model Team {
+  id          Int    @id @default(autoincrement())
+}
+
 model Novel {
   id                  Int                @id @default(autoincrement())
   title               String
@@ -42,8 +79,22 @@ model Novel {
   alternativeTitles   AlternativeTitle[]
   chapters            Chapter[]
   reviews             Review[]
+  novelRating         NovelRating?
+  usersRatings        UserRating[]
 
   @@map("novel")
+}
+
+model NovelRating {
+  id          Int   @id @default(autoincrement())
+  votesCount  Int
+  avgRating   Float
+  totalRating Int
+  novelId     Int   @unique
+  novel       Novel @relation(fields: [novelId], references: [id])
+  userId      Int
+
+  @@map("novel_rating")
 }
 
 model Bookmark {
@@ -53,6 +104,18 @@ model Bookmark {
   chapter   Chapter @relation(fields: [chapterId], references: [id])
 
   @@map("bookmark")
+}
+
+model UserRating {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  novelId   Int
+  novel     Novel    @relation(fields: [novelId], references: [id])
+  userId    Int
+
+  @@map("rating")
 }
 
 model Review {
@@ -68,6 +131,8 @@ model Review {
   novel             Novel           @relation(fields: [novelId], references: [id])
   commendableTypeId Int
   commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+
+  @@map("review")
 }
 
 model Comment {
