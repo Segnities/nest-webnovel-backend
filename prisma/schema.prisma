@@ -13,52 +13,228 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Provider {
+  GOOGLE
+  EMAIL_AND_PASSWORD
+}
+
+model User {
+  id                    Int                     @id @default(autoincrement())
+  username              String                  @unique
+  email                 String                  @unique
+  provider              Provider
+  img                   String
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  roleId                Int
+  role                  Role                    @relation(fields: [roleId], references: [id])
+  usersRatings          UserRating[]
+  comments              Comment[]
+  bookmarks             Bookmark[]
+  reviews               Review[]
+  userCollectionMapping UserCollectionMapping[]
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  users       User[]
+  permissions Permission[]
+}
+
+model Permission {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+  roleId      Int
+  role        Role   @relation(fields: [roleId], references: [id])
+}
+
 model Novel {
-  id                  Int                @id @default(autoincrement())
-  title               String
-  description         String
-  img                 String
-  releaseYear         Int
-  coverImg            String?
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-  views               Int                @default(0)
-  country             Country            @relation(fields: [countryId], references: [id])
-  countryId           Int
-  status              Status             @relation(fields: [statusId], references: [id])
-  statusId            Int
-  authorId            Int
-  author              Author             @relation(fields: [authorId], references: [id])
-  translationStatusId Int
-  translationStatus   TranslationStatus  @relation(fields: [translationStatusId], references: [id])
-  formatId            Int
-  format              Format             @relation(fields: [formatId], references: [id])
-  tags                Tag[]
-  genres              Genre[]
-  alternativeTitles   AlternativeTitle[]
-  chapters            Chapter[]
+  id                     Int                      @id @default(autoincrement())
+  title                  String
+  original_title         String
+  description            String
+  img                    String
+  isAdult                Boolean
+  releaseYear            Int
+  coverImg               String?
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  views                  Int                      @default(0)
+  country                Country                  @relation(fields: [countryId], references: [id])
+  countryId              Int
+  status                 Status                   @relation(fields: [statusId], references: [id])
+  statusId               Int
+  authorId               Int
+  author                 Author                   @relation(fields: [authorId], references: [id])
+  translationStatusId    Int
+  translationStatus      TranslationStatus        @relation(fields: [translationStatusId], references: [id])
+  formatId               Int
+  format                 Format                   @relation(fields: [formatId], references: [id])
+  commendableTypeId      Int
+  commendableType        CommendableType          @relation(fields: [commendableTypeId], references: [id])
+  tags                   Tag[]
+  genres                 Genre[]
+  alternativeTitles      AlternativeTitle[]
+  chapters               Chapter[]
+  reviews                Review[]
+  novelRating            NovelRating?
+  usersRatings           UserRating[]
+  novelCollectionMapping NovelCollectionMapping[]
 
   @@map("novel")
 }
 
-model Chapter {
+model NovelCollectionMapping {
+  id                    Int                   @id @default(autoincrement())
+  novelId               Int
+  novel                 Novel                 @relation(fields: [novelId], references: [id])
+  userCollectionId      Int
+  userCollectionMapping UserCollectionMapping @relation(fields: [userCollectionId], references: [id])
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+
+  @@unique([novelId, userCollectionId])
+  @@map("novel_collection_mapping")
+}
+
+model UserCollectionMapping {
+  id           Int        @id @default(autoincrement())
+  collectionId Int
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  novelCollectionMapping NovelCollectionMapping[]
+
+  @@unique([collectionId, userId])
+  @@map("user_collection_mapping")
+}
+
+model Collection {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userCollectionMapping UserCollectionMapping[]
+
+  @@map("collection")
+}
+
+model NovelRating {
+  id          Int   @id @default(autoincrement())
+  votesCount  Int
+  avgRating   Float
+  totalRating Int
+  novelId     Int   @unique
+  novel       Novel @relation(fields: [novelId], references: [id])
+
+  @@map("novel_rating")
+}
+
+model Bookmark {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      User    @relation(fields: [userId], references: [id])
+  chapterId Int
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+
+  @@map("bookmark")
+}
+
+model UserRating {
   id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  likes     Int
+  rating    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   novelId   Int
   novel     Novel    @relation(fields: [novelId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("rating")
 }
+
+model Review {
+  id                Int             @id @default(autoincrement())
+  title             String
+  body              String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  likes             Int
+  views             Int
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  novelId           Int
+  novel             Novel           @relation(fields: [novelId], references: [id])
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+
+  @@map("review")
+}
+
+model Comment {
+  id                Int             @id @default(autoincrement())
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  nestedLevel       Int?
+  body              String
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  replyToId         Int?
+
+  replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
+  replies Comment[] @relation(name: "CommentReplies")
+
+  @@map("comment")
+}
+
+model CommendableType {
+  id       Int       @id @default(autoincrement())
+  name     String
+  novels   Novel[]
+  chapters Chapter[]
+  reviews  Review[]
+  comments Comment[]
+
+  @@map("comandable_type")
+}
+
+model Chapter {
+  id                Int             @id @default(autoincrement())
+  title             String
+  content           String
+  likes             Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  novelId           Int
+  novel             Novel           @relation(fields: [novelId], references: [id])
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  bookmarks         Bookmark[]
+
+  @@map("chapter")
+}
+
 //novels + chapters
 model Team {
-  id        Int      @id @default(autoincrement())
-  name      String
-  chapters_count Int @default(0)
-  books_count Int @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @id @default(autoincrement())
+  name           String
+  chapters_count Int      @default(0)
+  books_count    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("team")
 }
 
 model Format {
