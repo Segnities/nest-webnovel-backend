@@ -18,6 +18,12 @@ enum Provider {
   EMAIL_AND_PASSWORD
 }
 
+enum ApplicationStatus {
+  Pending
+  Approved
+  Rejected
+}
+
 model User {
   id                    Int                     @id @default(autoincrement())
   username              String                  @unique
@@ -33,6 +39,10 @@ model User {
   bookmarks             Bookmark[]
   reviews               Review[]
   userCollectionMapping UserCollectionMapping[]
+  news                  News[]
+  userComplaints        UserComplaint[]
+
+  @@map("user")
 }
 
 model Role {
@@ -41,6 +51,8 @@ model Role {
   description String
   users       User[]
   permissions Permission[]
+
+  @@map("role")
 }
 
 model Permission {
@@ -49,6 +61,30 @@ model Permission {
   description String
   roleId      Int
   role        Role   @relation(fields: [roleId], references: [id])
+
+  @@map("permission")
+}
+
+
+model UserComplaint {
+  id              Int               @id @default(autoincrement())
+  status          ApplicationStatus
+  createdAt       DateTime          @default(now())
+  reasonId        Int
+  reason          ComplaintReason   @relation(fields: [reasonId], references: [id])
+  userId          Int
+  user            User              @relation(fields: [userId], references: [id])
+
+  @@map("user_complaint")
+}
+
+model ComplaintReason {
+  id          Int             @id @default(autoincrement())
+  title       String
+  desctoption String
+  complaints  UserComplaint[]
+
+  @@map("complaint_reason")
 }
 
 model Novel {
@@ -180,6 +216,23 @@ model Review {
   @@map("review")
 }
 
+model News {
+  id                Int             @id @default(autoincrement())
+  title             String
+  body              String
+  likes             Int
+  views             Int
+  published         Boolean
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+
+  @@map("news")
+}
+
 model Comment {
   id                Int             @id @default(autoincrement())
   userId            Int
@@ -190,6 +243,7 @@ model Comment {
   commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  complaitTypeId    Int
   replyToId         Int?
 
   replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
@@ -205,6 +259,7 @@ model CommendableType {
   chapters Chapter[]
   reviews  Review[]
   comments Comment[]
+  news     News[]
 
   @@map("comandable_type")
 }
@@ -221,6 +276,7 @@ model Chapter {
   commendableTypeId Int
   commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
   bookmarks         Bookmark[]
+  complaitTypeId    Int
 
   @@map("chapter")
 }
