@@ -58,6 +58,7 @@ model User {
   issuedBans                Ban[]                   @relation("issuedBySystemRelation")
   userBans                  Ban[]                   @relation("userBanRelation")
   reviewedAppeals           Appeal[]
+  userNotificationSettings UserNotificationSettings[]
 
   @@map("user")
 }
@@ -80,6 +81,17 @@ model Permission {
   role        Role   @relation(fields: [roleId], references: [id])
 
   @@map("permission")
+}
+
+model UserNotificationSettings {
+  id                          Int     @id @default(autoincrement())
+  receiveSystemNotifications  Boolean @default(true)
+  receiveCommentNotifications Boolean @default(true)
+  receiveNovelUpdates         Boolean @default(true)
+  receiveReviewNotifications  Boolean @default(true)
+  receiveAuthorUpdates        Boolean @default(true)
+  userId Int
+  user User @relation(fields: [userId], references: [id])
 }
 
 model ComplaintTargetType {
