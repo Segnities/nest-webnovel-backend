@@ -33,17 +33,17 @@ enum BanStatus {
 }
 
 model User {
-  id                        Int                     @id @default(autoincrement())
-  username                  String                  @unique
-  email                     String                  @unique
+  id                        Int                        @id @default(autoincrement())
+  username                  String                     @unique
+  email                     String                     @unique
   provider                  Provider
   img                       String
-  createdAt                 DateTime                @default(now())
-  updatedAt                 DateTime                @updatedAt
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
   roleId                    Int
-  role                      Role                    @relation(fields: [roleId], references: [id])
+  role                      Role                       @relation(fields: [roleId], references: [id])
   teamId                    Int?
-  team                      Team?                   @relation(fields: [teamId], references: [id])
+  team                      Team?                      @relation(fields: [teamId], references: [id])
   usersRatings              UserRating[]
   comments                  Comment[]
   bookmarks                 Bookmark[]
@@ -53,12 +53,13 @@ model User {
   news                      News[]
   userComplaints            UserComplaint[]
   complaintReasons          ComplaintReason[]
-  issuedContentComplaints   ContentComplaint[]      @relation("issuedByUserRelation")
-  resolvedContentComplaints ContentComplaint[]      @relation("resolvedByUserRelation")
-  issuedBans                Ban[]                   @relation("issuedBySystemRelation")
-  userBans                  Ban[]                   @relation("userBanRelation")
+  issuedContentComplaints   ContentComplaint[]         @relation("issuedByUserRelation")
+  resolvedContentComplaints ContentComplaint[]         @relation("resolvedByUserRelation")
+  issuedBans                Ban[]                      @relation("issuedBySystemRelation")
+  userBans                  Ban[]                      @relation("userBanRelation")
   reviewedAppeals           Appeal[]
-  userNotificationSettings UserNotificationSettings[]
+  userNotificationSettings  UserNotificationSettings[]
+  novelsSubscription        NovelSubscription[]
 
   @@map("user")
 }
@@ -90,8 +91,17 @@ model UserNotificationSettings {
   receiveNovelUpdates         Boolean @default(true)
   receiveReviewNotifications  Boolean @default(true)
   receiveAuthorUpdates        Boolean @default(true)
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  userId                      Int
+  user                        User    @relation(fields: [userId], references: [id])
+}
+
+model NovelSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  novelId   Int
+  novel     Novel    @relation(fields: [novelId], references: [id])
 }
 
 model ComplaintTargetType {
@@ -249,6 +259,7 @@ model Novel {
   complaintTargetId      Int
   complainTargetType     ComplaintTargetType      @relation(fields: [complaintTargetId], references: [id])
   continueReading        ContinueReading[]
+  novelSubscription      NovelSubscription[]
 
   @@map("novel")
 }
