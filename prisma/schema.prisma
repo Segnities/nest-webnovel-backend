@@ -49,6 +49,7 @@ model User {
   bookmarks                 Bookmark[]
   reviews                   Review[]
   userCollectionMapping     UserCollectionMapping[]
+  continueReading           ContinueReading[]
   news                      News[]
   userComplaints            UserComplaint[]
   complaintReasons          ComplaintReason[]
@@ -90,11 +91,11 @@ model ComplaintTargetType {
   usersComplaints     UserComplaint[]
   contentComplaints   ContentComplaint[]
   bans                Ban[]
-  Novel               Novel[]
-  Review              Review[]
-  News                News[]
-  Comment             Comment[]
-  Chapter             Chapter[]
+  novels              Novel[]
+  reviews             Review[]
+  news                News[]
+  comments            Comment[]
+  chapter             Chapter[]
 
   @@map("complaint_target_type")
 }
@@ -235,8 +236,22 @@ model Novel {
   novelCollectionMapping NovelCollectionMapping[]
   complaintTargetId      Int
   complainTargetType     ComplaintTargetType      @relation(fields: [complaintTargetId], references: [id])
+  continueReading        ContinueReading[]
 
   @@map("novel")
+}
+
+model ContinueReading {
+  id                 Int     @id @default(autoincrement())
+  progressPercentage Float
+  userId             Int
+  user               User    @relation(fields: [userId], references: [id])
+  lastChapterId      Int
+  lastChapter        Chapter @relation(fields: [lastChapterId], references: [id])
+  novelId            Int
+  novel              Novel   @relation(fields: [novelId], references: [id])
+
+  @@map("continue_reading")
 }
 
 model NovelCollectionMapping {
@@ -401,6 +416,7 @@ model Chapter {
   complaitTypeId     Int
   complaintTargetId  Int
   complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  continueNovel      ContinueReading[]
 
   @@map("chapter")
 }
