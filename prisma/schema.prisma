@@ -32,6 +32,22 @@ enum BanStatus {
   Appealed
 }
 
+enum NotificationMessageStatus {
+  SENT
+  PENDING
+  READ
+  UNREAD
+  ARCHIVED
+}
+
+enum NotificationRelatedEntity {
+  NOVEL
+  COMMENT
+  REVIEW
+  AUTHOR
+  SYSTEM
+}
+
 model User {
   id                        Int                        @id @default(autoincrement())
   username                  String                     @unique
@@ -60,6 +76,8 @@ model User {
   reviewedAppeals           Appeal[]
   userNotificationSettings  UserNotificationSettings[]
   novelsSubscription        NovelSubscription[]
+  notifications             Notification[]
+  authorSubscription        AuthorSubscription[]
 
   @@map("user")
 }
@@ -84,6 +102,57 @@ model Permission {
   @@map("permission")
 }
 
+model NotificationType {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String
+
+  notifications Notification[]
+}
+
+model NotificationStatus {
+  id          Int                       @id @default(autoincrement())
+  status      NotificationMessageStatus
+  description String
+
+  notifications Notification[]
+}
+
+model NotificationRelatedEntityType {
+  id          Int                       @id @default(autoincrement())
+  entityType  NotificationRelatedEntity
+  description String
+
+  notificationEntities NotificationEntity[]
+}
+
+model NotificationEntity {
+  id                            Int                           @id @default(autoincrement())
+  name                          String
+  description                   String
+  notifRelEntTypeId             Int
+  notificationRelatedEntityType NotificationRelatedEntityType @relation(fields: [notifRelEntTypeId], references: [id])
+  novels                        Novel[]
+  comment                       Comment[]
+  author                        Author[]
+  review                        Review[]
+}
+
+model Notification {
+  id                   Int                @id @default(autoincrement())
+  title                String
+  message              String
+  img                  String
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  userId               Int
+  user                 User               @relation(fields: [userId], references: [id])
+  notificationStatusId Int
+  notificationStatus   NotificationStatus @relation(fields: [notificationStatusId], references: [id])
+  notificationTypeId   Int
+  notificationType     NotificationType   @relation(fields: [notificationTypeId], references: [id])
+}
+
 model UserNotificationSettings {
   id                          Int     @id @default(autoincrement())
   receiveSystemNotifications  Boolean @default(true)
@@ -102,6 +171,15 @@ model NovelSubscription {
   user      User     @relation(fields: [userId], references: [id])
   novelId   Int
   novel     Novel    @relation(fields: [novelId], references: [id])
+}
+
+model AuthorSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  authorId  Int
+  author    Author   @relation(fields: [authorId], references: [id])
 }
 
 model ComplaintTargetType {
@@ -246,6 +324,8 @@ model Novel {
   translationStatus      TranslationStatus        @relation(fields: [translationStatusId], references: [id])
   formatId               Int
   format                 Format                   @relation(fields: [formatId], references: [id])
+  notificationEntityId   Int
+  notificationEntity     NotificationEntity       @relation(fields: [notificationEntityId], references: [id])
   commendableTypeId      Int
   commendableType        CommendableType          @relation(fields: [commendableTypeId], references: [id])
   tags                   Tag[]
@@ -353,21 +433,23 @@ model UserRating {
 }
 
 model Review {
-  id                 Int                 @id @default(autoincrement())
-  title              String
-  body               String
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  likes              Int
-  views              Int
-  userId             Int
-  user               User                @relation(fields: [userId], references: [id])
-  novelId            Int
-  novel              Novel               @relation(fields: [novelId], references: [id])
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  id                   Int                 @id @default(autoincrement())
+  title                String
+  body                 String
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  likes                Int
+  views                Int
+  userId               Int
+  user                 User                @relation(fields: [userId], references: [id])
+  novelId              Int
+  novel                Novel               @relation(fields: [novelId], references: [id])
+  commendableTypeId    Int
+  commendableType      CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  complaintTargetId    Int
+  complainTargetType   ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  notificationEntityId Int
+  notificationEntity   NotificationEntity  @relation(fields: [notificationEntityId], references: [id])
 
   @@map("review")
 }
@@ -392,19 +474,21 @@ model News {
 }
 
 model Comment {
-  id                 Int                 @id @default(autoincrement())
-  userId             Int
-  user               User                @relation(fields: [userId], references: [id])
-  nestedLevel        Int?
-  body               String
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  complaitTypeId     Int
-  replyToId          Int?
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  id                   Int                 @id @default(autoincrement())
+  userId               Int
+  user                 User                @relation(fields: [userId], references: [id])
+  nestedLevel          Int?
+  body                 String
+  commendableTypeId    Int
+  commendableType      CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  complaitTypeId       Int
+  replyToId            Int?
+  complaintTargetId    Int
+  complainTargetType   ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  notificationEntityId Int
+  notificationEntity   NotificationEntity  @relation(fields: [notificationEntityId], references: [id])
 
   replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
   replies Comment[] @relation(name: "CommentReplies")
@@ -515,10 +599,13 @@ model Status {
 }
 
 model Author {
-  id     Int     @id @default(autoincrement())
-  name   String
-  img    String
-  novels Novel[]
+  id                   Int                  @id @default(autoincrement())
+  name                 String
+  img                  String
+  novels               Novel[]
+  notificationEntityId Int
+  notificationEntity   NotificationEntity   @relation(fields: [notificationEntityId], references: [id])
+  authorSubscription   AuthorSubscription[]
 
   @@map("author")
 }
