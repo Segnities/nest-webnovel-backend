@@ -18,6 +18,13 @@ enum Provider {
   EMAIL_AND_PASSWORD
 }
 
+enum ROLE_NAME {
+  SYSTEM // System role for automatic actions 
+  ADMIN // Admin role with full access
+  MODERATOR // Moderator role with permissions to manage content and users
+  DEFAULT_USER // Regular user with standard permissions
+}
+
 enum ApprovalStatus {
   Pending
   Approved
@@ -51,7 +58,7 @@ enum NotificationRelatedEntity {
 model User {
   id                        Int                        @id @default(autoincrement())
   username                  String                     @unique
-  email                     String                     @unique
+  email                     String                     @unique @db.VarChar(50)
   provider                  Provider
   img                       String
   createdAt                 DateTime                   @default(now())
@@ -84,8 +91,8 @@ model User {
 
 model Role {
   id          Int          @id @default(autoincrement())
-  name        String
-  description String
+  name        String       @unique @db.VarChar(100)
+  description String?
   users       User[]
   permissions Permission[]
 
@@ -93,42 +100,48 @@ model Role {
 }
 
 model Permission {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(100)
+  description String?
   roleId      Int
-  role        Role   @relation(fields: [roleId], references: [id])
+  role        Role    @relation(fields: [roleId], references: [id])
 
   @@map("permission")
 }
 
 model NotificationType {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String?
 
   notifications Notification[]
+
+  @@map("notification_type")
 }
 
 model NotificationStatus {
   id          Int                       @id @default(autoincrement())
   status      NotificationMessageStatus
-  description String
+  description String?
 
   notifications Notification[]
+
+  @@map("notification_status")
 }
 
 model NotificationRelatedEntityType {
   id          Int                       @id @default(autoincrement())
   entityType  NotificationRelatedEntity
-  description String
+  description String?
 
   notificationEntities NotificationEntity[]
+
+  @@map("notification_related_entity_type")
 }
 
 model NotificationEntity {
   id                            Int                           @id @default(autoincrement())
-  name                          String
+  name                          String                        @db.VarChar(200)
   description                   String
   notifRelEntTypeId             Int
   notificationRelatedEntityType NotificationRelatedEntityType @relation(fields: [notifRelEntTypeId], references: [id])
@@ -136,11 +149,13 @@ model NotificationEntity {
   comment                       Comment[]
   author                        Author[]
   review                        Review[]
+
+  @@map("notification_entity")
 }
 
 model Notification {
   id                   Int                @id @default(autoincrement())
-  title                String
+  title                String             @db.VarChar(200)
   message              String
   img                  String
   createdAt            DateTime           @default(now())
@@ -151,6 +166,9 @@ model Notification {
   notificationStatus   NotificationStatus @relation(fields: [notificationStatusId], references: [id])
   notificationTypeId   Int
   notificationType     NotificationType   @relation(fields: [notificationTypeId], references: [id])
+
+  @@index([userId, notificationStatusId, createdAt])
+  @@map("notification")
 }
 
 model UserNotificationSettings {
@@ -162,6 +180,8 @@ model UserNotificationSettings {
   receiveAuthorUpdates        Boolean @default(true)
   userId                      Int
   user                        User    @relation(fields: [userId], references: [id])
+
+  @@map("user_notification_settings")
 }
 
 model NovelSubscription {
@@ -171,6 +191,8 @@ model NovelSubscription {
   user      User     @relation(fields: [userId], references: [id])
   novelId   Int
   novel     Novel    @relation(fields: [novelId], references: [id])
+
+  @@map("novel_subscription")
 }
 
 model AuthorSubscription {
@@ -180,12 +202,14 @@ model AuthorSubscription {
   user      User     @relation(fields: [userId], references: [id])
   authorId  Int
   author    Author   @relation(fields: [authorId], references: [id])
+
+  @@map("author_subscription")
 }
 
 model ComplaintTargetType {
   id                  Int                @id @default(autoincrement())
-  name                String
-  description         String
+  name                String             @db.VarChar(200)
+  description         String?
   complaintCategoryId Int
   complaintCategory   ComplaintCategory  @relation(fields: [complaintCategoryId], references: [id])
   usersComplaints     UserComplaint[]
@@ -202,7 +226,7 @@ model ComplaintTargetType {
 
 model ComplaintCategory {
   id                   Int                   @id @default(autoincrement())
-  name                 String
+  name                 String                @db.VarChar(200)
   description          String
   complaintTargetTypes ComplaintTargetType[]
 
@@ -244,7 +268,7 @@ model ContentComplaint {
 
 model ComplaintReason {
   id                Int                @id @default(autoincrement())
-  title             String
+  title             String             @db.VarChar(200)
   description       String
   userComplaints    UserComplaint[]
   contentComplaints ContentComplaint[]
@@ -271,11 +295,13 @@ model Ban {
   user                User                @relation(fields: [userId], references: [id], name: "userBanRelation")
   complaintTargetId   Int
   complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+
+  @@map("ban")
 }
 
 model Appeal {
   id             Int            @id @default(autoincrement())
-  title          String
+  title          String         @db.VarChar(200)
   body           String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
@@ -286,30 +312,36 @@ model Appeal {
   appeal         AppelaReason   @relation(fields: [appealReasonId], references: [id])
   reviewedBy     Int
   reviewedByUser User           @relation(fields: [reviewedBy], references: [id])
+
+  @@map("appeal")
 }
 
 model AppelaReason {
   id          Int    @id @default(autoincrement())
-  name        String
+  name        String @db.VarChar(200)
   description String
 
   appeals Appeal[]
+
+  @@map("appeal_reason")
 }
 
 model BanReason {
   id          Int    @id @default(autoincrement())
-  title       String
+  title       String @db.VarChar(200)
   description String
+
+  @@map("ban_reason")
 }
 
 model Novel {
   id                     Int                      @id @default(autoincrement())
-  title                  String
-  original_title         String
+  title                  String                   @db.VarChar(200)
+  original_title         String?                  @db.VarChar(200)
   description            String
   img                    String
   isAdult                Boolean
-  releaseYear            Int
+  releaseYear            Int?
   coverImg               String?
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
@@ -341,6 +373,7 @@ model Novel {
   continueReading        ContinueReading[]
   novelSubscription      NovelSubscription[]
 
+  @@index([authorId, statusId, formatId])
   @@map("novel")
 }
 
@@ -387,7 +420,7 @@ model UserCollectionMapping {
 
 model Collection {
   id          Int      @id @default(autoincrement())
-  title       String
+  title       String   @unique @db.VarChar(200)
   description String
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -421,7 +454,7 @@ model Bookmark {
 
 model UserRating {
   id        Int      @id @default(autoincrement())
-  rating    Int
+  rating    Int      @db.SmallInt
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   novelId   Int
@@ -429,12 +462,13 @@ model UserRating {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([novelId, userId])
   @@map("rating")
 }
 
 model Review {
   id                   Int                 @id @default(autoincrement())
-  title                String
+  title                String              @db.VarChar(200)
   body                 String
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
@@ -456,7 +490,7 @@ model Review {
 
 model News {
   id                 Int                 @id @default(autoincrement())
-  title              String
+  title              String              @db.VarChar(200)
   body               String
   likes              Int
   views              Int
@@ -470,6 +504,7 @@ model News {
   complaintTargetId  Int
   complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
 
+  @@index([userId, commendableTypeId, createdAt])
   @@map("news")
 }
 
@@ -498,7 +533,7 @@ model Comment {
 
 model CommendableType {
   id       Int       @id @default(autoincrement())
-  name     String
+  name     String    @db.VarChar(200)
   novels   Novel[]
   chapters Chapter[]
   reviews  Review[]
@@ -510,7 +545,7 @@ model CommendableType {
 
 model Chapter {
   id                 Int                 @id @default(autoincrement())
-  title              String
+  title              String              @db.VarChar(200)
   content            String
   likes              Int
   createdAt          DateTime            @default(now())
@@ -525,13 +560,14 @@ model Chapter {
   complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
   continueNovel      ContinueReading[]
 
+  @@index([novelId, createdAt])
   @@map("chapter")
 }
 
 //novels + chapters
 model Team {
   id             Int      @id @default(autoincrement())
-  name           String
+  name           String   @db.VarChar(200)
   chapters_count Int      @default(0)
   books_count    Int      @default(0)
   createdAt      DateTime @default(now())
@@ -543,7 +579,7 @@ model Team {
 
 model Format {
   id     Int     @id @default(autoincrement())
-  title  String
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("format")
@@ -551,7 +587,7 @@ model Format {
 
 model TranslationStatus {
   id     Int     @id @default(autoincrement())
-  title  String
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("translation_status")
@@ -559,7 +595,7 @@ model TranslationStatus {
 
 model AlternativeTitle {
   id      Int    @id @default(autoincrement())
-  title   String
+  title   String @db.VarChar(200)
   novelId Int
   novel   Novel  @relation(fields: [novelId], references: [id])
 
@@ -568,7 +604,7 @@ model AlternativeTitle {
 
 model Tag {
   id     Int     @id @default(autoincrement())
-  title  String
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("tag")
@@ -576,7 +612,7 @@ model Tag {
 
 model Genre {
   id     Int     @id @default(autoincrement())
-  title  String  @unique
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("genre")
@@ -584,7 +620,7 @@ model Genre {
 
 model Country {
   id     Int     @id @default(autoincrement())
-  title  String  @unique
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("country")
@@ -592,7 +628,7 @@ model Country {
 
 model Status {
   id     Int     @id @default(autoincrement())
-  title  String  @unique
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("status")
@@ -600,7 +636,7 @@ model Status {
 
 model Author {
   id                   Int                  @id @default(autoincrement())
-  name                 String
+  name                 String               @unique @db.VarChar(200)
   img                  String
   novels               Novel[]
   notificationEntityId Int
