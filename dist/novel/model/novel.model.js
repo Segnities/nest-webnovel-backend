@@ -1,0 +1,1 @@
+//# sourceMappingURL=novel.model.js.map

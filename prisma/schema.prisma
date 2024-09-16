@@ -8,6 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum NotificationMessageStatus {
+  SENT
+  PENDING
+  READ
+  UNREAD
+  ARCHIVED
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -18,61 +26,346 @@ enum Provider {
   EMAIL_AND_PASSWORD
 }
 
+enum ROLE_NAME {
+  SYSTEM // System role for automatic actions 
+  ADMIN // Admin role with full access
+  MODERATOR // Moderator role with permissions to manage content and users
+  DEFAULT_USER // Regular user with standard permissions
+}
+
+enum ApprovalStatus {
+  Pending
+  Approved
+  Rejected
+  Reviewed
+  Resolved
+}
+
+enum BanStatus {
+  Active
+  Expired
+  Appealed
+}
+
+enum NotificationRelatedEntity {
+  NOVEL
+  COMMENT
+  REVIEW
+  AUTHOR
+  SYSTEM
+}
+
 model User {
-  id                    Int                     @id @default(autoincrement())
-  username              String                  @unique
-  email                 String                  @unique
-  provider              Provider
-  img                   String
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  roleId                Int
-  role                  Role                    @relation(fields: [roleId], references: [id])
-  usersRatings          UserRating[]
-  comments              Comment[]
-  bookmarks             Bookmark[]
-  reviews               Review[]
-  userCollectionMapping UserCollectionMapping[]
+  id                        Int                        @id @default(autoincrement())
+  username                  String                     @unique
+  email                     String                     @unique @db.VarChar(50)
+  provider                  Provider
+  img                       String
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  roleId                    Int
+  role                      Role                       @relation(fields: [roleId], references: [id])
+  teamId                    Int?
+  team                      Team?                      @relation(fields: [teamId], references: [id])
+  usersRatings              UserRating[]
+  comments                  Comment[]
+  bookmarks                 Bookmark[]
+  reviews                   Review[]
+  userCollectionMapping     UserCollectionMapping[]
+  continueReading           ContinueReading[]
+  news                      News[]
+  userComplaints            UserComplaint[]
+  complaintReasons          ComplaintReason[]
+  issuedContentComplaints   ContentComplaint[]         @relation("issuedByUserRelation")
+  resolvedContentComplaints ContentComplaint[]         @relation("resolvedByUserRelation")
+  issuedBans                Ban[]                      @relation("issuedBySystemRelation")
+  userBans                  Ban[]                      @relation("userBanRelation")
+  reviewedAppeals           Appeal[]
+  userNotificationSettings  UserNotificationSettings[]
+  novelsSubscription        NovelSubscription[]
+  notifications             Notification[]
+  authorSubscription        AuthorSubscription[]
+
+  @@map("user")
 }
 
 model Role {
   id          Int          @id @default(autoincrement())
-  name        String
-  description String
+  name        String       @unique @db.VarChar(100)
+  description String?
   users       User[]
   permissions Permission[]
+
+  @@map("role")
 }
 
 model Permission {
-  id          Int    @id @default(autoincrement())
-  name        String
-  description String
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(100)
+  description String?
   roleId      Int
-  role        Role   @relation(fields: [roleId], references: [id])
+  role        Role    @relation(fields: [roleId], references: [id])
+
+  @@map("permission")
+}
+
+model NotificationType {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String?
+
+  notifications Notification[]
+
+  @@map("notification_type")
+}
+
+model NotificationGroup {
+  id            Int                 @id @default(autoincrement())
+  name          String              @db.VarChar(100)
+  description   String?
+  isDefault     Boolean             @default(false)
+  parentGroupId Int?
+  parentGroup   NotificationGroup?  @relation("GroupHierarchy", fields: [parentGroupId], references: [id])
+  childGroups   NotificationGroup[] @relation("GroupHierarchy")
+  notifications Notification[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+
+  @@map("notification_group")
+}
+
+model Notification {
+  id                  Int                       @id @default(autoincrement())
+  title               String                    @db.VarChar(200)
+  message             String
+  img                 String
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  userId              Int
+  user                User                      @relation(fields: [userId], references: [id])
+  type                NotificationType          @relation(fields: [typeId], references: [id])
+  typeId              Int
+  relatedEntityType   NotificationRelatedEntity
+  relatedEntityId     Int
+  notificationStatus  NotificationMessageStatus
+  novel               Novel?                    @relation(fields: [novelId], references: [id])
+  novelId             Int?
+  comment             Comment?                  @relation(fields: [commentId], references: [id])
+  commentId           Int?
+  review              Review?                   @relation(fields: [reviewId], references: [id])
+  reviewId            Int?
+  author              Author?                   @relation(fields: [authorId], references: [id])
+  authorId            Int?
+  metadata            Json?
+  notificationGroup   NotificationGroup?        @relation(fields: [notificationGroupId], references: [id])
+  notificationGroupId Int?
+
+  @@index([userId, notificationStatus, createdAt])
+  @@map("notification")
+}
+
+model UserNotificationSettings {
+  id                          Int     @id @default(autoincrement())
+  receiveSystemNotifications  Boolean @default(true)
+  receiveCommentNotifications Boolean @default(true)
+  receiveNovelUpdates         Boolean @default(true)
+  receiveReviewNotifications  Boolean @default(true)
+  receiveAuthorUpdates        Boolean @default(true)
+  userId                      Int
+  user                        User    @relation(fields: [userId], references: [id])
+
+  @@map("user_notification_settings")
+}
+
+model NovelSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  novelId   Int
+  novel     Novel    @relation(fields: [novelId], references: [id])
+
+  @@map("novel_subscription")
+}
+
+model AuthorSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  authorId  Int
+  author    Author   @relation(fields: [authorId], references: [id])
+
+  @@map("author_subscription")
+}
+
+model ComplaintTargetType {
+  id                  Int                @id @default(autoincrement())
+  name                String             @db.VarChar(200)
+  description         String?
+  complaintCategoryId Int
+  complaintCategory   ComplaintCategory  @relation(fields: [complaintCategoryId], references: [id])
+  usersComplaints     UserComplaint[]
+  contentComplaints   ContentComplaint[]
+  bans                Ban[]
+  novels              Novel[]
+  reviews             Review[]
+  news                News[]
+  comments            Comment[]
+  chapter             Chapter[]
+
+  @@map("complaint_target_type")
+}
+
+model ComplaintCategory {
+  id                   Int                   @id @default(autoincrement())
+  name                 String                @db.VarChar(200)
+  description          String
+  complaintTargetTypes ComplaintTargetType[]
+
+  @@map("complaint_category")
+}
+
+model UserComplaint {
+  id                  Int                 @id @default(autoincrement())
+  status              ApprovalStatus
+  createdAt           DateTime            @default(now())
+  reasonId            Int
+  reason              ComplaintReason     @relation(fields: [reasonId], references: [id])
+  userId              Int
+  user                User                @relation(fields: [userId], references: [id])
+  complaintTargetId   Int
+  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+
+  @@map("user_complaint")
+}
+
+model ContentComplaint {
+  id                  Int                 @id @default(autoincrement())
+  status              ApprovalStatus
+  contentId           Int
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  reasonId            Int
+  complaintReason     ComplaintReason     @relation(fields: [reasonId], references: [id])
+  complaintTargetId   Int
+  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  resolvedAt          DateTime
+  issuedBy            Int
+  issuedByUser        User                @relation(fields: [issuedBy], references: [id], name: "issuedByUserRelation")
+  resolvedBy          Int
+  resolvedByUser      User                @relation(fields: [resolvedBy], references: [id], name: "resolvedByUserRelation")
+
+  @@map("content_complaint")
+}
+
+model ComplaintReason {
+  id                Int                @id @default(autoincrement())
+  title             String             @db.VarChar(200)
+  description       String
+  userComplaints    UserComplaint[]
+  contentComplaints ContentComplaint[]
+  createdAt         DateTime           @default(now())
+  User              User?              @relation(fields: [userId], references: [id])
+  userId            Int?
+
+  @@map("complaint_reason")
+}
+
+model Ban {
+  id                  Int                 @id @default(autoincrement())
+  banStart            DateTime            @default(now())
+  banEnd              DateTime
+  duration            Int
+  appealed            Boolean             @default(false)
+  appealId            Int
+  appeal              Appeal              @relation(fields: [appealId], references: [id])
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  issuedBy            Int
+  issuedByUser        User                @relation(fields: [issuedBy], references: [id], name: "issuedBySystemRelation")
+  userId              Int
+  user                User                @relation(fields: [userId], references: [id], name: "userBanRelation")
+  complaintTargetId   Int
+  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+
+  @@map("ban")
+}
+
+model Appeal {
+  id             Int            @id @default(autoincrement())
+  title          String         @db.VarChar(200)
+  body           String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  reviewedAt     DateTime
+  status         ApprovalStatus
+  bans           Ban[]
+  appealReasonId Int
+  appeal         AppelaReason   @relation(fields: [appealReasonId], references: [id])
+  reviewedBy     Int
+  reviewedByUser User           @relation(fields: [reviewedBy], references: [id])
+
+  @@map("appeal")
+}
+
+model AppelaReason {
+  id          Int    @id @default(autoincrement())
+  name        String @db.VarChar(200)
+  description String
+
+  appeals Appeal[]
+
+  @@map("appeal_reason")
+}
+
+model BanReason {
+  id          Int    @id @default(autoincrement())
+  title       String @db.VarChar(200)
+  description String
+
+  @@map("ban_reason")
+}
+
+enum NovelStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+  CANCELLED
+}
+
+enum NovelFormat {
+  LIGHT_NOVEL
+  WEB_NOVEL
+}
+
+enum NovelTranslationStatus {
+  NOT_TRANSLATED
+  PARTIALLY_TRANSLATED
+  FULLY_TRANSLATED
+  MACHINE_TRANSLATED
+  ONGOING
 }
 
 model Novel {
   id                     Int                      @id @default(autoincrement())
-  title                  String
-  original_title         String
+  title                  String                   @db.VarChar(200)
+  original_title         String?                  @db.VarChar(200)
   description            String
   img                    String
   isAdult                Boolean
-  releaseYear            Int
+  releaseYear            Int?
   coverImg               String?
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
   views                  Int                      @default(0)
   country                Country                  @relation(fields: [countryId], references: [id])
   countryId              Int
-  status                 Status                   @relation(fields: [statusId], references: [id])
-  statusId               Int
+  status                 NovelStatus
   authorId               Int
   author                 Author                   @relation(fields: [authorId], references: [id])
-  translationStatusId    Int
-  translationStatus      TranslationStatus        @relation(fields: [translationStatusId], references: [id])
-  formatId               Int
-  format                 Format                   @relation(fields: [formatId], references: [id])
+  translationStatus      NovelTranslationStatus
+  format                 NovelFormat
   commendableTypeId      Int
   commendableType        CommendableType          @relation(fields: [commendableTypeId], references: [id])
   tags                   Tag[]
@@ -83,8 +376,27 @@ model Novel {
   novelRating            NovelRating?
   usersRatings           UserRating[]
   novelCollectionMapping NovelCollectionMapping[]
+  complaintTargetId      Int
+  complainTargetType     ComplaintTargetType      @relation(fields: [complaintTargetId], references: [id])
+  continueReading        ContinueReading[]
+  novelSubscription      NovelSubscription[]
+  notifications          Notification[]
 
+  @@index([authorId])
   @@map("novel")
+}
+
+model ContinueReading {
+  id                 Int     @id @default(autoincrement())
+  progressPercentage Float
+  userId             Int
+  user               User    @relation(fields: [userId], references: [id])
+  lastChapterId      Int
+  lastChapter        Chapter @relation(fields: [lastChapterId], references: [id])
+  novelId            Int
+  novel              Novel   @relation(fields: [novelId], references: [id])
+
+  @@map("continue_reading")
 }
 
 model NovelCollectionMapping {
@@ -117,7 +429,7 @@ model UserCollectionMapping {
 
 model Collection {
   id          Int      @id @default(autoincrement())
-  title       String
+  title       String   @unique @db.VarChar(200)
   description String
   isDefault   Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -151,7 +463,7 @@ model Bookmark {
 
 model UserRating {
   id        Int      @id @default(autoincrement())
-  rating    Int
+  rating    Int      @db.SmallInt
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   novelId   Int
@@ -159,103 +471,122 @@ model UserRating {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([novelId, userId])
   @@map("rating")
 }
 
 model Review {
-  id                Int             @id @default(autoincrement())
-  title             String
-  body              String
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  likes             Int
-  views             Int
-  userId            Int
-  user              User            @relation(fields: [userId], references: [id])
-  novelId           Int
-  novel             Novel           @relation(fields: [novelId], references: [id])
-  commendableTypeId Int
-  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  id                 Int                 @id @default(autoincrement())
+  title              String              @db.VarChar(200)
+  body               String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  likes              Int
+  views              Int
+  userId             Int
+  user               User                @relation(fields: [userId], references: [id])
+  novelId            Int
+  novel              Novel               @relation(fields: [novelId], references: [id])
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  notifications      Notification[]
 
   @@map("review")
 }
 
-model Comment {
-  id                Int             @id @default(autoincrement())
-  userId            Int
-  user              User            @relation(fields: [userId], references: [id])
-  nestedLevel       Int?
-  body              String
-  commendableTypeId Int
-  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  replyToId         Int?
+model News {
+  id                 Int                 @id @default(autoincrement())
+  title              String              @db.VarChar(200)
+  body               String
+  likes              Int
+  views              Int
+  published          Boolean
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  userId             Int
+  user               User                @relation(fields: [userId], references: [id])
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
 
-  replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
-  replies Comment[] @relation(name: "CommentReplies")
+  @@index([userId, commendableTypeId, createdAt])
+  @@map("news")
+}
+
+model Comment {
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  user               User                @relation(fields: [userId], references: [id])
+  nestedLevel        Int?
+  body               String
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  complaitTypeId     Int
+  replyToId          Int?
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+
+  replyTo       Comment?       @relation(name: "CommentReplies", fields: [replyToId], references: [id])
+  replies       Comment[]      @relation(name: "CommentReplies")
+  notifications Notification[]
 
   @@map("comment")
 }
 
 model CommendableType {
   id       Int       @id @default(autoincrement())
-  name     String
+  name     String    @db.VarChar(200)
   novels   Novel[]
   chapters Chapter[]
   reviews  Review[]
   comments Comment[]
+  news     News[]
 
   @@map("comandable_type")
 }
 
 model Chapter {
-  id                Int             @id @default(autoincrement())
-  title             String
-  content           String
-  likes             Int
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  novelId           Int
-  novel             Novel           @relation(fields: [novelId], references: [id])
-  commendableTypeId Int
-  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
-  bookmarks         Bookmark[]
+  id                 Int                 @id @default(autoincrement())
+  title              String              @db.VarChar(200)
+  content            String
+  likes              Int
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  novelId            Int
+  novel              Novel               @relation(fields: [novelId], references: [id])
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  bookmarks          Bookmark[]
+  complaitTypeId     Int
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  continueNovel      ContinueReading[]
 
+  @@index([novelId, createdAt])
   @@map("chapter")
 }
 
 //novels + chapters
 model Team {
   id             Int      @id @default(autoincrement())
-  name           String
+  name           String   @db.VarChar(200)
   chapters_count Int      @default(0)
   books_count    Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  users          User[]
 
   @@map("team")
 }
 
-model Format {
-  id     Int     @id @default(autoincrement())
-  title  String
-  novels Novel[]
-
-  @@map("format")
-}
-
-model TranslationStatus {
-  id     Int     @id @default(autoincrement())
-  title  String
-  novels Novel[]
-
-  @@map("translation_status")
-}
-
 model AlternativeTitle {
   id      Int    @id @default(autoincrement())
-  title   String
+  title   String @db.VarChar(200)
   novelId Int
   novel   Novel  @relation(fields: [novelId], references: [id])
 
@@ -264,7 +595,7 @@ model AlternativeTitle {
 
 model Tag {
   id     Int     @id @default(autoincrement())
-  title  String
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("tag")
@@ -272,7 +603,7 @@ model Tag {
 
 model Genre {
   id     Int     @id @default(autoincrement())
-  title  String  @unique
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("genre")
@@ -280,25 +611,19 @@ model Genre {
 
 model Country {
   id     Int     @id @default(autoincrement())
-  title  String  @unique
+  title  String  @unique @db.VarChar(200)
   novels Novel[]
 
   @@map("country")
 }
 
-model Status {
-  id     Int     @id @default(autoincrement())
-  title  String  @unique
-  novels Novel[]
-
-  @@map("status")
-}
-
 model Author {
-  id     Int     @id @default(autoincrement())
-  name   String
-  img    String
-  novels Novel[]
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(200)
+  img                String
+  novels             Novel[]
+  authorSubscription AuthorSubscription[]
+  notifications      Notification[]
 
   @@map("author")
 }

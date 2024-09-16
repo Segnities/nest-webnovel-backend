@@ -9,6 +9,8 @@ import { TagService } from './tag/tag.service';
 import { GenreService } from './genre/genre.service';
 import { CountryService } from './country/country.service';
 import { StatusService } from './status/status.service';
+import { AuthorModule } from './author/author.module';
+import { NovelModule } from './novel/novel.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { StatusService } from './status/status.service';
       playground: process.env.ENV === 'dev',
       autoSchemaFile: join(process.cwd(), 'src/shema.gql'),
     }),
+    AuthorModule,
+    NovelModule,
   ],
   controllers: [AppController],
   providers: [
