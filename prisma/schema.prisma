@@ -8,6 +8,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum NotificationMessageStatus {
+  SENT
+  PENDING
+  READ
+  UNREAD
+  ARCHIVED
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -37,14 +45,6 @@ enum BanStatus {
   Active
   Expired
   Appealed
-}
-
-enum NotificationMessageStatus {
-  SENT
-  PENDING
-  READ
-  UNREAD
-  ARCHIVED
 }
 
 enum NotificationRelatedEntity {
@@ -119,55 +119,48 @@ model NotificationType {
   @@map("notification_type")
 }
 
-model NotificationStatus {
-  id          Int                       @id @default(autoincrement())
-  status      NotificationMessageStatus
-  description String?
-
+model NotificationGroup {
+  id            Int                 @id @default(autoincrement())
+  name          String              @db.VarChar(100)
+  description   String?
+  isDefault     Boolean             @default(false)
+  parentGroupId Int?
+  parentGroup   NotificationGroup?  @relation("GroupHierarchy", fields: [parentGroupId], references: [id])
+  childGroups   NotificationGroup[] @relation("GroupHierarchy")
   notifications Notification[]
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
-  @@map("notification_status")
-}
-
-model NotificationRelatedEntityType {
-  id          Int                       @id @default(autoincrement())
-  entityType  NotificationRelatedEntity
-  description String?
-
-  notificationEntities NotificationEntity[]
-
-  @@map("notification_related_entity_type")
-}
-
-model NotificationEntity {
-  id                            Int                           @id @default(autoincrement())
-  name                          String                        @db.VarChar(200)
-  description                   String
-  notifRelEntTypeId             Int
-  notificationRelatedEntityType NotificationRelatedEntityType @relation(fields: [notifRelEntTypeId], references: [id])
-  novels                        Novel[]
-  comment                       Comment[]
-  author                        Author[]
-  review                        Review[]
-
-  @@map("notification_entity")
+  @@map("notification_group")
 }
 
 model Notification {
-  id                   Int                @id @default(autoincrement())
-  title                String             @db.VarChar(200)
-  message              String
-  img                  String
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  userId               Int
-  user                 User               @relation(fields: [userId], references: [id])
-  notificationStatusId Int
-  notificationStatus   NotificationStatus @relation(fields: [notificationStatusId], references: [id])
-  notificationTypeId   Int
-  notificationType     NotificationType   @relation(fields: [notificationTypeId], references: [id])
+  id                  Int                       @id @default(autoincrement())
+  title               String                    @db.VarChar(200)
+  message             String
+  img                 String
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  userId              Int
+  user                User                      @relation(fields: [userId], references: [id])
+  type                NotificationType          @relation(fields: [typeId], references: [id])
+  typeId              Int
+  relatedEntityType   NotificationRelatedEntity
+  relatedEntityId     Int
+  notificationStatus  NotificationMessageStatus
+  novel               Novel?                    @relation(fields: [novelId], references: [id])
+  novelId             Int?
+  comment             Comment?                  @relation(fields: [commentId], references: [id])
+  commentId           Int?
+  review              Review?                   @relation(fields: [reviewId], references: [id])
+  reviewId            Int?
+  author              Author?                   @relation(fields: [authorId], references: [id])
+  authorId            Int?
+  metadata            Json?
+  notificationGroup   NotificationGroup?        @relation(fields: [notificationGroupId], references: [id])
+  notificationGroupId Int?
 
-  @@index([userId, notificationStatusId, createdAt])
+  @@index([userId, notificationStatus, createdAt])
   @@map("notification")
 }
 
@@ -334,6 +327,26 @@ model BanReason {
   @@map("ban_reason")
 }
 
+enum NovelStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+  CANCELLED
+}
+
+enum NovelFormat {
+  LIGHT_NOVEL
+  WEB_NOVEL
+}
+
+enum NovelTranslationStatus {
+  NOT_TRANSLATED
+  PARTIALLY_TRANSLATED
+  FULLY_TRANSLATED
+  MACHINE_TRANSLATED
+  ONGOING
+}
+
 model Novel {
   id                     Int                      @id @default(autoincrement())
   title                  String                   @db.VarChar(200)
@@ -348,16 +361,11 @@ model Novel {
   views                  Int                      @default(0)
   country                Country                  @relation(fields: [countryId], references: [id])
   countryId              Int
-  status                 Status                   @relation(fields: [statusId], references: [id])
-  statusId               Int
+  status                 NovelStatus
   authorId               Int
   author                 Author                   @relation(fields: [authorId], references: [id])
-  translationStatusId    Int
-  translationStatus      TranslationStatus        @relation(fields: [translationStatusId], references: [id])
-  formatId               Int
-  format                 Format                   @relation(fields: [formatId], references: [id])
-  notificationEntityId   Int
-  notificationEntity     NotificationEntity       @relation(fields: [notificationEntityId], references: [id])
+  translationStatus      NovelTranslationStatus
+  format                 NovelFormat
   commendableTypeId      Int
   commendableType        CommendableType          @relation(fields: [commendableTypeId], references: [id])
   tags                   Tag[]
@@ -372,8 +380,9 @@ model Novel {
   complainTargetType     ComplaintTargetType      @relation(fields: [complaintTargetId], references: [id])
   continueReading        ContinueReading[]
   novelSubscription      NovelSubscription[]
+  notifications          Notification[]
 
-  @@index([authorId, statusId, formatId])
+  @@index([authorId])
   @@map("novel")
 }
 
@@ -467,23 +476,22 @@ model UserRating {
 }
 
 model Review {
-  id                   Int                 @id @default(autoincrement())
-  title                String              @db.VarChar(200)
-  body                 String
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  likes                Int
-  views                Int
-  userId               Int
-  user                 User                @relation(fields: [userId], references: [id])
-  novelId              Int
-  novel                Novel               @relation(fields: [novelId], references: [id])
-  commendableTypeId    Int
-  commendableType      CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  complaintTargetId    Int
-  complainTargetType   ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-  notificationEntityId Int
-  notificationEntity   NotificationEntity  @relation(fields: [notificationEntityId], references: [id])
+  id                 Int                 @id @default(autoincrement())
+  title              String              @db.VarChar(200)
+  body               String
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  likes              Int
+  views              Int
+  userId             Int
+  user               User                @relation(fields: [userId], references: [id])
+  novelId            Int
+  novel              Novel               @relation(fields: [novelId], references: [id])
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  notifications      Notification[]
 
   @@map("review")
 }
@@ -509,24 +517,23 @@ model News {
 }
 
 model Comment {
-  id                   Int                 @id @default(autoincrement())
-  userId               Int
-  user                 User                @relation(fields: [userId], references: [id])
-  nestedLevel          Int?
-  body                 String
-  commendableTypeId    Int
-  commendableType      CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  createdAt            DateTime            @default(now())
-  updatedAt            DateTime            @updatedAt
-  complaitTypeId       Int
-  replyToId            Int?
-  complaintTargetId    Int
-  complainTargetType   ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-  notificationEntityId Int
-  notificationEntity   NotificationEntity  @relation(fields: [notificationEntityId], references: [id])
+  id                 Int                 @id @default(autoincrement())
+  userId             Int
+  user               User                @relation(fields: [userId], references: [id])
+  nestedLevel        Int?
+  body               String
+  commendableTypeId  Int
+  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  complaitTypeId     Int
+  replyToId          Int?
+  complaintTargetId  Int
+  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
 
-  replyTo Comment?  @relation(name: "CommentReplies", fields: [replyToId], references: [id])
-  replies Comment[] @relation(name: "CommentReplies")
+  replyTo       Comment?       @relation(name: "CommentReplies", fields: [replyToId], references: [id])
+  replies       Comment[]      @relation(name: "CommentReplies")
+  notifications Notification[]
 
   @@map("comment")
 }
@@ -577,22 +584,6 @@ model Team {
   @@map("team")
 }
 
-model Format {
-  id     Int     @id @default(autoincrement())
-  title  String  @unique @db.VarChar(200)
-  novels Novel[]
-
-  @@map("format")
-}
-
-model TranslationStatus {
-  id     Int     @id @default(autoincrement())
-  title  String  @unique @db.VarChar(200)
-  novels Novel[]
-
-  @@map("translation_status")
-}
-
 model AlternativeTitle {
   id      Int    @id @default(autoincrement())
   title   String @db.VarChar(200)
@@ -626,22 +617,13 @@ model Country {
   @@map("country")
 }
 
-model Status {
-  id     Int     @id @default(autoincrement())
-  title  String  @unique @db.VarChar(200)
-  novels Novel[]
-
-  @@map("status")
-}
-
 model Author {
-  id                   Int                  @id @default(autoincrement())
-  name                 String               @unique @db.VarChar(200)
-  img                  String
-  novels               Novel[]
-  notificationEntityId Int
-  notificationEntity   NotificationEntity   @relation(fields: [notificationEntityId], references: [id])
-  authorSubscription   AuthorSubscription[]
+  id                 Int                  @id @default(autoincrement())
+  name               String               @unique @db.VarChar(200)
+  img                String
+  novels             Novel[]
+  authorSubscription AuthorSubscription[]
+  notifications      Notification[]
 
   @@map("author")
 }
