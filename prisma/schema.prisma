@@ -16,6 +16,13 @@ enum NotificationMessageStatus {
   ARCHIVED
 }
 
+enum CommentStatus {
+  ACTIVE
+  DELETED
+  HIDDEN_BY_MODERATOR
+  HIDDEN
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -522,11 +529,14 @@ model Comment {
   user               User                @relation(fields: [userId], references: [id])
   nestedLevel        Int?
   body               String
+  likes              Int                 @default(0)
+  dislikes           Int                 @default(0)
+  status             CommentStatus
   commendableTypeId  Int
   commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
-  complaitTypeId     Int
+  complaintTypeId    Int
   replyToId          Int?
   complaintTargetId  Int
   complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
@@ -535,6 +545,7 @@ model Comment {
   replies       Comment[]      @relation(name: "CommentReplies")
   notifications Notification[]
 
+  @@index([userId, commendableTypeId, createdAt])
   @@map("comment")
 }
 
