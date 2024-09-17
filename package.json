@@ -29,7 +29,11 @@
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^5.18.0",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
     "graphql": "^16.9.0",
+    "graphql-type-json": "^0.3.2",
+    "prisma-graphql-type-decimal": "^3.0.0",
+    "prisma-nestjs-graphql": "^20.0.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "uuid": "^10.0.0"

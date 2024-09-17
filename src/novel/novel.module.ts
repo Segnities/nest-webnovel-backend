@@ -2,6 +2,6 @@ import { Module } from '@nestjs/common';
 import { NovelService } from './novel.service';
 
 @Module({
-  providers: [NovelService]
+  providers: [NovelService],
 })
 export class NovelModule {}

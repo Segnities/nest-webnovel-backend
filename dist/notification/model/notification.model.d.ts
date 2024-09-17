@@ -1,0 +1,34 @@
+import { User } from '../../user/model/user.model';
+import { NotificationType } from '../../notification-type/model/notification-type.model';
+import { NotificationGroup } from '../../notification-group/model/notification-group.model';
+import { Novel } from '../../novel/model/novel.model';
+import { Comment } from '../../comment/model/comment.model';
+import { Review } from '../../review/model/review.model';
+import { Author } from '../../author/model/author.model';
+import { NotificationRelatedEntity, NotificationMessageStatus } from '../../enums/notification.enum';
+export declare class Notification {
+    id: number;
+    title: string;
+    message: string;
+    img: string;
+    createdAt: Date;
+    updatedAt: Date;
+    userId: number;
+    user: User;
+    type: NotificationType;
+    typeId: number;
+    relatedEntityType: NotificationRelatedEntity;
+    relatedEntityId: number;
+    notificationStatus: NotificationMessageStatus;
+    novel?: Novel;
+    novelId?: number;
+    comment?: Comment;
+    commentId?: number;
+    review?: Review;
+    reviewId?: number;
+    author?: Author;
+    authorId?: number;
+    metadata?: JSON;
+    notificationGroup?: NotificationGroup;
+    notificationGroupId?: number;
+}
