@@ -1,0 +1,16 @@
+import { Field } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+
+@ObjectType()
+export class AuthorCount {
+
+    @Field(() => Int, {nullable:false})
+    novels?: number;
+
+    @Field(() => Int, {nullable:false})
+    authorSubscription?: number;
+
+    @Field(() => Int, {nullable:false})
+    notifications?: number;
+}

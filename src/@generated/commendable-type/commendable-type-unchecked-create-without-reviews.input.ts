@@ -1,0 +1,29 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { NovelUncheckedCreateNestedManyWithoutCommendableTypeInput } from '../novel/novel-unchecked-create-nested-many-without-commendable-type.input';
+import { ChapterUncheckedCreateNestedManyWithoutCommendableTypeInput } from '../chapter/chapter-unchecked-create-nested-many-without-commendable-type.input';
+import { CommentUncheckedCreateNestedManyWithoutCommendableTypeInput } from '../comment/comment-unchecked-create-nested-many-without-commendable-type.input';
+import { NewsUncheckedCreateNestedManyWithoutCommendableTypeInput } from '../news/news-unchecked-create-nested-many-without-commendable-type.input';
+
+@InputType()
+export class CommendableTypeUncheckedCreateWithoutReviewsInput {
+
+    @Field(() => Int, {nullable:true})
+    id?: number;
+
+    @Field(() => String, {nullable:false})
+    name!: string;
+
+    @Field(() => NovelUncheckedCreateNestedManyWithoutCommendableTypeInput, {nullable:true})
+    novels?: NovelUncheckedCreateNestedManyWithoutCommendableTypeInput;
+
+    @Field(() => ChapterUncheckedCreateNestedManyWithoutCommendableTypeInput, {nullable:true})
+    chapters?: ChapterUncheckedCreateNestedManyWithoutCommendableTypeInput;
+
+    @Field(() => CommentUncheckedCreateNestedManyWithoutCommendableTypeInput, {nullable:true})
+    comments?: CommentUncheckedCreateNestedManyWithoutCommendableTypeInput;
+
+    @Field(() => NewsUncheckedCreateNestedManyWithoutCommendableTypeInput, {nullable:true})
+    news?: NewsUncheckedCreateNestedManyWithoutCommendableTypeInput;
+}
