@@ -6,18 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenreModule = void 0;
+exports.UserRatingService = void 0;
 const common_1 = require("@nestjs/common");
-const genre_controller_1 = require("./genre.controller");
-const genre_service_1 = require("./genre.service");
-const prisma_service_1 = require("../prisma/prisma.service");
-let GenreModule = class GenreModule {
+let UserRatingService = class UserRatingService {
 };
-exports.GenreModule = GenreModule;
-exports.GenreModule = GenreModule = __decorate([
-    (0, common_1.Module)({
-        controllers: [genre_controller_1.GenreController],
-        providers: [genre_service_1.GenreService, prisma_service_1.PrismaService],
-    })
-], GenreModule);
-//# sourceMappingURL=genre.module.js.map
+exports.UserRatingService = UserRatingService;
+exports.UserRatingService = UserRatingService = __decorate([
+    (0, common_1.Injectable)()
+], UserRatingService);
+//# sourceMappingURL=user-rating.service.js.map

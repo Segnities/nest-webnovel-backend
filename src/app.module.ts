@@ -15,6 +15,7 @@ import { TagModule } from './tag/tag.module';
 import { GenreModule } from './genre/genre.module';
 import { AlternativeTitleModule } from './alternative-title/alternative-title.module';
 import { CountryModule } from './country/country.module';
+import { UserRatingModule } from './user-rating/user-rating.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CountryModule } from './country/country.module';
     GenreModule,
     AlternativeTitleModule,
     CountryModule,
+    UserRatingModule,
   ],
   controllers: [AppController],
   providers: [

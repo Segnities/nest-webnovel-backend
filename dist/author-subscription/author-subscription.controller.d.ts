@@ -1,10 +1,10 @@
-import { PrismaService } from '@/prisma/prisma.service';
+import { AuthorSubscriptionService } from './author-subscription.service';
 import { AuthorSubscription } from '@prisma/client';
-export declare class AuthorSubscriptionService {
-    private prisma;
-    constructor(prisma: PrismaService);
+export declare class AuthorSubscriptionController {
+    private readonly authorSubscriptionService;
+    constructor(authorSubscriptionService: AuthorSubscriptionService);
     subscribeToAuthor(userId: number, authorId: number): Promise<AuthorSubscription>;
-    unsubscribeFromAuthor(userId: number, authorId: number): Promise<AuthorSubscription>;
+    unsubscribeFromAuthor(userId: number, authorId: number): Promise<void>;
     getAuthorSubscribers(authorId: number): Promise<AuthorSubscription[]>;
     getUserSubscriptions(userId: number): Promise<AuthorSubscription[]>;
     isUserSubscribedToAuthor(userId: number, authorId: number): Promise<boolean>;
