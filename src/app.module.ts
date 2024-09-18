@@ -11,9 +11,6 @@ import { PrismaService } from './prisma/prisma.service';
 import { StatusService } from './status/status.service';
 import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join } from 'path';
 
 @Module({
   imports: [
@@ -22,11 +19,6 @@ import { join } from 'path';
     NotificationModule,
     AuthorSubscriptionModule,
     UserModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: process.env.ENV === 'dev',
-    }),
   ],
   controllers: [AppController],
   providers: [
