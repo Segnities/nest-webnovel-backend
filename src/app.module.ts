@@ -11,6 +11,10 @@ import { PrismaService } from './prisma/prisma.service';
 import { StatusService } from './status/status.service';
 import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
+import { TagModule } from './tag/tag.module';
+import { GenreModule } from './genre/genre.module';
+import { AlternativeTitleModule } from './alternative-title/alternative-title.module';
+import { CountryModule } from './country/country.module';
 
 @Module({
   imports: [
@@ -19,6 +23,10 @@ import { UserModule } from './user/user.module';
     NotificationModule,
     AuthorSubscriptionModule,
     UserModule,
+    TagModule,
+    GenreModule,
+    AlternativeTitleModule,
+    CountryModule,
   ],
   controllers: [AppController],
   providers: [

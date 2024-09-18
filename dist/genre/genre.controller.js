@@ -12,48 +12,51 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NovelController = void 0;
+exports.GenreController = void 0;
 const common_1 = require("@nestjs/common");
-const novel_service_1 = require("./novel.service");
+const genre_service_1 = require("./genre.service");
 const client_1 = require("@prisma/client");
-let NovelController = class NovelController {
-    constructor(novelService) {
-        this.novelService = novelService;
+let GenreController = class GenreController {
+    constructor(genreService) {
+        this.genreService = genreService;
     }
     async findOneById(id) {
-        return this.novelService.findOneById(id);
+        return this.genreService.findOneById(id);
     }
     async findAll(args) {
-        return this.novelService.findAll(args);
+        return this.genreService.findAll(args);
     }
     async createOne(data) {
-        return this.novelService.createOne(data);
+        return this.genreService.createOne(data);
     }
     async createMany(data) {
-        return this.novelService.createMany(data);
+        return this.genreService.createMany(data);
     }
     async updateOne(id, data) {
-        return this.novelService.updateOne(id, data);
+        return this.genreService.updateOne(id, data);
     }
     async deleteOne(id) {
-        return this.novelService.deleteOne(id);
+        await this.genreService.deleteOne(id);
+    }
+    async findByTitle(title) {
+        return this.genreService.findByTitle(title);
     }
 };
-exports.NovelController = NovelController;
+exports.GenreController = GenreController;
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "findOneById", null);
+], GenreController.prototype, "findOneById", null);
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "findAll", null);
+], GenreController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
@@ -61,15 +64,15 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "createOne", null);
+], GenreController.prototype, "createOne", null);
 __decorate([
     (0, common_1.Post)('many'),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Array]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "createMany", null);
+], GenreController.prototype, "createMany", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
@@ -77,7 +80,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "updateOne", null);
+], GenreController.prototype, "updateOne", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
@@ -85,9 +88,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "deleteOne", null);
-exports.NovelController = NovelController = __decorate([
-    (0, common_1.Controller)('novels'),
-    __metadata("design:paramtypes", [novel_service_1.NovelService])
-], NovelController);
-//# sourceMappingURL=novel.controller.js.map
+], GenreController.prototype, "deleteOne", null);
+__decorate([
+    (0, common_1.Get)('title/:title'),
+    __param(0, (0, common_1.Param)('title')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], GenreController.prototype, "findByTitle", null);
+exports.GenreController = GenreController = __decorate([
+    (0, common_1.Controller)('genres'),
+    __metadata("design:paramtypes", [genre_service_1.GenreService])
+], GenreController);
+//# sourceMappingURL=genre.controller.js.map
