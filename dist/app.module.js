@@ -20,6 +20,7 @@ const prisma_service_1 = require("./prisma/prisma.service");
 const status_service_1 = require("./status/status.service");
 const tag_service_1 = require("./tag/tag.service");
 const user_module_1 = require("./user/user.module");
+const tag_module_1 = require("./tag/tag.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -31,6 +32,7 @@ exports.AppModule = AppModule = __decorate([
             notification_module_1.NotificationModule,
             author_subscription_module_1.AuthorSubscriptionModule,
             user_module_1.UserModule,
+            tag_module_1.TagModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
