@@ -24,6 +24,7 @@ const tag_module_1 = require("./tag/tag.module");
 const genre_module_1 = require("./genre/genre.module");
 const alternative_title_module_1 = require("./alternative-title/alternative-title.module");
 const country_module_1 = require("./country/country.module");
+const user_rating_module_1 = require("./user-rating/user-rating.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,6 +40,7 @@ exports.AppModule = AppModule = __decorate([
             genre_module_1.GenreModule,
             alternative_title_module_1.AlternativeTitleModule,
             country_module_1.CountryModule,
+            user_rating_module_1.UserRatingModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

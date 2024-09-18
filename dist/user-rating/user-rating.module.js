@@ -6,18 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorSubscriptionModule = void 0;
+exports.UserRatingModule = void 0;
 const common_1 = require("@nestjs/common");
-const author_subscription_service_1 = require("./author-subscription.service");
-const author_subscription_controller_1 = require("./author-subscription.controller");
+const user_rating_controller_1 = require("./user-rating.controller");
+const user_rating_service_1 = require("./user-rating.service");
 const prisma_service_1 = require("../prisma/prisma.service");
-let AuthorSubscriptionModule = class AuthorSubscriptionModule {
+let UserRatingModule = class UserRatingModule {
 };
-exports.AuthorSubscriptionModule = AuthorSubscriptionModule;
-exports.AuthorSubscriptionModule = AuthorSubscriptionModule = __decorate([
+exports.UserRatingModule = UserRatingModule;
+exports.UserRatingModule = UserRatingModule = __decorate([
     (0, common_1.Module)({
-        providers: [author_subscription_service_1.AuthorSubscriptionService, prisma_service_1.PrismaService],
-        controllers: [author_subscription_controller_1.AuthorSubscriptionController],
+        controllers: [user_rating_controller_1.UserRatingController],
+        providers: [user_rating_service_1.UserRatingService, prisma_service_1.PrismaService],
     })
-], AuthorSubscriptionModule);
-//# sourceMappingURL=author-subscription.module.js.map
+], UserRatingModule);
+//# sourceMappingURL=user-rating.module.js.map
