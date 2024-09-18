@@ -22,6 +22,7 @@ const tag_service_1 = require("./tag/tag.service");
 const user_module_1 = require("./user/user.module");
 const tag_module_1 = require("./tag/tag.module");
 const genre_module_1 = require("./genre/genre.module");
+const alternative_title_module_1 = require("./alternative-title/alternative-title.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,6 +36,7 @@ exports.AppModule = AppModule = __decorate([
             user_module_1.UserModule,
             tag_module_1.TagModule,
             genre_module_1.GenreModule,
+            alternative_title_module_1.AlternativeTitleModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

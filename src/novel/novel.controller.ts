@@ -8,6 +8,8 @@ import {
   Param,
   Query,
   ParseIntPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { NovelService } from './novel.service';
 import { Novel, Prisma } from '@prisma/client';
@@ -27,11 +29,13 @@ export class NovelController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async createOne(@Body() data: Prisma.NovelCreateInput): Promise<Novel> {
     return this.novelService.createOne(data);
   }
 
   @Post('many')
+  @HttpCode(HttpStatus.CREATED)
   async createMany(
     @Body() data: Prisma.NovelCreateManyInput,
   ): Promise<Novel[]> {
@@ -47,6 +51,7 @@ export class NovelController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
     return this.novelService.deleteOne(id);
   }

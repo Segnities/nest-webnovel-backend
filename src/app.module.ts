@@ -13,6 +13,7 @@ import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
 import { TagModule } from './tag/tag.module';
 import { GenreModule } from './genre/genre.module';
+import { AlternativeTitleModule } from './alternative-title/alternative-title.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GenreModule } from './genre/genre.module';
     UserModule,
     TagModule,
     GenreModule,
+    AlternativeTitleModule,
   ],
   controllers: [AppController],
   providers: [
