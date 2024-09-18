@@ -14,7 +14,7 @@ let NotificationModule = class NotificationModule {
 exports.NotificationModule = NotificationModule;
 exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Module)({
-        providers: [notification_service_1.NotificationService]
+        providers: [notification_service_1.NotificationService],
     })
 ], NotificationModule);
 //# sourceMappingURL=notification.module.js.map

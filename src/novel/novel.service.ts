@@ -1,8 +1,6 @@
-import { Novel } from '@/@generated/novel/novel.model';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
-import { NovelCreateInput } from '@/@generated/novel/novel-create.input';
-import { NovelCreateManyInput } from '@/@generated/novel/novel-create-many.input';
+import { Prisma, Novel } from '@prisma/client';
 
 @Injectable()
 export class NovelService {
@@ -11,11 +9,42 @@ export class NovelService {
   async findOneById(id: number): Promise<Novel> {
     return this.prisma.novel.findUnique({ where: { id } });
   }
-  async createOne(data: NovelCreateInput): Promise<Novel> {
-    return this.prisma.novel.create({ data });
+  async createOne(data: Prisma.NovelCreateInput): Promise<Novel> {
+    try {
+      return this.prisma.novel.create({ data });
+    } catch (error) {
+      throw error;
+    }
   }
-
-  async createMany(data: NovelCreateManyInput): Promise<Novel[]> {
-    return this.prisma.novel.createManyAndReturn({ data });
+  async findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
+    try {
+      return this.prisma.novel.findMany(args);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]> {
+    try {
+      return this.prisma.novel.createManyAndReturn({
+        data,
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel> {
+    try {
+      return this.prisma.novel.update({ where: { id }, data });
+    } catch (error) {
+      throw error;
+    }
+  }
+  async deleteOne(id: number): Promise<Novel> {
+    try {
+      return this.prisma.novel.delete({ where: { id } });
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -14,7 +14,7 @@ let AuthorSubscriptionModule = class AuthorSubscriptionModule {
 exports.AuthorSubscriptionModule = AuthorSubscriptionModule;
 exports.AuthorSubscriptionModule = AuthorSubscriptionModule = __decorate([
     (0, common_1.Module)({
-        providers: [author_subscription_service_1.AuthorSubscriptionService]
+        providers: [author_subscription_service_1.AuthorSubscriptionService],
     })
 ], AuthorSubscriptionModule);
 //# sourceMappingURL=author-subscription.module.js.map
