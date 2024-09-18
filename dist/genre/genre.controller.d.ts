@@ -1,13 +1,13 @@
-import { PrismaService } from '@/prisma/prisma.service';
-import { Prisma, Genre } from '@prisma/client';
-export declare class GenreService {
-    private prisma;
-    constructor(prisma: PrismaService);
+import { GenreService } from './genre.service';
+import { Genre, Prisma } from '@prisma/client';
+export declare class GenreController {
+    private readonly genreService;
+    constructor(genreService: GenreService);
     findOneById(id: number): Promise<Genre>;
-    createOne(data: Prisma.GenreCreateInput): Promise<Genre>;
     findAll(args?: Prisma.GenreFindManyArgs): Promise<Genre[]>;
+    createOne(data: Prisma.GenreCreateInput): Promise<Genre>;
     createMany(data: Prisma.GenreCreateManyInput[]): Promise<Prisma.BatchPayload>;
     updateOne(id: number, data: Prisma.GenreUpdateInput): Promise<Genre>;
-    deleteOne(id: number): Promise<Genre>;
+    deleteOne(id: number): Promise<void>;
     findByTitle(title: string): Promise<Genre | null>;
 }

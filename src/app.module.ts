@@ -12,6 +12,7 @@ import { StatusService } from './status/status.service';
 import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
 import { TagModule } from './tag/tag.module';
+import { GenreModule } from './genre/genre.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { TagModule } from './tag/tag.module';
     AuthorSubscriptionModule,
     UserModule,
     TagModule,
+    GenreModule,
   ],
   controllers: [AppController],
   providers: [
