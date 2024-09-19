@@ -16,6 +16,7 @@ import { GenreModule } from './genre/genre.module';
 import { AlternativeTitleModule } from './alternative-title/alternative-title.module';
 import { CountryModule } from './country/country.module';
 import { UserRatingModule } from './user-rating/user-rating.module';
+import { NovelSubscriptionModule } from './novel-subscription/novel-subscription.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UserRatingModule } from './user-rating/user-rating.module';
     AlternativeTitleModule,
     CountryModule,
     UserRatingModule,
+    NovelSubscriptionModule,
   ],
   controllers: [AppController],
   providers: [
