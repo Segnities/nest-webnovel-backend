@@ -18,6 +18,7 @@ import { CountryModule } from './country/country.module';
 import { UserRatingModule } from './user-rating/user-rating.module';
 import { NovelSubscriptionModule } from './novel-subscription/novel-subscription.module';
 import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UserNotificationSettingsModule } from './user-notification-settings/use
     UserRatingModule,
     NovelSubscriptionModule,
     UserNotificationSettingsModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [
