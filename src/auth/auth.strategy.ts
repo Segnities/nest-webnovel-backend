@@ -11,6 +11,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
   'firebase-auth',
 ) {
   private firebaseApp: admin.app.App;
+
   constructor(
     private configService: ConfigService,
     private prisma: PrismaService,
@@ -20,11 +21,13 @@ export class FirebaseAuthStrategy extends PassportStrategy(
       secretOrKeyProvider: async (request, rawJwtToken, done) => {
         const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
         done(null, projectId);
-      }, // Replace with your Firebase project ID
+      },
     });
+
     if (!admin.apps.length) {
       this.firebaseApp = admin.initializeApp({
         projectId: this.configService.get<string>('FIREBASE_PROJECT_ID'),
+        credential: admin.credential.applicationDefault(), // Ensure credentials are provided
       });
     } else {
       this.firebaseApp = admin.app();
@@ -33,18 +36,25 @@ export class FirebaseAuthStrategy extends PassportStrategy(
 
   async validate(token: string) {
     try {
-      console.log(token);
-      const decodedToken = await admin.auth().verifyIdToken(token);
+      const decodedToken = await this.firebaseApp.auth().verifyIdToken(token);
       const user = await this.prisma.user.findUnique({
         where: { email: decodedToken.email },
         include: { role: true },
       });
+
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
+
       return user;
     } catch (error) {
-      throw new UnauthorizedException('Invalid token');
+      if (error.code === 'auth/argument-error') {
+        throw new UnauthorizedException('Invalid token format');
+      } else if (error.code === 'auth/id-token-expired') {
+        throw new UnauthorizedException('Token has expired');
+      } else {
+        throw new UnauthorizedException('Invalid token');
+      }
     }
   }
 }

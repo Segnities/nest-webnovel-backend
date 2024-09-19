@@ -26,9 +26,13 @@ let RoleGuard = class RoleGuard {
             return true;
         }
         const request = context.switchToHttp().getRequest();
+        const authorizationHeader = request.headers.authorization();
+        if (!authorizationHeader) {
+            throw new common_1.UnauthorizedException('Authorization header is missing');
+        }
         const token = request.headers.authorization?.split('Bearer ')[1];
         if (!token) {
-            return false;
+            throw new common_1.UnauthorizedException('Token is missing');
         }
         try {
             const decodedToken = await admin.auth().verifyIdToken(token);
@@ -40,7 +44,11 @@ let RoleGuard = class RoleGuard {
             if (!userWithRole || !userWithRole.role) {
                 return false;
             }
-            return requiredRoles.some((role) => userWithRole.role.name === role);
+            const hasRole = requiredRoles.some((role) => userWithRole.role.name === role);
+            if (!hasRole) {
+                throw new common_1.ForbiddenException('User does not have the required role');
+            }
+            return true;
         }
         catch (error) {
             console.error('Error verifying Firebase token:', error);

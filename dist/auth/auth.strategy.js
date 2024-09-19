@@ -30,6 +30,7 @@ let FirebaseAuthStrategy = class FirebaseAuthStrategy extends (0, passport_1.Pas
         if (!admin.apps.length) {
             this.firebaseApp = admin.initializeApp({
                 projectId: this.configService.get('FIREBASE_PROJECT_ID'),
+                credential: admin.credential.applicationDefault(),
             });
         }
         else {
@@ -38,8 +39,7 @@ let FirebaseAuthStrategy = class FirebaseAuthStrategy extends (0, passport_1.Pas
     }
     async validate(token) {
         try {
-            console.log(token);
-            const decodedToken = await admin.auth().verifyIdToken(token);
+            const decodedToken = await this.firebaseApp.auth().verifyIdToken(token);
             const user = await this.prisma.user.findUnique({
                 where: { email: decodedToken.email },
                 include: { role: true },
@@ -50,7 +50,15 @@ let FirebaseAuthStrategy = class FirebaseAuthStrategy extends (0, passport_1.Pas
             return user;
         }
         catch (error) {
-            throw new common_1.UnauthorizedException('Invalid token');
+            if (error.code === 'auth/argument-error') {
+                throw new common_1.UnauthorizedException('Invalid token format');
+            }
+            else if (error.code === 'auth/id-token-expired') {
+                throw new common_1.UnauthorizedException('Token has expired');
+            }
+            else {
+                throw new common_1.UnauthorizedException('Invalid token');
+            }
         }
     }
 };

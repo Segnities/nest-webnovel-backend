@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './role.decorator';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,10 +27,14 @@ export class RoleGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split('Bearer ')[1];
+    const authorizationHeader = request.headers.authorization();
+    if (!authorizationHeader) {
+      throw new UnauthorizedException('Authorization header is missing');
+    }
 
+    const token = request.headers.authorization?.split('Bearer ')[1];
     if (!token) {
-      return false;
+      throw new UnauthorizedException('Token is missing');
     }
 
     try {
@@ -40,7 +50,14 @@ export class RoleGuard implements CanActivate {
         return false;
       }
 
-      return requiredRoles.some((role) => userWithRole.role.name === role);
+      const hasRole = requiredRoles.some(
+        (role) => userWithRole.role.name === role,
+      );
+      if (!hasRole) {
+        throw new ForbiddenException('User does not have the required role');
+      }
+
+      return true;
     } catch (error) {
       console.error('Error verifying Firebase token:', error);
       return false;
