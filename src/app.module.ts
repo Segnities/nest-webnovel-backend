@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthorSubscriptionModule } from './author-subscription/author-subscription.module';
@@ -20,6 +21,7 @@ import { NovelSubscriptionModule } from './novel-subscription/novel-subscription
 import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
 import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { TeamModule } from './team/team.module';
     UserNotificationSettingsModule,
     RoleModule,
     TeamModule,
+    AuthModule,
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

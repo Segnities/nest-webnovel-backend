@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const author_subscription_module_1 = require("./author-subscription/author-subscription.module");
@@ -28,6 +29,8 @@ const user_rating_module_1 = require("./user-rating/user-rating.module");
 const novel_subscription_module_1 = require("./novel-subscription/novel-subscription.module");
 const user_notification_settings_module_1 = require("./user-notification-settings/user-notification-settings.module");
 const role_module_1 = require("./role/role.module");
+const team_module_1 = require("./team/team.module");
+const auth_module_1 = require("./auth/auth.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -47,6 +50,9 @@ exports.AppModule = AppModule = __decorate([
             novel_subscription_module_1.NovelSubscriptionModule,
             user_notification_settings_module_1.UserNotificationSettingsModule,
             role_module_1.RoleModule,
+            team_module_1.TeamModule,
+            auth_module_1.AuthModule,
+            config_1.ConfigModule.forRoot(),
         ],
         controllers: [app_controller_1.AppController],
         providers: [
