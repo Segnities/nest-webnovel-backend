@@ -16,6 +16,9 @@ import { GenreModule } from './genre/genre.module';
 import { AlternativeTitleModule } from './alternative-title/alternative-title.module';
 import { CountryModule } from './country/country.module';
 import { UserRatingModule } from './user-rating/user-rating.module';
+import { NovelSubscriptionModule } from './novel-subscription/novel-subscription.module';
+import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { UserRatingModule } from './user-rating/user-rating.module';
     AlternativeTitleModule,
     CountryModule,
     UserRatingModule,
+    NovelSubscriptionModule,
+    UserNotificationSettingsModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [
