@@ -19,6 +19,7 @@ import { UserRatingModule } from './user-rating/user-rating.module';
 import { NovelSubscriptionModule } from './novel-subscription/novel-subscription.module';
 import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
 import { RoleModule } from './role/role.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RoleModule } from './role/role.module';
     NovelSubscriptionModule,
     UserNotificationSettingsModule,
     RoleModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [
