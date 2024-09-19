@@ -26,6 +26,7 @@ const alternative_title_module_1 = require("./alternative-title/alternative-titl
 const country_module_1 = require("./country/country.module");
 const user_rating_module_1 = require("./user-rating/user-rating.module");
 const novel_subscription_module_1 = require("./novel-subscription/novel-subscription.module");
+const user_notification_settings_module_1 = require("./user-notification-settings/user-notification-settings.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -43,6 +44,7 @@ exports.AppModule = AppModule = __decorate([
             country_module_1.CountryModule,
             user_rating_module_1.UserRatingModule,
             novel_subscription_module_1.NovelSubscriptionModule,
+            user_notification_settings_module_1.UserNotificationSettingsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

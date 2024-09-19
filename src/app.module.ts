@@ -17,6 +17,7 @@ import { AlternativeTitleModule } from './alternative-title/alternative-title.mo
 import { CountryModule } from './country/country.module';
 import { UserRatingModule } from './user-rating/user-rating.module';
 import { NovelSubscriptionModule } from './novel-subscription/novel-subscription.module';
+import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { NovelSubscriptionModule } from './novel-subscription/novel-subscription
     CountryModule,
     UserRatingModule,
     NovelSubscriptionModule,
+    UserNotificationSettingsModule,
   ],
   controllers: [AppController],
   providers: [
