@@ -23,6 +23,7 @@ import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
 import { BanModule } from './ban/ban.module';
+import { AppealModule } from './appeal/appeal.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { BanModule } from './ban/ban.module';
     AuthModule,
     ConfigModule.forRoot(),
     BanModule,
+    AppealModule,
   ],
   controllers: [AppController],
   providers: [
