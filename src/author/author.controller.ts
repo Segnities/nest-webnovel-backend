@@ -10,19 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthorService } from './author.service';
-import { FirebaseAuthGuard } from '../auth/auth.guard';
-import { RoleGuard } from '../role/role.guard';
-import { Roles } from '../role/role.decorator';
 import { Author, Novel, Prisma } from '@prisma/client';
 
 @Controller('authors')
-@UseGuards(FirebaseAuthGuard)
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @Post()
   @UseGuards(RoleGuard)
-  @Roles('ADMIN', 'MODERATOR')
   async createAuthor(@Body() data: Prisma.AuthorCreateInput): Promise<Author> {
     return this.authorService.createAuthor(data);
   }
@@ -38,8 +33,6 @@ export class AuthorController {
   }
 
   @Put(':id')
-  @UseGuards(RoleGuard)
-  @Roles('ADMIN', 'MODERATOR')
   async updateAuthor(
     @Param('id') id: string,
     @Body() data: Prisma.AuthorUpdateInput,
@@ -48,8 +41,6 @@ export class AuthorController {
   }
 
   @Delete(':id')
-  @UseGuards(RoleGuard)
-  @Roles('ADMIN')
   async deleteAuthor(@Param('id') id: string): Promise<Author> {
     return this.authorService.deleteAuthor(Number(id));
   }
@@ -88,8 +79,6 @@ export class AuthorController {
   }
 
   @Post(':id/novels')
-  @UseGuards(RoleGuard)
-  @Roles('ADMIN', 'MODERATOR')
   async addNovelToAuthor(
     @Param('id') id: string,
     @Body() novelData: Prisma.NovelCreateInput,
