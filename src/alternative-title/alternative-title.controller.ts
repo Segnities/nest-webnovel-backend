@@ -10,9 +10,14 @@ import {
   ParseIntPipe,
   HttpCode,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { AlternativeTitleService } from './alternative-title.service';
 import { AlternativeTitle, Prisma } from '@prisma/client';
+import { RoleGuard } from '../role/role.guard';
+import { FirebaseAuthGuard } from '../auth/auth.guard';
+import { Roles } from '../role/role.decorator';
+import { ROLES } from '../role/roles';
 
 @Controller('alternative-titles')
 export class AlternativeTitleController {
@@ -35,6 +40,8 @@ export class AlternativeTitleController {
   }
 
   @Post()
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   @HttpCode(HttpStatus.CREATED)
   async createOne(
     @Body() data: Prisma.AlternativeTitleCreateInput,
@@ -43,6 +50,8 @@ export class AlternativeTitleController {
   }
 
   @Post('many')
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   @HttpCode(HttpStatus.CREATED)
   async createMany(
     @Body() data: Prisma.AlternativeTitleCreateManyInput[],
@@ -51,6 +60,8 @@ export class AlternativeTitleController {
   }
 
   @Put(':id')
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   async updateOne(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: Prisma.AlternativeTitleUpdateInput,
@@ -59,6 +70,8 @@ export class AlternativeTitleController {
   }
 
   @Delete(':id')
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles(ROLES.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.alternativeTitleService.deleteOne(id);
