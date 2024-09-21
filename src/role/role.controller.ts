@@ -6,22 +6,15 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Role, Permission, Prisma } from '@prisma/client';
-import { FirebaseAuthGuard } from '../auth/auth.guard';
-import { RoleGuard } from '../role/role.guard';
-import { Roles } from '../role/role.decorator';
-import { ROLES } from './roles';
 
 @Controller('role')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async createRole(
     @Body() data: { name: string; description?: string },
   ): Promise<Role> {
@@ -29,29 +22,21 @@ export class RoleController {
   }
 
   @Get()
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   async getAllRoles(): Promise<Role[]> {
     return this.roleService.getAllRoles();
   }
 
   @Get(':id')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   async getRoleById(@Param('id') id: string): Promise<Role | null> {
     return this.roleService.getRoleById(Number(id));
   }
 
   @Get('name/:name')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   async getRoleByName(@Param('name') name: string): Promise<Role | null> {
     return this.roleService.getRoleByName(name);
   }
 
   @Put(':id')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async updateRole(
     @Param('id') id: string,
     @Body() data: { name?: string; description?: string },
@@ -60,15 +45,11 @@ export class RoleController {
   }
 
   @Delete(':id')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async deleteRole(@Param('id') id: string): Promise<Role> {
     return this.roleService.deleteRole(Number(id));
   }
 
   @Get(':id/permissions')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async getRoleWithPermissions(
     @Param('id') id: string,
   ): Promise<Role & { permissions: Permission[] }> {
@@ -76,8 +57,6 @@ export class RoleController {
   }
 
   @Post(':id/permissions')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async addPermissionToRole(
     @Param('id') id: string,
     @Body() permissionData: Prisma.PermissionCreateInput,
@@ -86,8 +65,6 @@ export class RoleController {
   }
 
   @Delete(':roleId/permissions/:permissionId')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async removePermissionFromRole(
     @Param('roleId') roleId: string,
     @Param('permissionId') permissionId: string,
@@ -99,8 +76,6 @@ export class RoleController {
   }
 
   @Get(':id/users')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN, ROLES.MODERATOR)
   async getUsersWithRole(
     @Param('id') id: string,
   ): Promise<{ id: number; username: string }[]> {
@@ -108,8 +83,6 @@ export class RoleController {
   }
 
   @Post('assign')
-  @UseGuards(RoleGuard, FirebaseAuthGuard)
-  @Roles(ROLES.ADMIN)
   async assignRoleToUser(
     @Body() data: { userId: number; roleId: number },
   ): Promise<void> {
