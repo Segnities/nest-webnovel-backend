@@ -7,7 +7,6 @@ import {
   Body,
   Param,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { Author, Novel, Prisma } from '@prisma/client';
@@ -17,7 +16,6 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @Post()
-  @UseGuards(RoleGuard)
   async createAuthor(@Body() data: Prisma.AuthorCreateInput): Promise<Author> {
     return this.authorService.createAuthor(data);
   }

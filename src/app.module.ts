@@ -22,6 +22,7 @@ import { UserNotificationSettingsModule } from './user-notification-settings/use
 import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
+import { BanModule } from './ban/ban.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
     TeamModule,
     AuthModule,
     ConfigModule.forRoot(),
+    BanModule,
   ],
   controllers: [AppController],
   providers: [
