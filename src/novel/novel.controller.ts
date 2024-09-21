@@ -11,7 +11,10 @@ import {
   HttpCode,
   HttpStatus,
   ParseArrayPipe,
+  UseGuards,
 } from '@nestjs/common';
+import { RoleGuard } from '../role/role.guard';
+import { FirebaseAuthGuard } from '../auth/auth.guard';
 import { NovelService } from './novel.service';
 import {
   Novel,
@@ -20,6 +23,7 @@ import {
   NovelTranslationStatus,
   Prisma,
 } from '@prisma/client';
+import { Roles } from '@/role/role.decorator';
 
 @Controller('novels')
 export class NovelController {
@@ -36,6 +40,8 @@ export class NovelController {
   }
 
   @Post()
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles('ADMIN', 'MODERATOR')
   @HttpCode(HttpStatus.CREATED)
   async createOne(@Body() data: Prisma.NovelCreateInput): Promise<Novel> {
     return this.novelService.createOne(data);
@@ -50,6 +56,8 @@ export class NovelController {
   }
 
   @Put(':id')
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles('ADMIN', 'MODERATOR')
   async updateOne(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: Prisma.NovelUpdateInput,
@@ -58,6 +66,8 @@ export class NovelController {
   }
 
   @Delete(':id')
+  @UseGuards(FirebaseAuthGuard, RoleGuard)
+  @Roles('ADMIN')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteOne(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
     return this.novelService.deleteOne(id);
@@ -163,6 +173,7 @@ export class NovelController {
   ): Promise<Novel & { chapters: any[] }> {
     return this.novelService.getNovelWithChapters(id);
   }
+  
 
   @Put(':id/views')
   async updateNovelViews(
