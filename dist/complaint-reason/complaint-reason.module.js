@@ -6,18 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CommentModule = void 0;
+exports.ComplaintReasonModule = void 0;
 const common_1 = require("@nestjs/common");
-const comment_controller_1 = require("./comment.controller");
-const comment_service_1 = require("./comment.service");
+const complaint_reason_controller_1 = require("./complaint-reason.controller");
+const complaint_reason_service_1 = require("./complaint-reason.service");
 const prisma_service_1 = require("../prisma/prisma.service");
-let CommentModule = class CommentModule {
+let ComplaintReasonModule = class ComplaintReasonModule {
 };
-exports.CommentModule = CommentModule;
-exports.CommentModule = CommentModule = __decorate([
+exports.ComplaintReasonModule = ComplaintReasonModule;
+exports.ComplaintReasonModule = ComplaintReasonModule = __decorate([
     (0, common_1.Module)({
-        controllers: [comment_controller_1.CommentController],
-        providers: [comment_service_1.CommentService, prisma_service_1.PrismaService],
+        controllers: [complaint_reason_controller_1.ComplaintReasonController],
+        providers: [complaint_reason_service_1.ComplaintReasonService, prisma_service_1.PrismaService],
     })
-], CommentModule);
-//# sourceMappingURL=comment.module.js.map
+], ComplaintReasonModule);
+//# sourceMappingURL=complaint-reason.module.js.map

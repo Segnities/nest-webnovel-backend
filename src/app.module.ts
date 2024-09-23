@@ -26,6 +26,7 @@ import { BanModule } from './ban/ban.module';
 import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
+import { ComplaintReasonModule } from './complaint-reason/complaint-reason.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { CommentModule } from './comment/comment.module';
     AppealModule,
     BookmarkModule,
     CommentModule,
+    ComplaintReasonModule,
   ],
   controllers: [AppController],
   providers: [
