@@ -1,4 +1,12 @@
-import { Controller } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { BookmarkService } from './bookmark.service';
 import { Bookmark, Prisma } from '@prisma/client';
 
@@ -6,30 +14,42 @@ import { Bookmark, Prisma } from '@prisma/client';
 export class BookmarkController {
   constructor(private readonly bookmarkService: BookmarkService) {}
 
-  async createBookmark(data: Prisma.BookmarkCreateInput): Promise<Bookmark> {
+  @Post()
+  async createBookmark(
+    @Body() data: Prisma.BookmarkCreateInput,
+  ): Promise<Bookmark> {
     return this.bookmarkService.createBookmark(data);
   }
 
-  async getBookmarkById(id: number): Promise<Bookmark> {
+  @Get(':id')
+  async getBookmarkById(@Param('id') id: number): Promise<Bookmark> {
     return this.bookmarkService.getBookmarkById(id);
   }
 
+  @Put(':id')
   async updateBookmark(
-    id: number,
-    data: Prisma.BookmarkUpdateInput,
+    @Param('id') id: number,
+    @Body() data: Prisma.BookmarkUpdateInput,
   ): Promise<Bookmark> {
     return this.bookmarkService.updateBookmark(id, data);
   }
 
-  async deleteBookmark(id: number): Promise<Bookmark> {
+  @Delete(':id')
+  async deleteBookmark(@Param('id') id: number): Promise<Bookmark> {
     return this.bookmarkService.deleteBookmark(id);
   }
 
-  async getBookmarksByUserId(userId: number): Promise<Bookmark[]> {
+  @Get('user/:userId')
+  async getBookmarksByUserId(
+    @Param('userId') userId: number,
+  ): Promise<Bookmark[]> {
     return this.bookmarkService.getBookmarksByUserId(userId);
   }
 
-  async getBookmarksByChapterId(chapterId: number): Promise<Bookmark[]> {
+  @Get('chapter/:chapterId')
+  async getBookmarksByChapterId(
+    @Param('chapterId') chapterId: number,
+  ): Promise<Bookmark[]> {
     return this.bookmarkService.getBookmarksByChapterId(chapterId);
   }
 }

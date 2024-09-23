@@ -27,6 +27,7 @@ import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
 import { ComplaintReasonModule } from './complaint-reason/complaint-reason.module';
+import { ContentComplaintModule } from './content-complaint/content-complaint.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { ComplaintReasonModule } from './complaint-reason/complaint-reason.modul
     BookmarkModule,
     CommentModule,
     ComplaintReasonModule,
+    ContentComplaintModule,
   ],
   controllers: [AppController],
   providers: [

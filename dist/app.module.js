@@ -36,6 +36,7 @@ const appeal_module_1 = require("./appeal/appeal.module");
 const bookmark_module_1 = require("./bookmark/bookmark.module");
 const comment_module_1 = require("./comment/comment.module");
 const complaint_reason_module_1 = require("./complaint-reason/complaint-reason.module");
+const content_complaint_module_1 = require("./content-complaint/content-complaint.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -63,6 +64,7 @@ exports.AppModule = AppModule = __decorate([
             bookmark_module_1.BookmarkModule,
             comment_module_1.CommentModule,
             complaint_reason_module_1.ComplaintReasonModule,
+            content_complaint_module_1.ContentComplaintModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
