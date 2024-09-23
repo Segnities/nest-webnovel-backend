@@ -6,18 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorModule = void 0;
+exports.BookmarkController = void 0;
 const common_1 = require("@nestjs/common");
-const author_service_1 = require("./author.service");
-const author_controller_1 = require("./author.controller");
-const prisma_service_1 = require("../prisma/prisma.service");
-let AuthorModule = class AuthorModule {
+let BookmarkController = class BookmarkController {
 };
-exports.AuthorModule = AuthorModule;
-exports.AuthorModule = AuthorModule = __decorate([
-    (0, common_1.Module)({
-        providers: [author_service_1.AuthorService, prisma_service_1.PrismaService],
-        controllers: [author_controller_1.AuthorController],
-    })
-], AuthorModule);
-//# sourceMappingURL=author.module.js.map
+exports.BookmarkController = BookmarkController;
+exports.BookmarkController = BookmarkController = __decorate([
+    (0, common_1.Controller)('bookmark')
+], BookmarkController);
+//# sourceMappingURL=bookmark.controller.js.map

@@ -6,18 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorModule = void 0;
+exports.AppealModule = void 0;
 const common_1 = require("@nestjs/common");
-const author_service_1 = require("./author.service");
-const author_controller_1 = require("./author.controller");
+const appeal_controller_1 = require("./appeal.controller");
+const appeal_service_1 = require("./appeal.service");
 const prisma_service_1 = require("../prisma/prisma.service");
-let AuthorModule = class AuthorModule {
+let AppealModule = class AppealModule {
 };
-exports.AuthorModule = AuthorModule;
-exports.AuthorModule = AuthorModule = __decorate([
+exports.AppealModule = AppealModule;
+exports.AppealModule = AppealModule = __decorate([
     (0, common_1.Module)({
-        providers: [author_service_1.AuthorService, prisma_service_1.PrismaService],
-        controllers: [author_controller_1.AuthorController],
+        controllers: [appeal_controller_1.AppealController],
+        providers: [appeal_service_1.AppealService, prisma_service_1.PrismaService],
     })
-], AuthorModule);
-//# sourceMappingURL=author.module.js.map
+], AppealModule);
+//# sourceMappingURL=appeal.module.js.map

@@ -24,6 +24,7 @@ import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
 import { BanModule } from './ban/ban.module';
 import { AppealModule } from './appeal/appeal.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { AppealModule } from './appeal/appeal.module';
     ConfigModule.forRoot(),
     BanModule,
     AppealModule,
+    BookmarkModule,
   ],
   controllers: [AppController],
   providers: [

@@ -31,6 +31,9 @@ const user_notification_settings_module_1 = require("./user-notification-setting
 const role_module_1 = require("./role/role.module");
 const team_module_1 = require("./team/team.module");
 const auth_module_1 = require("./auth/auth.module");
+const ban_module_1 = require("./ban/ban.module");
+const appeal_module_1 = require("./appeal/appeal.module");
+const bookmark_module_1 = require("./bookmark/bookmark.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -53,6 +56,9 @@ exports.AppModule = AppModule = __decorate([
             team_module_1.TeamModule,
             auth_module_1.AuthModule,
             config_1.ConfigModule.forRoot(),
+            ban_module_1.BanModule,
+            appeal_module_1.AppealModule,
+            bookmark_module_1.BookmarkModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

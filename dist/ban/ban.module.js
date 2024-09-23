@@ -6,18 +6,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthorModule = void 0;
+exports.BanModule = void 0;
 const common_1 = require("@nestjs/common");
-const author_service_1 = require("./author.service");
-const author_controller_1 = require("./author.controller");
+const ban_controller_1 = require("./ban.controller");
+const ban_service_1 = require("./ban.service");
 const prisma_service_1 = require("../prisma/prisma.service");
-let AuthorModule = class AuthorModule {
+let BanModule = class BanModule {
 };
-exports.AuthorModule = AuthorModule;
-exports.AuthorModule = AuthorModule = __decorate([
+exports.BanModule = BanModule;
+exports.BanModule = BanModule = __decorate([
     (0, common_1.Module)({
-        providers: [author_service_1.AuthorService, prisma_service_1.PrismaService],
-        controllers: [author_controller_1.AuthorController],
+        controllers: [ban_controller_1.BanController],
+        providers: [ban_service_1.BanService, prisma_service_1.PrismaService],
     })
-], AuthorModule);
-//# sourceMappingURL=author.module.js.map
+], BanModule);
+//# sourceMappingURL=ban.module.js.map
