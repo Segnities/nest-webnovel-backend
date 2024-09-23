@@ -29,6 +29,7 @@ import { CommentModule } from './comment/comment.module';
 import { ComplaintReasonModule } from './complaint-reason/complaint-reason.module';
 import { ContentComplaintModule } from './content-complaint/content-complaint.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { ContinueReadingModule } from './continue-reading/continue-reading.modul
     ComplaintReasonModule,
     ContentComplaintModule,
     ContinueReadingModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [

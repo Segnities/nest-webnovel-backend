@@ -38,6 +38,7 @@ const comment_module_1 = require("./comment/comment.module");
 const complaint_reason_module_1 = require("./complaint-reason/complaint-reason.module");
 const content_complaint_module_1 = require("./content-complaint/content-complaint.module");
 const continue_reading_module_1 = require("./continue-reading/continue-reading.module");
+const news_module_1 = require("./news/news.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -67,6 +68,7 @@ exports.AppModule = AppModule = __decorate([
             complaint_reason_module_1.ComplaintReasonModule,
             content_complaint_module_1.ContentComplaintModule,
             continue_reading_module_1.ContinueReadingModule,
+            news_module_1.NewsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
