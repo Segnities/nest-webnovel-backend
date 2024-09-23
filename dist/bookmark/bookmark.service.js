@@ -53,6 +53,16 @@ let BookmarkService = class BookmarkService {
             where: { id },
         });
     }
+    async getBookmarksByUserId(userId) {
+        return this.prisma.bookmark.findMany({
+            where: { userId },
+        });
+    }
+    async getBookmarksByChapterId(chapterId) {
+        return this.prisma.bookmark.findMany({
+            where: { chapterId },
+        });
+    }
 };
 exports.BookmarkService = BookmarkService;
 exports.BookmarkService = BookmarkService = __decorate([

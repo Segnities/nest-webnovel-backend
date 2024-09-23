@@ -7,4 +7,6 @@ export declare class BookmarkService {
     getBookmarkById(id: number): Promise<Bookmark>;
     updateBookmark(id: number, data: Prisma.BookmarkUpdateInput): Promise<Bookmark>;
     deleteBookmark(id: number): Promise<Bookmark>;
+    getBookmarksByUserId(userId: number): Promise<Bookmark[]>;
+    getBookmarksByChapterId(chapterId: number): Promise<Bookmark[]>;
 }

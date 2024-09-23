@@ -45,4 +45,14 @@ export class BookmarkService {
       where: { id },
     });
   }
+  async getBookmarksByUserId(userId: number): Promise<Bookmark[]> {
+    return this.prisma.bookmark.findMany({
+      where: { userId },
+    });
+  }
+  async getBookmarksByChapterId(chapterId: number): Promise<Bookmark[]> {
+    return this.prisma.bookmark.findMany({
+      where: { chapterId },
+    });
+  }
 }
