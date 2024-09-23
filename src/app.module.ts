@@ -25,6 +25,7 @@ import { AuthModule } from './auth/auth.module';
 import { BanModule } from './ban/ban.module';
 import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { BookmarkModule } from './bookmark/bookmark.module';
     BanModule,
     AppealModule,
     BookmarkModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [
