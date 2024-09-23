@@ -24,6 +24,12 @@ import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
 import { BanModule } from './ban/ban.module';
 import { AppealModule } from './appeal/appeal.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
+import { CommentModule } from './comment/comment.module';
+import { ComplaintReasonModule } from './complaint-reason/complaint-reason.module';
+import { ContentComplaintModule } from './content-complaint/content-complaint.module';
+import { ContinueReadingModule } from './continue-reading/continue-reading.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -45,6 +51,12 @@ import { AppealModule } from './appeal/appeal.module';
     ConfigModule.forRoot(),
     BanModule,
     AppealModule,
+    BookmarkModule,
+    CommentModule,
+    ComplaintReasonModule,
+    ContentComplaintModule,
+    ContinueReadingModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [
