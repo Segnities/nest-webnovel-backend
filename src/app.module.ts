@@ -30,6 +30,7 @@ import { ComplaintReasonModule } from './complaint-reason/complaint-reason.modul
 import { ContentComplaintModule } from './content-complaint/content-complaint.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
+import { NotificationGroupModule } from './notification-group/notification-group.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { NewsModule } from './news/news.module';
     ContentComplaintModule,
     ContinueReadingModule,
     NewsModule,
+    NotificationGroupModule,
   ],
   controllers: [AppController],
   providers: [
