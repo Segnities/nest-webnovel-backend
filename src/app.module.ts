@@ -21,7 +21,6 @@ import { UserNotificationSettingsModule } from './user-notification-settings/use
 import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
-import { BanModule } from './ban/ban.module';
 import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
@@ -31,8 +30,6 @@ import { ContinueReadingModule } from './continue-reading/continue-reading.modul
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
-import { UserCollectionMappingModule } from './user-collection-mapping/user-collection-mapping.module';
-import { UserComplaintModule } from './user-complaint/user-complaint.module';
 
 @Module({
   imports: [
@@ -52,7 +49,6 @@ import { UserComplaintModule } from './user-complaint/user-complaint.module';
     TeamModule,
     AuthModule,
     ConfigModule.forRoot(),
-    BanModule,
     AppealModule,
     BookmarkModule,
     CommentModule,
@@ -62,8 +58,6 @@ import { UserComplaintModule } from './user-complaint/user-complaint.module';
     NewsModule,
     NotificationGroupModule,
     ReviewModule,
-    UserCollectionMappingModule,
-    UserComplaintModule,
   ],
   controllers: [AppController],
   providers: [

@@ -30,7 +30,6 @@ const user_notification_settings_module_1 = require("./user-notification-setting
 const role_module_1 = require("./role/role.module");
 const team_module_1 = require("./team/team.module");
 const auth_module_1 = require("./auth/auth.module");
-const ban_module_1 = require("./ban/ban.module");
 const appeal_module_1 = require("./appeal/appeal.module");
 const bookmark_module_1 = require("./bookmark/bookmark.module");
 const comment_module_1 = require("./comment/comment.module");
@@ -41,7 +40,6 @@ const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
 const review_module_1 = require("./review/review.module");
 const user_collection_mapping_module_1 = require("./user-collection-mapping/user-collection-mapping.module");
-const user_complaint_module_1 = require("./user-complaint/user-complaint.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -64,7 +62,6 @@ exports.AppModule = AppModule = __decorate([
             team_module_1.TeamModule,
             auth_module_1.AuthModule,
             config_1.ConfigModule.forRoot(),
-            ban_module_1.BanModule,
             appeal_module_1.AppealModule,
             bookmark_module_1.BookmarkModule,
             comment_module_1.CommentModule,
@@ -75,7 +72,6 @@ exports.AppModule = AppModule = __decorate([
             notification_group_module_1.NotificationGroupModule,
             review_module_1.ReviewModule,
             user_collection_mapping_module_1.UserCollectionMappingModule,
-            user_complaint_module_1.UserComplaintModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

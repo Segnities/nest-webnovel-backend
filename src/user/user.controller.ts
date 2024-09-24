@@ -79,19 +79,9 @@ export class UserController {
     return this.userService.getUserAuthorSubscriptions(userId);
   }
 
-  @Get(':id/collections')
-  async getUserCollections(@Param('id') userId: number) {
-    return this.userService.getUserCollections(userId);
-  }
-
   @Get(':id/permissions')
   async getUserPermissions(@Param('id') userId: number) {
     return this.userService.getUserPermissions(userId);
-  }
-
-  @Get(':id/appeals')
-  async getUserAppeals(@Param('id') userId: number) {
-    return this.userService.getUserAppeals(userId);
   }
 
   @Get(':id/novel-ratings')
