@@ -9,7 +9,6 @@ import { GenreService } from './genre/genre.service';
 import { NotificationModule } from './notification/notification.module';
 import { NovelModule } from './novel/novel.module';
 import { PrismaService } from './prisma/prisma.service';
-import { StatusService } from './status/status.service';
 import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
 import { TagModule } from './tag/tag.module';
@@ -31,6 +30,7 @@ import { ContentComplaintModule } from './content-complaint/content-complaint.mo
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -59,6 +59,7 @@ import { NotificationGroupModule } from './notification-group/notification-group
     ContinueReadingModule,
     NewsModule,
     NotificationGroupModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [
@@ -67,7 +68,6 @@ import { NotificationGroupModule } from './notification-group/notification-group
     TagService,
     GenreService,
     CountryService,
-    StatusService,
   ],
 })
 export class AppModule {}

@@ -18,7 +18,6 @@ const genre_service_1 = require("./genre/genre.service");
 const notification_module_1 = require("./notification/notification.module");
 const novel_module_1 = require("./novel/novel.module");
 const prisma_service_1 = require("./prisma/prisma.service");
-const status_service_1 = require("./status/status.service");
 const tag_service_1 = require("./tag/tag.service");
 const user_module_1 = require("./user/user.module");
 const tag_module_1 = require("./tag/tag.module");
@@ -40,6 +39,7 @@ const content_complaint_module_1 = require("./content-complaint/content-complain
 const continue_reading_module_1 = require("./continue-reading/continue-reading.module");
 const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
+const review_module_1 = require("./review/review.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -71,6 +71,7 @@ exports.AppModule = AppModule = __decorate([
             continue_reading_module_1.ContinueReadingModule,
             news_module_1.NewsModule,
             notification_group_module_1.NotificationGroupModule,
+            review_module_1.ReviewModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -79,7 +80,6 @@ exports.AppModule = AppModule = __decorate([
             tag_service_1.TagService,
             genre_service_1.GenreService,
             country_service_1.CountryService,
-            status_service_1.StatusService,
         ],
     })
 ], AppModule);
