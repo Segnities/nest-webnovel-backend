@@ -32,6 +32,7 @@ import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
 import { UserCollectionMappingModule } from './user-collection-mapping/user-collection-mapping.module';
+import { UserComplaintModule } from './user-complaint/user-complaint.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UserCollectionMappingModule } from './user-collection-mapping/user-coll
     NotificationGroupModule,
     ReviewModule,
     UserCollectionMappingModule,
+    UserComplaintModule,
   ],
   controllers: [AppController],
   providers: [

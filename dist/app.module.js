@@ -41,6 +41,7 @@ const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
 const review_module_1 = require("./review/review.module");
 const user_collection_mapping_module_1 = require("./user-collection-mapping/user-collection-mapping.module");
+const user_complaint_module_1 = require("./user-complaint/user-complaint.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -74,6 +75,7 @@ exports.AppModule = AppModule = __decorate([
             notification_group_module_1.NotificationGroupModule,
             review_module_1.ReviewModule,
             user_collection_mapping_module_1.UserCollectionMappingModule,
+            user_complaint_module_1.UserComplaintModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
