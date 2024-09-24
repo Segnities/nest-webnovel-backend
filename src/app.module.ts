@@ -24,8 +24,6 @@ import { AuthModule } from './auth/auth.module';
 import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
-import { ComplaintReasonModule } from './complaint-reason/complaint-reason.module';
-import { ContentComplaintModule } from './content-complaint/content-complaint.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
@@ -52,8 +50,6 @@ import { ReviewModule } from './review/review.module';
     AppealModule,
     BookmarkModule,
     CommentModule,
-    ComplaintReasonModule,
-    ContentComplaintModule,
     ContinueReadingModule,
     NewsModule,
     NotificationGroupModule,

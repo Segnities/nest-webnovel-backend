@@ -8,7 +8,38 @@ export declare class UserService {
     getUserByEmail(email: string): Promise<User | null>;
     updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User>;
     deleteUser(id: number): Promise<User>;
-    getUserReviews(userId: number): Promise<any>;
+    getUserReviews(userId: number): Promise<({
+        novel: {
+            id: number;
+            title: string;
+            original_title: string | null;
+            description: string;
+            img: string;
+            isAdult: boolean;
+            releaseYear: number | null;
+            coverImg: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            views: number;
+            countryId: number;
+            status: import(".prisma/client").$Enums.NovelStatus;
+            authorId: number;
+            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+            format: import(".prisma/client").$Enums.NovelFormat;
+            commendableTypeId: number;
+        };
+    } & {
+        id: number;
+        title: string;
+        body: string;
+        createdAt: Date;
+        updatedAt: Date;
+        likes: number;
+        views: number;
+        userId: number;
+        novelId: number;
+        commendableTypeId: number;
+    })[]>;
     getUserBookmarks(userId: number): Promise<({
         chapter: {
             novel: {
@@ -72,51 +103,6 @@ export declare class UserService {
         name: string;
         img: string;
     }[]>;
-    getUserCollections(userId: number): Promise<({
-        novelCollectionMapping: ({
-            novel: {
-                id: number;
-                title: string;
-                original_title: string | null;
-                description: string;
-                img: string;
-                isAdult: boolean;
-                releaseYear: number | null;
-                coverImg: string | null;
-                createdAt: Date;
-                updatedAt: Date;
-                views: number;
-                countryId: number;
-                status: import(".prisma/client").$Enums.NovelStatus;
-                authorId: number;
-                translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
-                format: import(".prisma/client").$Enums.NovelFormat;
-                commendableTypeId: number;
-            };
-        } & {
-            id: number;
-            novelId: number;
-            userCollectionId: number;
-            createdAt: Date;
-            updatedAt: Date;
-        })[];
-        collection: {
-            id: number;
-            title: string;
-            description: string;
-            isDefault: boolean;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-    } & {
-        id: number;
-        collectionId: number;
-        userId: number;
-        createdAt: Date;
-        updatedAt: Date;
-    })[]>;
-    getUserBans(userId: number): Promise<any>;
-    getUserComplaints(userId: number): Promise<any>;
     updateUserRole(userId: number, roleId: number): Promise<User>;
     getUserRatings(userId: number): Promise<UserRating[]>;
     getContinueReadingList(userId: number): Promise<ContinueReading[]>;
@@ -130,8 +116,6 @@ export declare class UserService {
             updatedAt: Date;
         };
     }>;
-    getUserContentComplaints(userId: number): Promise<any>;
-    getUserIssuedBans(userId: number): Promise<any>;
     getUserPermissions(userId: number): Promise<{
         role: {
             permissions: {
@@ -146,7 +130,6 @@ export declare class UserService {
             description: string | null;
         };
     }>;
-    getUserAppeals(userId: number): Promise<any>;
     getUserNovelRatings(userId: number): Promise<({
         novel: {
             novelRating: {
@@ -168,15 +151,15 @@ export declare class UserService {
         userId: number;
     })[]>;
     getUserCreatedContent(userId: number): Promise<{
-        novels: any;
-        reviews: any;
-        comments: any;
-        news: any;
+        novels: number;
+        reviews: number;
+        comments: number;
+        news: number;
     }>;
     getUserActivityStats(userId: number): Promise<{
-        bookmarksCount: any;
-        ratingsCount: any;
-        reviewsCount: any;
-        commentsCount: any;
+        bookmarksCount: number;
+        ratingsCount: number;
+        reviewsCount: number;
+        commentsCount: number;
     }>;
 }

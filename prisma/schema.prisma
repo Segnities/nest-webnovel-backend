@@ -201,9 +201,9 @@ model NovelSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   novelId   Int
-  novel     Novel    @relation(fields: [novelId], references: [id])
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
 
   @@map("novel_subscription")
 }
@@ -212,9 +212,9 @@ model AuthorSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   authorId  Int
-  author    Author   @relation(fields: [authorId], references: [id])
+  author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("author_subscription")
 }
@@ -284,11 +284,11 @@ model Collection {
 model CollectionItem {
   id           Int        @id @default(autoincrement())
   collectionId Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   novelId      Int
-  novel        Novel      @relation(fields: [novelId], references: [id])
+  novel        Novel      @relation(fields: [novelId], references: [id], onDelete: Cascade)
   userId       Int
-  user         User       @relation(fields: [userId], references: [id])
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
@@ -412,7 +412,7 @@ model Chapter {
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   novelId           Int
-  novel             Novel             @relation(fields: [novelId], references: [id])
+  novel             Novel             @relation(fields: [novelId], references: [id], onDelete: Cascade)
   commendableTypeId Int
   commendableType   CommendableType   @relation(fields: [commendableTypeId], references: [id])
   bookmarks         Bookmark[]
