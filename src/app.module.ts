@@ -31,6 +31,7 @@ import { ContinueReadingModule } from './continue-reading/continue-reading.modul
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
+import { UserCollectionMappingModule } from './user-collection-mapping/user-collection-mapping.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { ReviewModule } from './review/review.module';
     NewsModule,
     NotificationGroupModule,
     ReviewModule,
+    UserCollectionMappingModule,
   ],
   controllers: [AppController],
   providers: [

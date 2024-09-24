@@ -40,6 +40,7 @@ const continue_reading_module_1 = require("./continue-reading/continue-reading.m
 const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
 const review_module_1 = require("./review/review.module");
+const user_collection_mapping_module_1 = require("./user-collection-mapping/user-collection-mapping.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -72,6 +73,7 @@ exports.AppModule = AppModule = __decorate([
             news_module_1.NewsModule,
             notification_group_module_1.NotificationGroupModule,
             review_module_1.ReviewModule,
+            user_collection_mapping_module_1.UserCollectionMappingModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
