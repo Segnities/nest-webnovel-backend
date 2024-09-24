@@ -9,7 +9,6 @@ import { GenreService } from './genre/genre.service';
 import { NotificationModule } from './notification/notification.module';
 import { NovelModule } from './novel/novel.module';
 import { PrismaService } from './prisma/prisma.service';
-import { StatusService } from './status/status.service';
 import { TagService } from './tag/tag.service';
 import { UserModule } from './user/user.module';
 import { TagModule } from './tag/tag.module';
@@ -30,6 +29,10 @@ import { ComplaintReasonModule } from './complaint-reason/complaint-reason.modul
 import { ContentComplaintModule } from './content-complaint/content-complaint.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
+import { NotificationGroupModule } from './notification-group/notification-group.module';
+import { ReviewModule } from './review/review.module';
+import { UserCollectionMappingModule } from './user-collection-mapping/user-collection-mapping.module';
+import { UserComplaintModule } from './user-complaint/user-complaint.module';
 
 @Module({
   imports: [
@@ -57,6 +60,10 @@ import { NewsModule } from './news/news.module';
     ContentComplaintModule,
     ContinueReadingModule,
     NewsModule,
+    NotificationGroupModule,
+    ReviewModule,
+    UserCollectionMappingModule,
+    UserComplaintModule,
   ],
   controllers: [AppController],
   providers: [
@@ -65,7 +72,6 @@ import { NewsModule } from './news/news.module';
     TagService,
     GenreService,
     CountryService,
-    StatusService,
   ],
 })
 export class AppModule {}

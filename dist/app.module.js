@@ -18,7 +18,6 @@ const genre_service_1 = require("./genre/genre.service");
 const notification_module_1 = require("./notification/notification.module");
 const novel_module_1 = require("./novel/novel.module");
 const prisma_service_1 = require("./prisma/prisma.service");
-const status_service_1 = require("./status/status.service");
 const tag_service_1 = require("./tag/tag.service");
 const user_module_1 = require("./user/user.module");
 const tag_module_1 = require("./tag/tag.module");
@@ -39,6 +38,10 @@ const complaint_reason_module_1 = require("./complaint-reason/complaint-reason.m
 const content_complaint_module_1 = require("./content-complaint/content-complaint.module");
 const continue_reading_module_1 = require("./continue-reading/continue-reading.module");
 const news_module_1 = require("./news/news.module");
+const notification_group_module_1 = require("./notification-group/notification-group.module");
+const review_module_1 = require("./review/review.module");
+const user_collection_mapping_module_1 = require("./user-collection-mapping/user-collection-mapping.module");
+const user_complaint_module_1 = require("./user-complaint/user-complaint.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -69,6 +72,10 @@ exports.AppModule = AppModule = __decorate([
             content_complaint_module_1.ContentComplaintModule,
             continue_reading_module_1.ContinueReadingModule,
             news_module_1.NewsModule,
+            notification_group_module_1.NotificationGroupModule,
+            review_module_1.ReviewModule,
+            user_collection_mapping_module_1.UserCollectionMappingModule,
+            user_complaint_module_1.UserComplaintModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -77,7 +84,6 @@ exports.AppModule = AppModule = __decorate([
             tag_service_1.TagService,
             genre_service_1.GenreService,
             country_service_1.CountryService,
-            status_service_1.StatusService,
         ],
     })
 ], AppModule);
