@@ -27,7 +27,6 @@ export declare class UserService {
             translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
             format: import(".prisma/client").$Enums.NovelFormat;
             commendableTypeId: number;
-            complaintTargetId: number;
         };
     } & {
         id: number;
@@ -40,7 +39,6 @@ export declare class UserService {
         userId: number;
         novelId: number;
         commendableTypeId: number;
-        complaintTargetId: number;
     })[]>;
     getUserBookmarks(userId: number): Promise<({
         chapter: {
@@ -62,7 +60,6 @@ export declare class UserService {
                 translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
                 format: import(".prisma/client").$Enums.NovelFormat;
                 commendableTypeId: number;
-                complaintTargetId: number;
             };
         } & {
             id: number;
@@ -73,8 +70,6 @@ export declare class UserService {
             updatedAt: Date;
             novelId: number;
             commendableTypeId: number;
-            complaitTypeId: number;
-            complaintTargetId: number;
         };
     } & {
         id: number;
@@ -108,97 +103,6 @@ export declare class UserService {
         name: string;
         img: string;
     }[]>;
-    getUserCollections(userId: number): Promise<({
-        novelCollectionMapping: ({
-            novel: {
-                id: number;
-                title: string;
-                original_title: string | null;
-                description: string;
-                img: string;
-                isAdult: boolean;
-                releaseYear: number | null;
-                coverImg: string | null;
-                createdAt: Date;
-                updatedAt: Date;
-                views: number;
-                countryId: number;
-                status: import(".prisma/client").$Enums.NovelStatus;
-                authorId: number;
-                translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
-                format: import(".prisma/client").$Enums.NovelFormat;
-                commendableTypeId: number;
-                complaintTargetId: number;
-            };
-        } & {
-            id: number;
-            novelId: number;
-            userCollectionId: number;
-            createdAt: Date;
-            updatedAt: Date;
-        })[];
-        collection: {
-            id: number;
-            title: string;
-            description: string;
-            isDefault: boolean;
-            createdAt: Date;
-            updatedAt: Date;
-        };
-    } & {
-        id: number;
-        collectionId: number;
-        userId: number;
-        createdAt: Date;
-        updatedAt: Date;
-    })[]>;
-    getUserBans(userId: number): Promise<({
-        appeal: {
-            id: number;
-            title: string;
-            body: string;
-            createdAt: Date;
-            updatedAt: Date;
-            reviewedAt: Date;
-            status: import(".prisma/client").$Enums.ApprovalStatus;
-            appealReasonId: number;
-            reviewedBy: number;
-        };
-    } & {
-        id: number;
-        banStart: Date;
-        banEnd: Date;
-        duration: number;
-        appealed: boolean;
-        appealId: number;
-        createdAt: Date;
-        updatedAt: Date;
-        issuedBy: number;
-        userId: number;
-        complaintTargetId: number;
-    })[]>;
-    getUserComplaints(userId: number): Promise<({
-        complaintTargetType: {
-            id: number;
-            name: string;
-            description: string | null;
-            complaintCategoryId: number;
-        };
-        reason: {
-            id: number;
-            title: string;
-            description: string;
-            createdAt: Date;
-            userId: number | null;
-        };
-    } & {
-        id: number;
-        status: import(".prisma/client").$Enums.ApprovalStatus;
-        createdAt: Date;
-        reasonId: number;
-        userId: number;
-        complaintTargetId: number;
-    })[]>;
     updateUserRole(userId: number, roleId: number): Promise<User>;
     getUserRatings(userId: number): Promise<UserRating[]>;
     getContinueReadingList(userId: number): Promise<ContinueReading[]>;
@@ -212,63 +116,6 @@ export declare class UserService {
             updatedAt: Date;
         };
     }>;
-    getUserContentComplaints(userId: number): Promise<({
-        complaintTargetType: {
-            id: number;
-            name: string;
-            description: string | null;
-            complaintCategoryId: number;
-        };
-        complaintReason: {
-            id: number;
-            title: string;
-            description: string;
-            createdAt: Date;
-            userId: number | null;
-        };
-    } & {
-        id: number;
-        status: import(".prisma/client").$Enums.ApprovalStatus;
-        contentId: number;
-        createdAt: Date;
-        updatedAt: Date;
-        reasonId: number;
-        complaintTargetId: number;
-        resolvedAt: Date;
-        issuedBy: number;
-        resolvedBy: number;
-    })[]>;
-    getUserIssuedBans(userId: number): Promise<({
-        user: {
-            id: number;
-            username: string;
-            email: string;
-            provider: import(".prisma/client").$Enums.Provider;
-            img: string;
-            createdAt: Date;
-            updatedAt: Date;
-            roleId: number;
-            teamId: number | null;
-        };
-        complaintTargetType: {
-            id: number;
-            name: string;
-            description: string | null;
-            complaintCategoryId: number;
-        };
-    } & {
-        id: number;
-        banStart: Date;
-        banEnd: Date;
-        duration: number;
-        appealed: boolean;
-        appealId: number;
-        createdAt: Date;
-        updatedAt: Date;
-        issuedBy: number;
-        userId: number;
-        complaintTargetId: number;
-    })[]>;
     getUserPermissions(userId: number): Promise<{
         role: {
             permissions: {
@@ -283,34 +130,6 @@ export declare class UserService {
             description: string | null;
         };
     }>;
-    getUserAppeals(userId: number): Promise<({
-        appeal: {
-            id: number;
-            name: string;
-            description: string;
-        };
-        reviewedByUser: {
-            id: number;
-            username: string;
-            email: string;
-            provider: import(".prisma/client").$Enums.Provider;
-            img: string;
-            createdAt: Date;
-            updatedAt: Date;
-            roleId: number;
-            teamId: number | null;
-        };
-    } & {
-        id: number;
-        title: string;
-        body: string;
-        createdAt: Date;
-        updatedAt: Date;
-        reviewedAt: Date;
-        status: import(".prisma/client").$Enums.ApprovalStatus;
-        appealReasonId: number;
-        reviewedBy: number;
-    })[]>;
     getUserNovelRatings(userId: number): Promise<({
         novel: {
             novelRating: {

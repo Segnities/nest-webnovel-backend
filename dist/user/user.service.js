@@ -109,36 +109,6 @@ let UserService = class UserService {
             },
         });
     }
-    async getUserCollections(userId) {
-        return this.prisma.userCollectionMapping.findMany({
-            where: { userId },
-            include: {
-                collection: true,
-                novelCollectionMapping: {
-                    include: {
-                        novel: true,
-                    },
-                },
-            },
-        });
-    }
-    async getUserBans(userId) {
-        return this.prisma.ban.findMany({
-            where: { userId },
-            include: {
-                appeal: true,
-            },
-        });
-    }
-    async getUserComplaints(userId) {
-        return this.prisma.userComplaint.findMany({
-            where: { userId },
-            include: {
-                reason: true,
-                complaintTargetType: true,
-            },
-        });
-    }
     async updateUserRole(userId, roleId) {
         return this.prisma.user.update({
             where: { id: userId },
@@ -175,24 +145,6 @@ let UserService = class UserService {
             },
         });
     }
-    async getUserContentComplaints(userId) {
-        return this.prisma.contentComplaint.findMany({
-            where: { issuedBy: userId },
-            include: {
-                complaintReason: true,
-                complaintTargetType: true,
-            },
-        });
-    }
-    async getUserIssuedBans(userId) {
-        return this.prisma.ban.findMany({
-            where: { issuedBy: userId },
-            include: {
-                user: true,
-                complaintTargetType: true,
-            },
-        });
-    }
     async getUserPermissions(userId) {
         return this.prisma.user.findUnique({
             where: { id: userId },
@@ -202,21 +154,6 @@ let UserService = class UserService {
                         permissions: true,
                     },
                 },
-            },
-        });
-    }
-    async getUserAppeals(userId) {
-        return this.prisma.appeal.findMany({
-            where: {
-                bans: {
-                    some: {
-                        userId,
-                    },
-                },
-            },
-            include: {
-                appeal: true,
-                reviewedByUser: true,
             },
         });
     }

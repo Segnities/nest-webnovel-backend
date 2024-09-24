@@ -118,39 +118,6 @@ export class UserService {
     });
   }
 
-  async getUserCollections(userId: number) {
-    return this.prisma.userCollectionMapping.findMany({
-      where: { userId },
-      include: {
-        collection: true,
-        novelCollectionMapping: {
-          include: {
-            novel: true,
-          },
-        },
-      },
-    });
-  }
-
-  async getUserBans(userId: number) {
-    return this.prisma.ban.findMany({
-      where: { userId },
-      include: {
-        appeal: true,
-      },
-    });
-  }
-
-  async getUserComplaints(userId: number) {
-    return this.prisma.userComplaint.findMany({
-      where: { userId },
-      include: {
-        reason: true,
-        complaintTargetType: true,
-      },
-    });
-  }
-
   async updateUserRole(userId: number, roleId: number): Promise<User> {
     return this.prisma.user.update({
       where: { id: userId },
@@ -191,26 +158,6 @@ export class UserService {
     });
   }
 
-  async getUserContentComplaints(userId: number) {
-    return this.prisma.contentComplaint.findMany({
-      where: { issuedBy: userId },
-      include: {
-        complaintReason: true,
-        complaintTargetType: true,
-      },
-    });
-  }
-
-  async getUserIssuedBans(userId: number) {
-    return this.prisma.ban.findMany({
-      where: { issuedBy: userId },
-      include: {
-        user: true,
-        complaintTargetType: true,
-      },
-    });
-  }
-
   async getUserPermissions(userId: number) {
     return this.prisma.user.findUnique({
       where: { id: userId },
@@ -220,21 +167,6 @@ export class UserService {
             permissions: true,
           },
         },
-      },
-    });
-  }
-  async getUserAppeals(userId: number) {
-    return this.prisma.appeal.findMany({
-      where: {
-        bans: {
-          some: {
-            userId,
-          },
-        },
-      },
-      include: {
-        appeal: true,
-        reviewedByUser: true,
       },
     });
   }

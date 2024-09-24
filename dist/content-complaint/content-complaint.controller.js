@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContentComplaintController = void 0;
 const common_1 = require("@nestjs/common");
@@ -50,7 +51,7 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [typeof (_a = typeof client_1.Prisma !== "undefined" && client_1.Prisma.ContentComplaintCreateInput) === "function" ? _a : Object]),
     __metadata("design:returntype", Promise)
 ], ContentComplaintController.prototype, "createContentComplaint", null);
 __decorate([
@@ -65,7 +66,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [Number, typeof (_b = typeof client_1.Prisma !== "undefined" && client_1.Prisma.ContentComplaintUpdateInput) === "function" ? _b : Object]),
     __metadata("design:returntype", Promise)
 ], ContentComplaintController.prototype, "updateContentComplaint", null);
 __decorate([

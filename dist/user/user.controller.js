@@ -56,14 +56,8 @@ let UserController = class UserController {
     async getUserAuthorSubscriptions(userId) {
         return this.userService.getUserAuthorSubscriptions(userId);
     }
-    async getUserCollections(userId) {
-        return this.userService.getUserCollections(userId);
-    }
     async getUserPermissions(userId) {
         return this.userService.getUserPermissions(userId);
-    }
-    async getUserAppeals(userId) {
-        return this.userService.getUserAppeals(userId);
     }
     async getUserNovelRatings(userId) {
         return this.userService.getUserNovelRatings(userId);
@@ -162,26 +156,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserAuthorSubscriptions", null);
 __decorate([
-    (0, common_1.Get)(':id/collections'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "getUserCollections", null);
-__decorate([
     (0, common_1.Get)(':id/permissions'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserPermissions", null);
-__decorate([
-    (0, common_1.Get)(':id/appeals'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "getUserAppeals", null);
 __decorate([
     (0, common_1.Get)(':id/novel-ratings'),
     __param(0, (0, common_1.Param)('id')),

@@ -4,12 +4,6 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
-generator nestgraphql {
-    provider = "node node_modules/prisma-nestjs-graphql"
-    // for yarn monorepos
-    // provider = "prisma-nestjs-graphql"
-    output = "../src/@generated"
-}
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,6 +21,26 @@ enum CommentStatus {
   DELETED
   HIDDEN_BY_MODERATOR
   HIDDEN
+}
+
+enum NovelStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+  CANCELLED
+}
+
+enum NovelFormat {
+  LIGHT_NOVEL
+  WEB_NOVEL
+}
+
+enum NovelTranslationStatus {
+  NOT_TRANSLATED
+  PARTIALLY_TRANSLATED
+  FULLY_TRANSLATED
+  MACHINE_TRANSLATED
+  ONGOING
 }
 
 datasource db {
@@ -69,35 +83,28 @@ enum NotificationRelatedEntity {
 }
 
 model User {
-  id                        Int                        @id @default(autoincrement())
-  username                  String                     @unique
-  email                     String                     @unique @db.VarChar(50)
-  provider                  Provider
-  img                       String
-  createdAt                 DateTime                   @default(now())
-  updatedAt                 DateTime                   @updatedAt
-  roleId                    Int
-  role                      Role                       @relation(fields: [roleId], references: [id])
-  teamId                    Int?
-  team                      Team?                      @relation(fields: [teamId], references: [id])
-  usersRatings              UserRating[]
-  comments                  Comment[]
-  bookmarks                 Bookmark[]
-  reviews                   Review[]
-  userCollectionMapping     UserCollectionMapping[]
-  continueReading           ContinueReading[]
-  news                      News[]
-  userComplaints            UserComplaint[]
-  complaintReasons          ComplaintReason[]
-  issuedContentComplaints   ContentComplaint[]         @relation("issuedByUserRelation")
-  resolvedContentComplaints ContentComplaint[]         @relation("resolvedByUserRelation")
-  issuedBans                Ban[]                      @relation("issuedBySystemRelation")
-  userBans                  Ban[]                      @relation("userBanRelation")
-  reviewedAppeals           Appeal[]
-  userNotificationSettings  UserNotificationSettings[]
-  novelsSubscription        NovelSubscription[]
-  notifications             Notification[]
-  authorSubscription        AuthorSubscription[]
+  id                       Int                        @id @default(autoincrement())
+  username                 String                     @unique
+  email                    String                     @unique @db.VarChar(50)
+  provider                 Provider
+  img                      String
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @updatedAt
+  roleId                   Int
+  role                     Role                       @relation(fields: [roleId], references: [id])
+  teamId                   Int?
+  team                     Team?                      @relation(fields: [teamId], references: [id])
+  usersRatings             UserRating[]
+  comments                 Comment[]
+  bookmarks                Bookmark[]
+  reviews                  Review[]
+  continueReading          ContinueReading[]
+  news                     News[]
+  userNotificationSettings UserNotificationSettings[]
+  novelsSubscription       NovelSubscription[]
+  notifications            Notification[]
+  authorSubscription       AuthorSubscription[]
+  collectionItems          CollectionItem[]
 
   @@map("user")
 }
@@ -194,9 +201,9 @@ model NovelSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   novelId   Int
-  novel     Novel    @relation(fields: [novelId], references: [id])
+  novel     Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
 
   @@map("novel_subscription")
 }
@@ -205,195 +212,45 @@ model AuthorSubscription {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   authorId  Int
-  author    Author   @relation(fields: [authorId], references: [id])
+  author    Author   @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("author_subscription")
 }
 
-model ComplaintTargetType {
-  id                  Int                @id @default(autoincrement())
-  name                String             @db.VarChar(200)
-  description         String?
-  complaintCategoryId Int
-  complaintCategory   ComplaintCategory  @relation(fields: [complaintCategoryId], references: [id])
-  usersComplaints     UserComplaint[]
-  contentComplaints   ContentComplaint[]
-  bans                Ban[]
-  novels              Novel[]
-  reviews             Review[]
-  news                News[]
-  comments            Comment[]
-  chapter             Chapter[]
-
-  @@map("complaint_target_type")
-}
-
-model ComplaintCategory {
-  id                   Int                   @id @default(autoincrement())
-  name                 String                @db.VarChar(200)
-  description          String
-  complaintTargetTypes ComplaintTargetType[]
-
-  @@map("complaint_category")
-}
-
-model UserComplaint {
-  id                  Int                 @id @default(autoincrement())
-  status              ApprovalStatus
-  createdAt           DateTime            @default(now())
-  reasonId            Int
-  reason              ComplaintReason     @relation(fields: [reasonId], references: [id])
-  userId              Int
-  user                User                @relation(fields: [userId], references: [id])
-  complaintTargetId   Int
-  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-
-  @@map("user_complaint")
-}
-
-model ContentComplaint {
-  id                  Int                 @id @default(autoincrement())
-  status              ApprovalStatus
-  contentId           Int
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  reasonId            Int
-  complaintReason     ComplaintReason     @relation(fields: [reasonId], references: [id])
-  complaintTargetId   Int
-  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-  resolvedAt          DateTime
-  issuedBy            Int
-  issuedByUser        User                @relation(fields: [issuedBy], references: [id], name: "issuedByUserRelation")
-  resolvedBy          Int
-  resolvedByUser      User                @relation(fields: [resolvedBy], references: [id], name: "resolvedByUserRelation")
-
-  @@map("content_complaint")
-}
-
-model ComplaintReason {
-  id                Int                @id @default(autoincrement())
-  title             String             @db.VarChar(200)
-  description       String
-  userComplaints    UserComplaint[]
-  contentComplaints ContentComplaint[]
-  createdAt         DateTime           @default(now())
-  User              User?              @relation(fields: [userId], references: [id])
-  userId            Int?
-
-  @@map("complaint_reason")
-}
-
-model Ban {
-  id                  Int                 @id @default(autoincrement())
-  banStart            DateTime            @default(now())
-  banEnd              DateTime
-  duration            Int
-  appealed            Boolean             @default(false)
-  appealId            Int
-  appeal              Appeal              @relation(fields: [appealId], references: [id])
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  issuedBy            Int
-  issuedByUser        User                @relation(fields: [issuedBy], references: [id], name: "issuedBySystemRelation")
-  userId              Int
-  user                User                @relation(fields: [userId], references: [id], name: "userBanRelation")
-  complaintTargetId   Int
-  complaintTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-
-  @@map("ban")
-}
-
-model Appeal {
-  id             Int            @id @default(autoincrement())
-  title          String         @db.VarChar(200)
-  body           String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  reviewedAt     DateTime
-  status         ApprovalStatus
-  bans           Ban[]
-  appealReasonId Int
-  appeal         AppelaReason   @relation(fields: [appealReasonId], references: [id])
-  reviewedBy     Int
-  reviewedByUser User           @relation(fields: [reviewedBy], references: [id])
-
-  @@map("appeal")
-}
-
-model AppelaReason {
-  id          Int    @id @default(autoincrement())
-  name        String @db.VarChar(200)
-  description String
-
-  appeals Appeal[]
-
-  @@map("appeal_reason")
-}
-
-model BanReason {
-  id          Int    @id @default(autoincrement())
-  title       String @db.VarChar(200)
-  description String
-
-  @@map("ban_reason")
-}
-
-enum NovelStatus {
-  ONGOING
-  COMPLETED
-  HIATUS
-  CANCELLED
-}
-
-enum NovelFormat {
-  LIGHT_NOVEL
-  WEB_NOVEL
-}
-
-enum NovelTranslationStatus {
-  NOT_TRANSLATED
-  PARTIALLY_TRANSLATED
-  FULLY_TRANSLATED
-  MACHINE_TRANSLATED
-  ONGOING
-}
-
 model Novel {
-  id                     Int                      @id @default(autoincrement())
-  title                  String                   @db.VarChar(200)
-  original_title         String?                  @db.VarChar(200)
-  description            String
-  img                    String
-  isAdult                Boolean
-  releaseYear            Int?
-  coverImg               String?
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
-  views                  Int                      @default(0)
-  country                Country                  @relation(fields: [countryId], references: [id])
-  countryId              Int
-  status                 NovelStatus
-  authorId               Int
-  author                 Author                   @relation(fields: [authorId], references: [id])
-  translationStatus      NovelTranslationStatus
-  format                 NovelFormat
-  commendableTypeId      Int
-  commendableType        CommendableType          @relation(fields: [commendableTypeId], references: [id])
-  tags                   Tag[]
-  genres                 Genre[]
-  alternativeTitles      AlternativeTitle[]
-  chapters               Chapter[]
-  reviews                Review[]
-  novelRating            NovelRating?
-  usersRatings           UserRating[]
-  novelCollectionMapping NovelCollectionMapping[]
-  complaintTargetId      Int
-  complainTargetType     ComplaintTargetType      @relation(fields: [complaintTargetId], references: [id])
-  continueReading        ContinueReading[]
-  novelSubscription      NovelSubscription[]
-  notifications          Notification[]
+  id                Int                    @id @default(autoincrement())
+  title             String                 @db.VarChar(200)
+  original_title    String?                @db.VarChar(200)
+  description       String
+  img               String
+  isAdult           Boolean
+  releaseYear       Int?
+  coverImg          String?
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+  views             Int                    @default(0)
+  country           Country                @relation(fields: [countryId], references: [id])
+  countryId         Int
+  status            NovelStatus
+  authorId          Int
+  author            Author                 @relation(fields: [authorId], references: [id])
+  translationStatus NovelTranslationStatus
+  format            NovelFormat
+  commendableTypeId Int
+  commendableType   CommendableType        @relation(fields: [commendableTypeId], references: [id])
+  tags              Tag[]
+  genres            Genre[]
+  alternativeTitles AlternativeTitle[]
+  chapters          Chapter[]
+  reviews           Review[]
+  novelRating       NovelRating?
+  usersRatings      UserRating[]
+  continueReading   ContinueReading[]
+  novelSubscription NovelSubscription[]
+  notifications     Notification[]
+  collectionItems   CollectionItem[]
 
   @@index([authorId])
   @@map("novel")
@@ -412,45 +269,31 @@ model ContinueReading {
   @@map("continue_reading")
 }
 
-model NovelCollectionMapping {
-  id                    Int                   @id @default(autoincrement())
-  novelId               Int
-  novel                 Novel                 @relation(fields: [novelId], references: [id])
-  userCollectionId      Int
-  userCollectionMapping UserCollectionMapping @relation(fields: [userCollectionId], references: [id])
-  createdAt             DateTime              @default(now())
-  updatedAt             DateTime              @updatedAt
+model Collection {
+  id              Int              @id @default(autoincrement())
+  title           String           @unique @db.VarChar(200)
+  description     String
+  isDefault       Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  collectionItems CollectionItem[]
 
-  @@unique([novelId, userCollectionId])
-  @@map("novel_collection_mapping")
+  @@map("collection")
 }
 
-model UserCollectionMapping {
+model CollectionItem {
   id           Int        @id @default(autoincrement())
   collectionId Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  novelId      Int
+  novel        Novel      @relation(fields: [novelId], references: [id], onDelete: Cascade)
   userId       Int
-  user         User       @relation(fields: [userId], references: [id])
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  novelCollectionMapping NovelCollectionMapping[]
-
-  @@unique([collectionId, userId])
-  @@map("user_collection_mapping")
-}
-
-model Collection {
-  id          Int      @id @default(autoincrement())
-  title       String   @unique @db.VarChar(200)
-  description String
-  isDefault   Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  userCollectionMapping UserCollectionMapping[]
-
-  @@map("collection")
+  @@unique([collectionId, novelId, userId])
+  @@map("collection_item")
 }
 
 model NovelRating {
@@ -489,63 +332,57 @@ model UserRating {
 }
 
 model Review {
-  id                 Int                 @id @default(autoincrement())
-  title              String              @db.VarChar(200)
-  body               String
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  likes              Int
-  views              Int
-  userId             Int
-  user               User                @relation(fields: [userId], references: [id])
-  novelId            Int
-  novel              Novel               @relation(fields: [novelId], references: [id])
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-  notifications      Notification[]
+  id                Int             @id @default(autoincrement())
+  title             String          @db.VarChar(200)
+  body              String
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  likes             Int
+  views             Int
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  novelId           Int
+  novel             Novel           @relation(fields: [novelId], references: [id])
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  notifications     Notification[]
 
-  @@map("review")
+  @@map("novel_review")
 }
 
 model News {
-  id                 Int                 @id @default(autoincrement())
-  title              String              @db.VarChar(200)
-  body               String
-  likes              Int
-  views              Int
-  published          Boolean
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  userId             Int
-  user               User                @relation(fields: [userId], references: [id])
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  id                Int             @id @default(autoincrement())
+  title             String          @db.VarChar(200)
+  body              String
+  likes             Int
+  views             Int
+  published         Boolean
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
 
   @@index([userId, commendableTypeId, createdAt])
   @@map("news")
 }
 
 model Comment {
-  id                 Int                 @id @default(autoincrement())
-  userId             Int
-  user               User                @relation(fields: [userId], references: [id])
-  nestedLevel        Int?
-  body               String
-  likes              Int                 @default(0)
-  dislikes           Int                 @default(0)
-  status             CommentStatus
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  complaintTypeId    Int
-  replyToId          Int?
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
+  id                Int             @id @default(autoincrement())
+  userId            Int
+  user              User            @relation(fields: [userId], references: [id])
+  nestedLevel       Int?
+  body              String
+  likes             Int             @default(0)
+  dislikes          Int             @default(0)
+  status            CommentStatus
+  commendableTypeId Int
+  commendableType   CommendableType @relation(fields: [commendableTypeId], references: [id])
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  complaintTypeId   Int
+  replyToId         Int?
 
   replyTo       Comment?       @relation(name: "CommentReplies", fields: [replyToId], references: [id])
   replies       Comment[]      @relation(name: "CommentReplies")
@@ -568,21 +405,18 @@ model CommendableType {
 }
 
 model Chapter {
-  id                 Int                 @id @default(autoincrement())
-  title              String              @db.VarChar(200)
-  content            String
-  likes              Int
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  novelId            Int
-  novel              Novel               @relation(fields: [novelId], references: [id])
-  commendableTypeId  Int
-  commendableType    CommendableType     @relation(fields: [commendableTypeId], references: [id])
-  bookmarks          Bookmark[]
-  complaitTypeId     Int
-  complaintTargetId  Int
-  complainTargetType ComplaintTargetType @relation(fields: [complaintTargetId], references: [id])
-  continueNovel      ContinueReading[]
+  id                Int               @id @default(autoincrement())
+  title             String            @db.VarChar(200)
+  content           String
+  likes             Int
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  novelId           Int
+  novel             Novel             @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  commendableTypeId Int
+  commendableType   CommendableType   @relation(fields: [commendableTypeId], references: [id])
+  bookmarks         Bookmark[]
+  continueNovel     ContinueReading[]
 
   @@index([novelId, createdAt])
   @@map("chapter")
