@@ -9,10 +9,17 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, Prisma } from '@prisma/client';
+import { CreateUserDto } from './dto/CreateUserDto';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Post('signup')
+  async signup(@Body() createUserDto: CreateUserDto): Promise<UserRecord> {
+    return this.userService.createUserWithFirebase(createUserDto);
+  }
 
   @Post()
   async createUser(
