@@ -19,8 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["src/*"],
-      "@config/*": ["config/*"],
-      "@firebase-setup/*": ["firebase.setup.ts"],
+      "@config/*": ["./config/*"],
     }
   }
 }

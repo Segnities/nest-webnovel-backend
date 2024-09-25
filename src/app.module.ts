@@ -21,13 +21,13 @@ import { UserNotificationSettingsModule } from './user-notification-settings/use
 import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
 import { AuthModule } from './auth/auth.module';
-import { AppealModule } from './appeal/appeal.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
+import { FirebaseAdmin } from '@config/firebase.setup';
 
 @Module({
   imports: [
@@ -46,8 +46,10 @@ import { ReviewModule } from './review/review.module';
     RoleModule,
     TeamModule,
     AuthModule,
-    ConfigModule.forRoot(),
-    AppealModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     BookmarkModule,
     CommentModule,
     ContinueReadingModule,
@@ -62,6 +64,7 @@ import { ReviewModule } from './review/review.module';
     TagService,
     GenreService,
     CountryService,
+    FirebaseAdmin,
   ],
 })
 export class AppModule {}

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   User,
@@ -9,11 +9,43 @@ import {
   ContinueReading,
   Comment,
 } from '@prisma/client';
+import { FirebaseAdmin } from '@config/firebase.setup';
+import { CreateUserDto } from './dto/CreateUserDto';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly admin: FirebaseAdmin,
+  ) {}
+  async createUserWithFirebase(data: CreateUserDto): Promise<UserRecord> {
+    const { email, password, firstName, lastName, role, username } = data;
+    const app = this.admin.setup();
 
+    try {
+      const createdUser = await app.auth().createUser({
+        email,
+        password,
+        displayName: `${firstName} ${lastName}`,
+      });
+      await app.auth().setCustomUserClaims(createdUser.uid, { role });
+      await this.prisma.user.create({
+        data: {
+          email,
+          firstName,
+          lastName,
+          roleId: 1,
+          img: 'no-image',
+          password,
+          username,
+        },
+      });
+      return createdUser;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
   }
