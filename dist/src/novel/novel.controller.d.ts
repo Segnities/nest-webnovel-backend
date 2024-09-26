@@ -34,5 +34,4 @@ export declare class NovelController {
     getNonAdultNovels(): Promise<Novel[]>;
     getNovelsByAuthorName(name: string): Promise<Novel[]>;
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
-    updateNovelRating(id: number, rating: number): Promise<Novel>;
 }

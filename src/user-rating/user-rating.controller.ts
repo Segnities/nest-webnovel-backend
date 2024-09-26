@@ -8,47 +8,32 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserRatingService } from './user-rating.service';
+import { Prisma } from '@prisma/client';
 
 @Controller('user-rating')
 export class UserRatingController {
   constructor(private readonly userRatingService: UserRatingService) {}
 
   @Post()
-  async createRating(
-    @Body() body: { userId: number; novelId: number; rating: number },
-  ) {
-    return this.userRatingService.createRating(
-      body.userId,
-      body.novelId,
-      body.rating,
-    );
+  async createRating(@Body() data: Prisma.UserRatingCreateInput) {
+    return this.userRatingService.create(data);
   }
 
   @Put(':id')
   async updateRating(
     @Param('id') id: number,
-    @Body() body: { userId: number; novelId: number; rating: number },
+    @Body() data: Prisma.UserRatingUpdateInput,
   ) {
-    return this.userRatingService.updateRating(
-      id,
-      body.userId,
-      body.novelId,
-      body.rating,
-    );
+    return this.userRatingService.update(id, data);
   }
 
   @Get(':id')
   async getRating(@Param('id') id: number) {
-    return this.userRatingService.getUserRating(id);
-  }
-
-  @Get('novel/:novelId')
-  async getRatingsByNovel(@Param('novelId') novelId: number) {
-    return this.userRatingService.getRatingsByNovel(novelId);
+    return this.userRatingService.findOneById(id);
   }
 
   @Delete(':id')
   async deleteRating(@Param('id') id: number) {
-    return this.userRatingService.deleteRating(id);
+    return this.userRatingService.delete(id);
   }
 }

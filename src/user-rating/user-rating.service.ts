@@ -1,64 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { UserRating } from '@prisma/client';
+import { Prisma, UserRating } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserRatingService {
   constructor(private prisma: PrismaService) {}
 
-  async createRating(
-    userId: number,
-    novelId: number,
-    rating: number,
-  ): Promise<UserRating> {
-    return this.prisma.userRating.create({
-      data: {
-        userId,
-        novelId,
-        rating,
-      },
-    });
+  async findOneById(id: number): Promise<UserRating> {
+    return this.prisma.userRating.findUnique({ where: { id } });
   }
 
-  async updateRating(
+  async create(data: Prisma.UserRatingCreateInput): Promise<UserRating> {
+    return this.prisma.userRating.create({ data });
+  }
+
+  async update(
     id: number,
-    userId: number,
-    novelId: number,
-    rating: number,
+    data: Prisma.UserRatingUpdateInput,
   ): Promise<UserRating> {
-    return this.prisma.userRating.update({
-      where: {
-        id,
-        userId,
-        novelId,
-      },
-      data: {
-        rating,
-      },
-    });
+    return this.prisma.userRating.update({ where: { id }, data });
   }
 
-  async getUserRating(id: number): Promise<UserRating | null> {
-    return this.prisma.userRating.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
-
-  async getRatingsByNovel(novelId: number): Promise<UserRating[]> {
-    return this.prisma.userRating.findMany({
-      where: {
-        novelId,
-      },
-    });
-  }
-
-  async deleteRating(id: number): Promise<UserRating> {
-    return this.prisma.userRating.delete({
-      where: {
-        id,
-      },
-    });
+  async delete(id: number): Promise<UserRating> {
+    return this.prisma.userRating.delete({ where: { id } });
   }
 }

@@ -29,6 +29,19 @@ export class NovelService {
       throw error;
     }
   }
+  async likeNovel(novelId: number): Promise<Novel> {
+    return this.prisma.novel.update({
+      where: { id: novelId },
+      data: { likes: { increment: 1 } },
+    });
+  }
+  async dislikeNovel(novelId: number): Promise<Novel> {
+    return this.prisma.novel.update({
+      where: { id: novelId },
+      data: { dislikes: { increment: 1 } },
+    });
+  }
+
   async createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]> {
     try {
       return this.prisma.novel.createManyAndReturn({
@@ -156,11 +169,9 @@ export class NovelService {
     return this.prisma.novel.findMany({
       take: limit,
       orderBy: {
-        novelRating: {
-          avgRating: 'desc',
-        },
+        likes: 'desc',
       },
-      include: { author: true, novelRating: true },
+      include: { author: true },
     });
   }
 
@@ -231,7 +242,6 @@ export class NovelService {
         _count: {
           select: { chapters: true, reviews: true },
         },
-        novelRating: true,
       },
     });
 
@@ -245,8 +255,8 @@ export class NovelService {
       views: novel.views,
       chapterCount: novel._count.chapters,
       reviewCount: novel._count.reviews,
-      avgRating: novel.novelRating?.avgRating || 0,
-      totalRatings: novel.novelRating?.votesCount || 0,
+      likes: novel.likes,
+      dislikes: novel.dislikes,
     };
   }
 
@@ -323,42 +333,6 @@ export class NovelService {
         },
       },
       include: { author: true, alternativeTitles: true },
-    });
-  }
-
-  async updateNovelRating(novelId: number, rating: number): Promise<Novel> {
-    const novel = await this.prisma.novel.findUnique({
-      where: { id: novelId },
-      include: { novelRating: true },
-    });
-
-    if (!novel) {
-      throw new NotFoundException(`Роман з ID ${novelId} не знайдено`);
-    }
-
-    const newTotalRating = (novel.novelRating?.totalRating || 0) + rating;
-    const newVotesCount = (novel.novelRating?.votesCount || 0) + 1;
-    const newAvgRating = newTotalRating / newVotesCount;
-
-    return this.prisma.novel.update({
-      where: { id: novelId },
-      data: {
-        novelRating: {
-          upsert: {
-            create: {
-              totalRating: newTotalRating,
-              votesCount: newVotesCount,
-              avgRating: newAvgRating,
-            },
-            update: {
-              totalRating: newTotalRating,
-              votesCount: newVotesCount,
-              avgRating: newAvgRating,
-            },
-          },
-        },
-      },
-      include: { novelRating: true },
     });
   }
 }

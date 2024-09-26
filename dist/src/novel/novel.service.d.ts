@@ -6,6 +6,8 @@ export declare class NovelService {
     findOneById(id: number): Promise<Novel>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
+    likeNovel(novelId: number): Promise<Novel>;
+    dislikeNovel(novelId: number): Promise<Novel>;
     createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]>;
     updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel>;
     deleteOne(id: number): Promise<Novel>;
@@ -34,5 +36,4 @@ export declare class NovelService {
     getNonAdultNovels(): Promise<Novel[]>;
     getNovelsByAuthorName(authorName: string): Promise<Novel[]>;
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
-    updateNovelRating(novelId: number, rating: number): Promise<Novel>;
 }

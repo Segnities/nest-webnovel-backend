@@ -212,12 +212,4 @@ export class NovelController {
   ): Promise<Novel[]> {
     return this.novelService.getNovelsByAlternativeTitle(title);
   }
-
-  @Put(':id/rating')
-  async updateNovelRating(
-    @Param('id', ParseIntPipe) id: number,
-    @Body('rating', ParseIntPipe) rating: number,
-  ): Promise<Novel> {
-    return this.novelService.updateNovelRating(id, rating);
-  }
 }

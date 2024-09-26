@@ -7,7 +7,6 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 enum NotificationMessageStatus {
   SENT
   PENDING
@@ -222,6 +221,7 @@ model Novel {
   title             String                 @db.VarChar(200)
   original_title    String?                @db.VarChar(200)
   description       String
+  slug              String                 @unique @db.VarChar(255)
   img               String
   likes             Int                    @default(0)
   dislikes          Int                    @default(0)
