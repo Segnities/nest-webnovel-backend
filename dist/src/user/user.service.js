@@ -194,7 +194,8 @@ let UserService = class UserService {
                     select: {
                         id: true,
                         title: true,
-                        novelRating: true,
+                        likes: true,
+                        dislikes: true,
                     },
                 },
             },

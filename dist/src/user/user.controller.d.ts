@@ -15,21 +15,24 @@ export declare class UserController {
         novel: {
             id: number;
             title: string;
+            createdAt: Date;
+            updatedAt: Date;
+            likes: number;
+            views: number;
+            commendableTypeId: number;
             original_title: string | null;
             description: string;
+            slug: string;
             img: string;
+            dislikes: number;
             isAdult: boolean;
             releaseYear: number | null;
             coverImg: string | null;
-            createdAt: Date;
-            updatedAt: Date;
-            views: number;
             countryId: number;
             status: import(".prisma/client").$Enums.NovelStatus;
             authorId: number;
             translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
             format: import(".prisma/client").$Enums.NovelFormat;
-            commendableTypeId: number;
         };
     } & {
         id: number;
@@ -48,31 +51,34 @@ export declare class UserController {
             novel: {
                 id: number;
                 title: string;
+                createdAt: Date;
+                updatedAt: Date;
+                likes: number;
+                views: number;
+                commendableTypeId: number;
                 original_title: string | null;
                 description: string;
+                slug: string;
                 img: string;
+                dislikes: number;
                 isAdult: boolean;
                 releaseYear: number | null;
                 coverImg: string | null;
-                createdAt: Date;
-                updatedAt: Date;
-                views: number;
                 countryId: number;
                 status: import(".prisma/client").$Enums.NovelStatus;
                 authorId: number;
                 translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
                 format: import(".prisma/client").$Enums.NovelFormat;
-                commendableTypeId: number;
             };
         } & {
             id: number;
             title: string;
-            content: string;
-            likes: number;
             createdAt: Date;
             updatedAt: Date;
+            likes: number;
             novelId: number;
             commendableTypeId: number;
+            content: string;
         };
     } & {
         id: number;
@@ -82,33 +88,33 @@ export declare class UserController {
     getUserNotifications(userId: number): Promise<{
         id: number;
         title: string;
-        message: string;
-        img: string;
         createdAt: Date;
         updatedAt: Date;
         userId: number;
+        novelId: number | null;
+        img: string;
+        authorId: number | null;
+        message: string;
         typeId: number;
         relatedEntityType: import(".prisma/client").$Enums.NotificationRelatedEntity;
         relatedEntityId: number;
         notificationStatus: import(".prisma/client").$Enums.NotificationMessageStatus;
-        novelId: number | null;
         commentId: number | null;
         reviewId: number | null;
-        authorId: number | null;
         metadata: Prisma.JsonValue | null;
         notificationGroupId: number | null;
     }[]>;
     getUserComments(userId: number): Promise<{
         id: number;
-        userId: number;
-        nestedLevel: number | null;
         body: string;
-        likes: number;
-        dislikes: number;
-        status: import(".prisma/client").$Enums.CommentStatus;
-        commendableTypeId: number;
         createdAt: Date;
         updatedAt: Date;
+        likes: number;
+        userId: number;
+        commendableTypeId: number;
+        dislikes: number;
+        status: import(".prisma/client").$Enums.CommentStatus;
+        nestedLevel: number | null;
         complaintTypeId: number;
         replyToId: number | null;
     }[]>;
@@ -116,32 +122,35 @@ export declare class UserController {
         id: number;
         title: string;
         body: string;
-        likes: number;
-        views: number;
-        published: boolean;
         createdAt: Date;
         updatedAt: Date;
-        commendableTypeId: number;
+        likes: number;
+        views: number;
         userId: number;
+        commendableTypeId: number;
+        published: boolean;
     }[]>;
     getUserNovelSubscriptions(userId: number): Promise<{
         id: number;
         title: string;
+        createdAt: Date;
+        updatedAt: Date;
+        likes: number;
+        views: number;
+        commendableTypeId: number;
         original_title: string | null;
         description: string;
+        slug: string;
         img: string;
+        dislikes: number;
         isAdult: boolean;
         releaseYear: number | null;
         coverImg: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        views: number;
         countryId: number;
         status: import(".prisma/client").$Enums.NovelStatus;
         authorId: number;
         translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
         format: import(".prisma/client").$Enums.NovelFormat;
-        commendableTypeId: number;
     }[]>;
     getUserAuthorSubscriptions(userId: number): Promise<{
         id: number;
@@ -166,21 +175,16 @@ export declare class UserController {
         novel: {
             id: number;
             title: string;
-            novelRating: {
-                id: number;
-                votesCount: number;
-                avgRating: number;
-                totalRating: number;
-                novelId: number;
-            };
+            likes: number;
+            dislikes: number;
         };
     } & {
         id: number;
-        rating: number;
         createdAt: Date;
         updatedAt: Date;
-        novelId: number;
         userId: number;
+        novelId: number;
+        isLiked: boolean;
     })[]>;
     getUserCreatedContent(userId: number): Promise<{
         novels: number;

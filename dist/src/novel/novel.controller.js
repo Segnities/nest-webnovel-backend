@@ -107,9 +107,6 @@ let NovelController = class NovelController {
     async getNovelsByAlternativeTitle(title) {
         return this.novelService.getNovelsByAlternativeTitle(title);
     }
-    async updateNovelRating(id, rating) {
-        return this.novelService.updateNovelRating(id, rating);
-    }
 };
 exports.NovelController = NovelController;
 __decorate([
@@ -318,14 +315,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getNovelsByAlternativeTitle", null);
-__decorate([
-    (0, common_1.Put)(':id/rating'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Body)('rating', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
-    __metadata("design:returntype", Promise)
-], NovelController.prototype, "updateNovelRating", null);
 exports.NovelController = NovelController = __decorate([
     (0, common_1.Controller)('novels'),
     __metadata("design:paramtypes", [novel_service_1.NovelService])

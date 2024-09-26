@@ -15,24 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRatingController = void 0;
 const common_1 = require("@nestjs/common");
 const user_rating_service_1 = require("./user-rating.service");
+const client_1 = require("@prisma/client");
 let UserRatingController = class UserRatingController {
     constructor(userRatingService) {
         this.userRatingService = userRatingService;
     }
-    async createRating(body) {
-        return this.userRatingService.createRating(body.userId, body.novelId, body.rating);
+    async createRating(data) {
+        return this.userRatingService.create(data);
     }
-    async updateRating(id, body) {
-        return this.userRatingService.updateRating(id, body.userId, body.novelId, body.rating);
+    async updateRating(id, data) {
+        return this.userRatingService.update(id, data);
     }
     async getRating(id) {
-        return this.userRatingService.getUserRating(id);
-    }
-    async getRatingsByNovel(novelId) {
-        return this.userRatingService.getRatingsByNovel(novelId);
+        return this.userRatingService.findOneById(id);
     }
     async deleteRating(id) {
-        return this.userRatingService.deleteRating(id);
+        return this.userRatingService.delete(id);
     }
 };
 exports.UserRatingController = UserRatingController;
@@ -58,13 +56,6 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserRatingController.prototype, "getRating", null);
-__decorate([
-    (0, common_1.Get)('novel/:novelId'),
-    __param(0, (0, common_1.Param)('novelId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], UserRatingController.prototype, "getRatingsByNovel", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),

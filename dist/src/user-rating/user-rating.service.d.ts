@@ -1,11 +1,10 @@
-import { UserRating } from '@prisma/client';
+import { Prisma, UserRating } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 export declare class UserRatingService {
     private prisma;
     constructor(prisma: PrismaService);
-    createRating(userId: number, novelId: number, rating: number): Promise<UserRating>;
-    updateRating(id: number, userId: number, novelId: number, rating: number): Promise<UserRating>;
-    getUserRating(id: number): Promise<UserRating | null>;
-    getRatingsByNovel(novelId: number): Promise<UserRating[]>;
-    deleteRating(id: number): Promise<UserRating>;
+    findOneById(id: number): Promise<UserRating>;
+    create(data: Prisma.UserRatingCreateInput): Promise<UserRating>;
+    update(id: number, data: Prisma.UserRatingUpdateInput): Promise<UserRating>;
+    delete(id: number): Promise<UserRating>;
 }

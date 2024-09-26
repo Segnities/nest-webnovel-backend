@@ -7,7 +7,6 @@
 generator client {
   provider = "prisma-client-js"
 }
-
 enum NotificationMessageStatus {
   SENT
   PENDING
@@ -83,8 +82,9 @@ model User {
   email                    String                     @unique @db.VarChar(50)
   firstName                String                     @db.VarChar(50)
   lastName                 String                     @db.VarChar(50)
-  password                 String
+  password                 String?
   img                      String
+  isAdult                  Boolean                    @default(false)
   createdAt                DateTime                   @default(now())
   updatedAt                DateTime                   @updatedAt
   roleId                   Int
@@ -221,7 +221,10 @@ model Novel {
   title             String                 @db.VarChar(200)
   original_title    String?                @db.VarChar(200)
   description       String
+  slug              String                 @unique @db.VarChar(255)
   img               String
+  likes             Int                    @default(0)
+  dislikes          Int                    @default(0)
   isAdult           Boolean
   releaseYear       Int?
   coverImg          String?
@@ -242,7 +245,6 @@ model Novel {
   alternativeTitles AlternativeTitle[]
   chapters          Chapter[]
   reviews           Review[]
-  novelRating       NovelRating?
   usersRatings      UserRating[]
   continueReading   ContinueReading[]
   novelSubscription NovelSubscription[]
@@ -293,16 +295,6 @@ model CollectionItem {
   @@map("collection_item")
 }
 
-model NovelRating {
-  id          Int   @id @default(autoincrement())
-  votesCount  Int
-  avgRating   Float
-  totalRating Int
-  novelId     Int   @unique
-  novel       Novel @relation(fields: [novelId], references: [id])
-
-  @@map("novel_rating")
-}
 
 model Bookmark {
   id        Int     @id @default(autoincrement())
@@ -316,7 +308,7 @@ model Bookmark {
 
 model UserRating {
   id        Int      @id @default(autoincrement())
-  rating    Int      @db.SmallInt
+  isLiked   Boolean
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   novelId   Int
@@ -325,7 +317,7 @@ model UserRating {
   user      User     @relation(fields: [userId], references: [id])
 
   @@index([novelId, userId])
-  @@map("rating")
+  @@map("user_rating")
 }
 
 model Review {

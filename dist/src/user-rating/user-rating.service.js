@@ -16,47 +16,17 @@ let UserRatingService = class UserRatingService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async createRating(userId, novelId, rating) {
-        return this.prisma.userRating.create({
-            data: {
-                userId,
-                novelId,
-                rating,
-            },
-        });
+    async findOneById(id) {
+        return this.prisma.userRating.findUnique({ where: { id } });
     }
-    async updateRating(id, userId, novelId, rating) {
-        return this.prisma.userRating.update({
-            where: {
-                id,
-                userId,
-                novelId,
-            },
-            data: {
-                rating,
-            },
-        });
+    async create(data) {
+        return this.prisma.userRating.create({ data });
     }
-    async getUserRating(id) {
-        return this.prisma.userRating.findUnique({
-            where: {
-                id,
-            },
-        });
+    async update(id, data) {
+        return this.prisma.userRating.update({ where: { id }, data });
     }
-    async getRatingsByNovel(novelId) {
-        return this.prisma.userRating.findMany({
-            where: {
-                novelId,
-            },
-        });
-    }
-    async deleteRating(id) {
-        return this.prisma.userRating.delete({
-            where: {
-                id,
-            },
-        });
+    async delete(id) {
+        return this.prisma.userRating.delete({ where: { id } });
     }
 };
 exports.UserRatingService = UserRatingService;
