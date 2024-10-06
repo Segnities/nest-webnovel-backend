@@ -7,6 +7,7 @@ import {
   NovelFormat,
   NovelTranslationStatus,
 } from '@prisma/client';
+import compressAndUploadImage from 'utils/compressAndUploadImage';
 
 @Injectable()
 export class NovelService {
@@ -17,7 +18,15 @@ export class NovelService {
   }
   async createOne(data: Prisma.NovelCreateInput): Promise<Novel> {
     try {
-      return this.prisma.novel.create({ data });
+      const novelImagePath = compressAndUploadImage(data.img, data.original_title);
+      const coverImgPath = compressAndUploadImage(data.coverImg, data.original_title);
+      return this.prisma.novel.create({
+        data: {
+          ...data,
+          img: novelImagePath,
+          coverImg: coverImgPath,
+        },
+      });
     } catch (error) {
       throw error;
     }

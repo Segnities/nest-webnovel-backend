@@ -383,7 +383,7 @@ model Comment {
 
 model CommendableType {
   id       Int       @id @default(autoincrement())
-  name     String    @db.VarChar(200)
+  name     String    @db.VarChar(200) @unique
   novels   Novel[]
   chapters Chapter[]
   reviews  Review[]

@@ -50,6 +50,7 @@ export class NovelController {
   }
 
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   async updateOne(
     @Param('id', ParseIntPipe) id: number,
     @Body() data: Prisma.NovelUpdateInput,
@@ -63,6 +64,7 @@ export class NovelController {
     return this.novelService.deleteOne(id);
   }
   @Get('author/:authorId')
+  @HttpCode(HttpStatus.OK)
   async findByAuthor(
     @Param('authorId', ParseIntPipe) authorId: number,
   ): Promise<Novel[]> {
@@ -70,6 +72,7 @@ export class NovelController {
   }
 
   @Get('status/:status')
+  @HttpCode(HttpStatus.OK)
   async findByStatus(@Param('status') status: NovelStatus): Promise<Novel[]> {
     return this.novelService.findByStatus(status);
   }
@@ -80,6 +83,7 @@ export class NovelController {
   }
 
   @Get('translation-status/:status')
+  @HttpCode(HttpStatus.OK)
   async findByTranslationStatus(
     @Param('status') status: NovelTranslationStatus,
   ): Promise<Novel[]> {
@@ -87,6 +91,7 @@ export class NovelController {
   }
 
   @Get('tag/:tagId')
+  @HttpCode(HttpStatus.OK)
   async findByTag(
     @Param('tagId', ParseIntPipe) tagId: number,
   ): Promise<Novel[]> {
@@ -94,6 +99,7 @@ export class NovelController {
   }
 
   @Get('tags')
+  @HttpCode(HttpStatus.OK)
   async findByTags(
     @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
     tagIds: number[],
@@ -102,6 +108,7 @@ export class NovelController {
   }
 
   @Get('genre/:genreId')
+  @HttpCode(HttpStatus.OK)
   async findByGenre(
     @Param('genreId', ParseIntPipe) genreId: number,
   ): Promise<Novel[]> {
@@ -109,6 +116,7 @@ export class NovelController {
   }
 
   @Get('genres')
+  @HttpCode(HttpStatus.OK)
   async findByGenres(
     @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
     genreIds: number[],
@@ -117,6 +125,7 @@ export class NovelController {
   }
 
   @Get('country/:countryId')
+  @HttpCode(HttpStatus.OK)
   async findByCountry(
     @Param('countryId', ParseIntPipe) countryId: number,
   ): Promise<Novel[]> {
@@ -124,6 +133,7 @@ export class NovelController {
   }
 
   @Get('countries')
+  @HttpCode(HttpStatus.OK)
   async findByCountries(
     @Query('ids', new ParseArrayPipe({ items: Number, separator: ',' }))
     countryIds: number[],
@@ -132,6 +142,7 @@ export class NovelController {
   }
 
   @Get('top-rated')
+  @HttpCode(HttpStatus.OK)
   async getTopRatedNovels(
     @Query('limit', ParseIntPipe) limit: number = 10,
   ): Promise<Novel[]> {
@@ -139,6 +150,7 @@ export class NovelController {
   }
 
   @Get('most-viewed')
+  @HttpCode(HttpStatus.OK)
   async getMostViewedNovels(
     @Query('limit', ParseIntPipe) limit: number = 10,
   ): Promise<Novel[]> {
@@ -146,6 +158,7 @@ export class NovelController {
   }
 
   @Get('recently-updated')
+  @HttpCode(HttpStatus.OK)
   async getRecentlyUpdatedNovels(
     @Query('limit', ParseIntPipe) limit: number = 10,
   ): Promise<Novel[]> {
@@ -153,11 +166,13 @@ export class NovelController {
   }
 
   @Get('search')
+  @HttpCode(HttpStatus.OK)
   async searchNovels(@Query('term') searchTerm: string): Promise<Novel[]> {
     return this.novelService.searchNovels(searchTerm);
   }
 
   @Get(':id/chapters')
+  @HttpCode(HttpStatus.OK)
   async getNovelWithChapters(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Novel & { chapters: any[] }> {
@@ -165,6 +180,7 @@ export class NovelController {
   }
 
   @Put(':id/views')
+  @HttpCode(HttpStatus.OK)
   async updateNovelViews(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Novel> {
@@ -172,11 +188,13 @@ export class NovelController {
   }
 
   @Get(':id/stats')
+  @HttpCode(HttpStatus.OK)
   async getNovelStats(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return this.novelService.getNovelStats(id);
   }
 
   @Get(':id/related')
+  @HttpCode(HttpStatus.OK)
   async getRelatedNovels(
     @Param('id', ParseIntPipe) id: number,
     @Query('limit', ParseIntPipe) limit: number = 5,
@@ -185,6 +203,7 @@ export class NovelController {
   }
 
   @Get('release-year/:year')
+  @HttpCode(HttpStatus.OK)
   async getNovelsByReleaseYear(
     @Param('year', ParseIntPipe) year: number,
   ): Promise<Novel[]> {
@@ -192,16 +211,19 @@ export class NovelController {
   }
 
   @Get('adult')
+  @HttpCode(HttpStatus.OK)
   async getAdultNovels(): Promise<Novel[]> {
     return this.novelService.getAdultNovels();
   }
 
   @Get('non-adult')
+  @HttpCode(HttpStatus.OK)
   async getNonAdultNovels(): Promise<Novel[]> {
     return this.novelService.getNonAdultNovels();
   }
 
   @Get('author-name/:name')
+  @HttpCode(HttpStatus.OK)
   async getNovelsByAuthorName(@Param('name') name: string): Promise<Novel[]> {
     return this.novelService.getNovelsByAuthorName(name);
   }

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NovelService = void 0;
 const prisma_service_1 = require("../prisma/prisma.service");
 const common_1 = require("@nestjs/common");
+const compressAndUploadImage_1 = require("../../utils/compressAndUploadImage");
 let NovelService = class NovelService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -21,7 +22,15 @@ let NovelService = class NovelService {
     }
     async createOne(data) {
         try {
-            return this.prisma.novel.create({ data });
+            const novelImagePath = (0, compressAndUploadImage_1.default)(data.img, data.original_title);
+            const coverImgPath = (0, compressAndUploadImage_1.default)(data.coverImg, data.original_title);
+            return this.prisma.novel.create({
+                data: {
+                    ...data,
+                    img: novelImagePath,
+                    coverImg: coverImgPath,
+                },
+            });
         }
         catch (error) {
             throw error;

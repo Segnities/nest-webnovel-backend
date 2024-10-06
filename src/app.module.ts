@@ -28,6 +28,7 @@ import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
 import { FirebaseAdmin } from '@config/firebase.setup';
+import { CommendableTypeModule } from './commendable-type/commendable-type.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { FirebaseAdmin } from '@config/firebase.setup';
     NewsModule,
     NotificationGroupModule,
     ReviewModule,
+    CommendableTypeModule,
   ],
   controllers: [AppController],
   providers: [

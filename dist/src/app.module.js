@@ -37,6 +37,7 @@ const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
 const review_module_1 = require("./review/review.module");
 const firebase_setup_1 = require("../config/firebase.setup");
+const commendable_type_module_1 = require("./commendable-type/commendable-type.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -68,6 +69,7 @@ exports.AppModule = AppModule = __decorate([
             news_module_1.NewsModule,
             notification_group_module_1.NotificationGroupModule,
             review_module_1.ReviewModule,
+            commendable_type_module_1.CommendableTypeModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
