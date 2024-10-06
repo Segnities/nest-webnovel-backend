@@ -22,6 +22,30 @@ export class NovelService {
       throw error;
     }
   }
+
+  async createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]> {
+    try {
+      return this.prisma.novel.createManyAndReturn({
+        data,
+        skipDuplicates: true,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findOneBySlug(slug: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { slug } });
+  }
+
+  async findOneByTitle(title: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { title } });
+  }
+
+  async findOneByOriginalTitle(original_title: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { original_title } });
+  }
+
   async findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
     try {
       return this.prisma.novel.findMany(args);
@@ -42,16 +66,6 @@ export class NovelService {
     });
   }
 
-  async createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]> {
-    try {
-      return this.prisma.novel.createManyAndReturn({
-        data,
-        skipDuplicates: true,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
   async updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel> {
     try {
       return this.prisma.novel.update({ where: { id }, data });

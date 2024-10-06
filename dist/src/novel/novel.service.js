@@ -27,6 +27,26 @@ let NovelService = class NovelService {
             throw error;
         }
     }
+    async createMany(data) {
+        try {
+            return this.prisma.novel.createManyAndReturn({
+                data,
+                skipDuplicates: true,
+            });
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async findOneBySlug(slug) {
+        return this.prisma.novel.findFirst({ where: { slug } });
+    }
+    async findOneByTitle(title) {
+        return this.prisma.novel.findFirst({ where: { title } });
+    }
+    async findOneByOriginalTitle(original_title) {
+        return this.prisma.novel.findFirst({ where: { original_title } });
+    }
     async findAll(args) {
         try {
             return this.prisma.novel.findMany(args);
@@ -46,17 +66,6 @@ let NovelService = class NovelService {
             where: { id: novelId },
             data: { dislikes: { increment: 1 } },
         });
-    }
-    async createMany(data) {
-        try {
-            return this.prisma.novel.createManyAndReturn({
-                data,
-                skipDuplicates: true,
-            });
-        }
-        catch (error) {
-            throw error;
-        }
     }
     async updateOne(id, data) {
         try {

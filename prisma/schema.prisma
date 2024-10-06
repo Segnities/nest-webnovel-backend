@@ -398,6 +398,9 @@ model Chapter {
   title             String            @db.VarChar(200)
   content           String
   likes             Int
+  views             Int
+  slug              String            @unique @db.VarChar(255)
+  chapterNumber     Int
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
   novelId           Int
@@ -411,7 +414,6 @@ model Chapter {
   @@map("chapter")
 }
 
-//novels + chapters
 model Team {
   id             Int      @id @default(autoincrement())
   name           String   @db.VarChar(200)
