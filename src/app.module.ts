@@ -29,6 +29,7 @@ import { NotificationGroupModule } from './notification-group/notification-group
 import { ReviewModule } from './review/review.module';
 import { FirebaseAdmin } from '@config/firebase.setup';
 import { CommendableTypeModule } from './commendable-type/commendable-type.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CommendableTypeModule } from './commendable-type/commendable-type.modul
     NotificationGroupModule,
     ReviewModule,
     CommendableTypeModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [

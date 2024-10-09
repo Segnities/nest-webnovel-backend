@@ -23,7 +23,7 @@ import {
 
 @Controller('novels')
 export class NovelController {
-  constructor(private readonly novelService: NovelService) {}
+  constructor(private readonly novelService: NovelService) { }
 
   @Get(':id')
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
@@ -37,7 +37,9 @@ export class NovelController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+
   async createOne(@Body() data: Prisma.NovelCreateInput): Promise<Novel> {
+    console.log(data);
     return this.novelService.createOne(data);
   }
 

@@ -27,6 +27,7 @@ let NovelController = class NovelController {
         return this.novelService.findAll(args);
     }
     async createOne(data) {
+        console.log(data);
         return this.novelService.createOne(data);
     }
     async createMany(data) {

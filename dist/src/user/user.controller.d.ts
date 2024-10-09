@@ -20,7 +20,7 @@ export declare class UserController {
             title: string;
             original_title: string | null;
             description: string;
-            slug: string;
+            slug: string | null;
             likes: number;
             dislikes: number;
             isAdult: boolean;
@@ -56,7 +56,7 @@ export declare class UserController {
                 title: string;
                 original_title: string | null;
                 description: string;
-                slug: string;
+                slug: string | null;
                 likes: number;
                 dislikes: number;
                 isAdult: boolean;
@@ -141,7 +141,7 @@ export declare class UserController {
         title: string;
         original_title: string | null;
         description: string;
-        slug: string;
+        slug: string | null;
         likes: number;
         dislikes: number;
         isAdult: boolean;
