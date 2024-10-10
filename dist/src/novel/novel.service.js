@@ -80,7 +80,7 @@ let NovelService = class NovelService {
     async createMany(data) {
         const localImages = [];
         try {
-            const createdNovels = [];
+            const novels = [];
             for (const novelData of data) {
                 const novelImageProps = {
                     imageUrl: novelData.img,
@@ -113,9 +113,10 @@ let NovelService = class NovelService {
                     img: cloudinaryImgSecureUrl,
                     coverImg: cloudinaryCoverSecureUrl,
                 };
-                createdNovels.push(novel);
+                novels.push(novel);
             }
-            return this.prisma.novel.createMany({ data: createdNovels });
+            const createdNovels = await this.prisma.novel.createManyAndReturn({ data: novels });
+            return createdNovels;
         }
         catch (error) {
             await (0, deleteLocalImages_1.deleteLocalImages)(localImages);

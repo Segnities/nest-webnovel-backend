@@ -37,7 +37,6 @@ export class NovelController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-
   async createOne(@Body() data: Prisma.NovelCreateInput): Promise<Novel> {
     console.log(data);
     return this.novelService.createOne(data);
@@ -46,7 +45,7 @@ export class NovelController {
   @Post('many')
   @HttpCode(HttpStatus.CREATED)
   async createMany(
-    @Body() data: Prisma.NovelCreateManyInput,
+    @Body() data: Prisma.NovelCreateManyInput[],
   ): Promise<Novel[]> {
     return this.novelService.createMany(data);
   }

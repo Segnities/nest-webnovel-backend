@@ -6,7 +6,7 @@ export declare class NovelController {
     findOneById(id: number): Promise<Novel>;
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
-    createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]>;
+    createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]>;
     updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel>;
     deleteOne(id: number): Promise<Novel>;
     findByAuthor(authorId: number): Promise<Novel[]>;

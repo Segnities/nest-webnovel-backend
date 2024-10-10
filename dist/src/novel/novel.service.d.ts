@@ -7,7 +7,7 @@ export declare class NovelService {
     constructor(prisma: PrismaService, cloudinaryService: CloudinaryService);
     findOneById(id: number): Promise<Novel>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
-    createMany(data: Prisma.NovelCreateManyInput[]): Promise<Prisma.BatchPayload>;
+    createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]>;
     findOneBySlug(slug: string): Promise<Novel>;
     findOneByTitle(title: string): Promise<Novel>;
     findOneByOriginalTitle(original_title: string): Promise<Novel>;

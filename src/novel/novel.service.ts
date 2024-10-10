@@ -85,10 +85,10 @@ export class NovelService {
     }
   }
 
-  async createMany(data: Prisma.NovelCreateManyInput[]): Promise<Prisma.BatchPayload> {
+  async createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]> {
     const localImages: string[] = [];
     try {
-      const createdNovels: Prisma.NovelCreateManyInput[] = [];
+      const novels = [];
       for (const novelData of data) {
         // Compress novel image
         const novelImageProps = {
@@ -122,15 +122,16 @@ export class NovelService {
           ? (await this.cloudinaryService.uploadImage(coverImage)).secure_url
           : null;
         // Create novel object
-        const novel: Prisma.NovelCreateManyInput = {
+        const novel = {
           ...novelData,
           img: cloudinaryImgSecureUrl,
           coverImg: cloudinaryCoverSecureUrl,
         };
-        createdNovels.push(novel);
+        novels.push(novel);
       }
       // Create many novels in the database
-      return this.prisma.novel.createMany({ data: createdNovels });
+      const createdNovels = await this.prisma.novel.createManyAndReturn({ data: novels });
+      return createdNovels;
     } catch (error) {
       await deleteLocalImages(localImages);
       throw error;
