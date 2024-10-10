@@ -5,34 +5,34 @@ export declare class UserRatingController {
     constructor(userRatingService: UserRatingService);
     createRating(data: Prisma.UserRatingCreateInput): Promise<{
         id: number;
-        isLiked: boolean;
         createdAt: Date;
+        userId: number;
         updatedAt: Date;
         novelId: number;
-        userId: number;
+        isLiked: boolean;
     }>;
     updateRating(id: number, data: Prisma.UserRatingUpdateInput): Promise<{
         id: number;
-        isLiked: boolean;
         createdAt: Date;
+        userId: number;
         updatedAt: Date;
         novelId: number;
-        userId: number;
+        isLiked: boolean;
     }>;
     getRating(id: number): Promise<{
         id: number;
-        isLiked: boolean;
         createdAt: Date;
+        userId: number;
         updatedAt: Date;
         novelId: number;
-        userId: number;
+        isLiked: boolean;
     }>;
     deleteRating(id: number): Promise<{
         id: number;
-        isLiked: boolean;
         createdAt: Date;
+        userId: number;
         updatedAt: Date;
         novelId: number;
-        userId: number;
+        isLiked: boolean;
     }>;
 }

@@ -27,6 +27,7 @@ let NovelController = class NovelController {
         return this.novelService.findAll(args);
     }
     async createOne(data) {
+        console.log(data);
         return this.novelService.createOne(data);
     }
     async createMany(data) {
@@ -136,11 +137,12 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Array]),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "createMany", null);
 __decorate([
     (0, common_1.Put)(':id'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -157,6 +159,7 @@ __decorate([
 ], NovelController.prototype, "deleteOne", null);
 __decorate([
     (0, common_1.Get)('author/:authorId'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('authorId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -164,6 +167,7 @@ __decorate([
 ], NovelController.prototype, "findByAuthor", null);
 __decorate([
     (0, common_1.Get)('status/:status'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('status')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -178,6 +182,7 @@ __decorate([
 ], NovelController.prototype, "findByFormat", null);
 __decorate([
     (0, common_1.Get)('translation-status/:status'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('status')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -185,6 +190,7 @@ __decorate([
 ], NovelController.prototype, "findByTranslationStatus", null);
 __decorate([
     (0, common_1.Get)('tag/:tagId'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('tagId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -192,6 +198,7 @@ __decorate([
 ], NovelController.prototype, "findByTag", null);
 __decorate([
     (0, common_1.Get)('tags'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('ids', new common_1.ParseArrayPipe({ items: Number, separator: ',' }))),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -199,6 +206,7 @@ __decorate([
 ], NovelController.prototype, "findByTags", null);
 __decorate([
     (0, common_1.Get)('genre/:genreId'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('genreId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -206,6 +214,7 @@ __decorate([
 ], NovelController.prototype, "findByGenre", null);
 __decorate([
     (0, common_1.Get)('genres'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('ids', new common_1.ParseArrayPipe({ items: Number, separator: ',' }))),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -213,6 +222,7 @@ __decorate([
 ], NovelController.prototype, "findByGenres", null);
 __decorate([
     (0, common_1.Get)('country/:countryId'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('countryId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -220,6 +230,7 @@ __decorate([
 ], NovelController.prototype, "findByCountry", null);
 __decorate([
     (0, common_1.Get)('countries'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('ids', new common_1.ParseArrayPipe({ items: Number, separator: ',' }))),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Array]),
@@ -227,6 +238,7 @@ __decorate([
 ], NovelController.prototype, "findByCountries", null);
 __decorate([
     (0, common_1.Get)('top-rated'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -234,6 +246,7 @@ __decorate([
 ], NovelController.prototype, "getTopRatedNovels", null);
 __decorate([
     (0, common_1.Get)('most-viewed'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -241,6 +254,7 @@ __decorate([
 ], NovelController.prototype, "getMostViewedNovels", null);
 __decorate([
     (0, common_1.Get)('recently-updated'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -248,6 +262,7 @@ __decorate([
 ], NovelController.prototype, "getRecentlyUpdatedNovels", null);
 __decorate([
     (0, common_1.Get)('search'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('term')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -255,6 +270,7 @@ __decorate([
 ], NovelController.prototype, "searchNovels", null);
 __decorate([
     (0, common_1.Get)(':id/chapters'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -262,6 +278,7 @@ __decorate([
 ], NovelController.prototype, "getNovelWithChapters", null);
 __decorate([
     (0, common_1.Put)(':id/views'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -269,6 +286,7 @@ __decorate([
 ], NovelController.prototype, "updateNovelViews", null);
 __decorate([
     (0, common_1.Get)(':id/stats'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -276,6 +294,7 @@ __decorate([
 ], NovelController.prototype, "getNovelStats", null);
 __decorate([
     (0, common_1.Get)(':id/related'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
@@ -284,6 +303,7 @@ __decorate([
 ], NovelController.prototype, "getRelatedNovels", null);
 __decorate([
     (0, common_1.Get)('release-year/:year'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('year', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -291,18 +311,21 @@ __decorate([
 ], NovelController.prototype, "getNovelsByReleaseYear", null);
 __decorate([
     (0, common_1.Get)('adult'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getAdultNovels", null);
 __decorate([
     (0, common_1.Get)('non-adult'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getNonAdultNovels", null);
 __decorate([
     (0, common_1.Get)('author-name/:name'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Param)('name')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

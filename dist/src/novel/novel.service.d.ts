@@ -1,14 +1,19 @@
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Prisma, Novel, NovelStatus, NovelFormat, NovelTranslationStatus } from '@prisma/client';
 export declare class NovelService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private cloudinaryService;
+    constructor(prisma: PrismaService, cloudinaryService: CloudinaryService);
     findOneById(id: number): Promise<Novel>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
+    createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]>;
+    findOneBySlug(slug: string): Promise<Novel>;
+    findOneByTitle(title: string): Promise<Novel>;
+    findOneByOriginalTitle(original_title: string): Promise<Novel>;
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
     likeNovel(novelId: number): Promise<Novel>;
     dislikeNovel(novelId: number): Promise<Novel>;
-    createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]>;
     updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel>;
     deleteOne(id: number): Promise<Novel>;
     findByAuthor(authorId: number): Promise<Novel[]>;

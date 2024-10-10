@@ -1,3 +1,4 @@
+import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
@@ -7,21 +8,148 @@ import {
   NovelFormat,
   NovelTranslationStatus,
 } from '@prisma/client';
+import compressAndUploadImage from 'utils/compressAndUploadImage';
+import { deleteLocalImages } from 'utils/deleteLocalImages';
 
 @Injectable()
 export class NovelService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private cloudinaryService: CloudinaryService,
+  ) { }
 
   async findOneById(id: number): Promise<Novel> {
     return this.prisma.novel.findUnique({ where: { id } });
   }
   async createOne(data: Prisma.NovelCreateInput): Promise<Novel> {
+    const localImages: string[] = [];
     try {
-      return this.prisma.novel.create({ data });
+      // Log input data for debugging
+      console.log('Original data:', data);
+
+      const novelImageProps = {
+        imageUrl: data.img,
+        title: data.original_title,
+        width: 800,
+        height: 600,
+      };
+
+      // Compress novel image
+      const novelImage = await compressAndUploadImage(novelImageProps);
+      localImages.push(novelImage);
+
+      console.log('Compressed novel image URL:', novelImage);
+
+      const coverImageProps = {
+        imageUrl: data.coverImg,
+        title: data.original_title,
+        width: 1000,
+        height: 450,
+      };
+
+      const coverImage = data.coverImg
+        ? await compressAndUploadImage(coverImageProps)
+        : null;
+      console.log('Compressed cover image URL:', coverImage);
+      localImages.push(coverImage);
+      const cloudinaryImgSecureUrl = (
+        await this.cloudinaryService.uploadImage(novelImage)
+      ).secure_url;
+      const cloudinaryCoverSecureUrl = coverImage
+        ? (await this.cloudinaryService.uploadImage(coverImage)).secure_url
+        : null;
+
+      const createdNovel = await this.prisma.novel.create({
+        data: {
+          title: data.title,
+          description: data.description,
+          original_title: data.original_title,
+          slug: data.slug,
+          releaseYear: data.releaseYear,
+          isAdult: data.isAdult,
+          translationStatus: data.translationStatus,
+          format: data.format,
+          status: data.status,
+          commendableType: { connect: { id: data.commendableType.connect.id } },
+          country: { connect: { id: data.country.connect.id } },
+          author: { connect: { id: data.author.connect.id } },
+          img: cloudinaryImgSecureUrl,
+          coverImg: cloudinaryCoverSecureUrl,
+        },
+      });
+      return createdNovel;
     } catch (error) {
+      console.error('Error creating novel:', error); // More detailed error logging
+      await deleteLocalImages(localImages);
       throw error;
     }
   }
+
+  async createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]> {
+    const localImages: string[] = [];
+    try {
+      const novels = [];
+      for (const novelData of data) {
+        // Compress novel image
+        const novelImageProps = {
+          imageUrl: novelData.img,
+          title: novelData.original_title,
+          width: 800,
+          height: 600,
+        };
+        const novelImage = await compressAndUploadImage(novelImageProps);
+        localImages.push(novelImage);
+        console.log('Compressed novel image URL:', novelImage);
+        // Compress cover image if it exists
+        const coverImageProps = novelData.coverImg
+          ? {
+            imageUrl: novelData.coverImg,
+            title: novelData.original_title,
+            width: 1000,
+            height: 450,
+          }
+          : null;
+        const coverImage = coverImageProps
+          ? await compressAndUploadImage(coverImageProps)
+          : null;
+        localImages.push(coverImage);
+        console.log('Compressed cover image URL:', coverImage);
+        // Upload images to Cloudinary
+        const cloudinaryImgSecureUrl = (
+          await this.cloudinaryService.uploadImage(novelImage)
+        ).secure_url;
+        const cloudinaryCoverSecureUrl = coverImage
+          ? (await this.cloudinaryService.uploadImage(coverImage)).secure_url
+          : null;
+        // Create novel object
+        const novel = {
+          ...novelData,
+          img: cloudinaryImgSecureUrl,
+          coverImg: cloudinaryCoverSecureUrl,
+        };
+        novels.push(novel);
+      }
+      // Create many novels in the database
+      const createdNovels = await this.prisma.novel.createManyAndReturn({ data: novels });
+      return createdNovels;
+    } catch (error) {
+      await deleteLocalImages(localImages);
+      throw error;
+    }
+  }
+
+  async findOneBySlug(slug: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { slug } });
+  }
+
+  async findOneByTitle(title: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { title } });
+  }
+
+  async findOneByOriginalTitle(original_title: string): Promise<Novel> {
+    return this.prisma.novel.findFirst({ where: { original_title } });
+  }
+
   async findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
     try {
       return this.prisma.novel.findMany(args);
@@ -42,16 +170,6 @@ export class NovelService {
     });
   }
 
-  async createMany(data: Prisma.NovelCreateManyInput): Promise<Novel[]> {
-    try {
-      return this.prisma.novel.createManyAndReturn({
-        data,
-        skipDuplicates: true,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
   async updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel> {
     try {
       return this.prisma.novel.update({ where: { id }, data });
