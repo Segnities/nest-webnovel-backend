@@ -41,4 +41,13 @@ export declare class NovelService {
     getNonAdultNovels(): Promise<Novel[]>;
     getNovelsByAuthorName(authorName: string): Promise<Novel[]>;
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
+    getDiscoverNovels(): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
+        country: {
+            title: string;
+        };
+    }[]>;
 }

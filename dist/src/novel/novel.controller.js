@@ -20,6 +20,9 @@ let NovelController = class NovelController {
     constructor(novelService) {
         this.novelService = novelService;
     }
+    async getDiscoverNovels() {
+        return this.novelService.getDiscoverNovels();
+    }
     async findOneById(id) {
         return this.novelService.findOneById(id);
     }
@@ -110,6 +113,12 @@ let NovelController = class NovelController {
     }
 };
 exports.NovelController = NovelController;
+__decorate([
+    (0, common_1.Get)('discover'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getDiscoverNovels", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

@@ -3,6 +3,15 @@ import { Novel, NovelFormat, NovelStatus, NovelTranslationStatus, Prisma } from 
 export declare class NovelController {
     private readonly novelService;
     constructor(novelService: NovelService);
+    getDiscoverNovels(): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
+        country: {
+            title: string;
+        };
+    }[]>;
     findOneById(id: number): Promise<Novel>;
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;

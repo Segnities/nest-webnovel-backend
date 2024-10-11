@@ -24,11 +24,15 @@ import {
 @Controller('novels')
 export class NovelController {
   constructor(private readonly novelService: NovelService) { }
-
+  @Get('discover')
+  async getDiscoverNovels() {
+    return this.novelService.getDiscoverNovels();
+  }
   @Get(':id')
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
     return this.novelService.findOneById(id);
   }
+
 
   @Get()
   async findAll(@Query() args: Prisma.NovelFindManyArgs): Promise<Novel[]> {

@@ -453,4 +453,24 @@ export class NovelService {
       include: { author: true, alternativeTitles: true },
     });
   }
+
+  async getDiscoverNovels() {
+    const top500Novels = await this.prisma.novel.findMany({
+      orderBy: {
+        likes: 'desc', // Change to descending order to get top novels
+      },
+      take: 500,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        country: {
+          select: { title: true },
+        },
+        img: true,
+      },
+    });
+    const shuffled = top500Novels.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 20);
+  }
 }
