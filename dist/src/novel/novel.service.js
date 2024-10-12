@@ -426,6 +426,54 @@ let NovelService = class NovelService {
         const shuffled = top500Novels.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, 20);
     }
+    async getTimeRatingNovels() {
+        const now = new Date();
+        const weekAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        const monthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        const weeklyTop = [];
+        const monthlyTop = [];
+        const novels = await this.prisma.novel.findMany({
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                country: {
+                    select: { title: true },
+                },
+                img: true,
+                createdAt: true,
+            },
+            orderBy: {
+                likes: 'desc',
+            },
+        });
+        for (const novel of novels) {
+            const createdAt = new Date(novel.createdAt);
+            if (createdAt >= monthAgo && monthlyTop.length < 10) {
+                monthlyTop.push(novel);
+            }
+            if (createdAt >= weekAgo && weeklyTop.length < 10) {
+                weeklyTop.push(novel);
+            }
+            if (weeklyTop.length >= 10 && monthlyTop.length >= 10) {
+                break;
+            }
+        }
+        return {
+            weeklyTop,
+            monthlyTop,
+            allTimeTop: novels.slice(0, 10),
+        };
+    }
+    async getTopRatingNovels({ limit, select }) {
+        return this.prisma.novel.findMany({
+            take: limit,
+            orderBy: {
+                likes: "desc"
+            },
+            select,
+        });
+    }
 };
 exports.NovelService = NovelService;
 exports.NovelService = NovelService = __decorate([

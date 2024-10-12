@@ -23,6 +23,12 @@ let NovelController = class NovelController {
     async getDiscoverNovels() {
         return this.novelService.getDiscoverNovels();
     }
+    async getTimeRatingNovels() {
+        return this.novelService.getTimeRatingNovels();
+    }
+    async getTopRatingNovels(data) {
+        return this.novelService.getTopRatingNovels(data);
+    }
     async findOneById(id) {
         return this.novelService.findOneById(id);
     }
@@ -119,6 +125,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getDiscoverNovels", null);
+__decorate([
+    (0, common_1.Get)('time-rating'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getTimeRatingNovels", null);
+__decorate([
+    (0, common_1.Get)('top-rating'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getTopRatingNovels", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),

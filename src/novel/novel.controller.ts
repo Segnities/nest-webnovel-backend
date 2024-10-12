@@ -28,12 +28,21 @@ export class NovelController {
   async getDiscoverNovels() {
     return this.novelService.getDiscoverNovels();
   }
+  @Get('time-rating')
+  async getTimeRatingNovels() {
+    return this.novelService.getTimeRatingNovels();
+  }
+
+  @Get('top-rating')
+  @HttpCode(HttpStatus.OK)
+  async getTopRatingNovels(@Body() data: { limit: number, select: Prisma.NovelSelect }) {
+    return this.novelService.getTopRatingNovels(data);
+  }
+
   @Get(':id')
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
     return this.novelService.findOneById(id);
   }
-
-
   @Get()
   async findAll(@Query() args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
     return this.novelService.findAll(args);
