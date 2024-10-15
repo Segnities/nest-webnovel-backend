@@ -21,7 +21,26 @@ let NovelService = class NovelService {
         this.cloudinaryService = cloudinaryService;
     }
     async findOneById(id) {
-        return this.prisma.novel.findUnique({ where: { id } });
+        return this.prisma.novel.findUnique({
+            where: { id },
+            include: {
+                author: true,
+                alternativeTitles: true,
+                tags: true,
+                chapters: {
+                    select: {
+                        id: true,
+                        title: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        slug: true,
+                        views: true,
+                        chapterNumber: true,
+                        _count: true,
+                    },
+                }
+            }
+        });
     }
     async createOne(data) {
         const localImages = [];
@@ -275,7 +294,23 @@ let NovelService = class NovelService {
         return this.prisma.novel.findMany({
             take: limit,
             orderBy: { updatedAt: 'desc' },
-            include: { author: true },
+            include: { tags: true, genres: true, author: true, chapters: true }
+        });
+    }
+    async findRecentlyCreatedNovels(limit = 10) {
+        return this.prisma.novel.findMany({
+            take: limit,
+            orderBy: { createdAt: 'desc' },
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                country: {
+                    select: { title: true },
+                },
+                img: true,
+                createdAt: true,
+            },
         });
     }
     async searchNovels(searchTerm) {

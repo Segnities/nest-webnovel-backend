@@ -24,11 +24,39 @@ import {
 @Controller('novels')
 export class NovelController {
   constructor(private readonly novelService: NovelService) { }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findAll(@Query() args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
+    const { take, skip, select, include, ...rest } = args;
+    const parsedTake = take ? parseInt(String(take), 10) : undefined;
+    const parsedSkip = skip ? parseInt(String(skip), 10) : undefined;
+    const parsedSelect = select
+      ? Object.keys(select).reduce((acc, key) => {
+        acc[key] = select[key] === 'true'; // convert "true"/"false" strings to booleans
+        return acc;
+      }, {})
+      : undefined;
+    const parsedInclude = include ? Object.keys(select).reduce((acc, key) => {
+      acc[key] = select[key] === 'true';
+      return acc;
+    }, {}) : undefined;
+
+    return this.novelService.findAll({
+      take: parsedTake,
+      skip: parsedSkip,
+      select: parsedSelect,
+      include: parsedInclude,
+      ...rest
+    });
+  }
+
   @Get('discover')
   async getDiscoverNovels() {
     return this.novelService.getDiscoverNovels();
   }
   @Get('time-rating')
+  @HttpCode(HttpStatus.OK)
   async getTimeRatingNovels() {
     return this.novelService.getTimeRatingNovels();
   }
@@ -37,15 +65,6 @@ export class NovelController {
   @HttpCode(HttpStatus.OK)
   async getTopRatingNovels(@Body() data: { limit: number, select: Prisma.NovelSelect }) {
     return this.novelService.getTopRatingNovels(data);
-  }
-
-  @Get(':id')
-  async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
-    return this.novelService.findOneById(id);
-  }
-  @Get()
-  async findAll(@Query() args: Prisma.NovelFindManyArgs): Promise<Novel[]> {
-    return this.novelService.findAll(args);
   }
 
   @Post()
@@ -179,6 +198,12 @@ export class NovelController {
     return this.novelService.getRecentlyUpdatedNovels(limit);
   }
 
+  @Get('recently-created')
+  @HttpCode(HttpStatus.OK)
+  async findRecentlyCreatedNovels(@Query('limit', ParseIntPipe) limit: number = 8) {
+    return this.novelService.findRecentlyCreatedNovels(limit);
+  }
+
   @Get('search')
   @HttpCode(HttpStatus.OK)
   async searchNovels(@Query('term') searchTerm: string): Promise<Novel[]> {
@@ -247,5 +272,9 @@ export class NovelController {
     @Param('title') title: string,
   ): Promise<Novel[]> {
     return this.novelService.getNovelsByAlternativeTitle(title);
+  }
+  @Get(':id')
+  async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {
+    return this.novelService.findOneById(id);
   }
 }
