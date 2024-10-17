@@ -20,11 +20,42 @@ let NovelController = class NovelController {
     constructor(novelService) {
         this.novelService = novelService;
     }
-    async findOneById(id) {
-        return this.novelService.findOneById(id);
-    }
     async findAll(args) {
-        return this.novelService.findAll(args);
+        const { take, skip, select, include, ...rest } = args;
+        const parsedTake = take ? parseInt(String(take), 10) : undefined;
+        const parsedSkip = skip ? parseInt(String(skip), 10) : undefined;
+        const parsedSelect = select
+            ? Object.keys(select).reduce((acc, key) => {
+                acc[key] = select[key] === 'true';
+                return acc;
+            }, {})
+            : undefined;
+        const parsedInclude = include ? Object.keys(select).reduce((acc, key) => {
+            acc[key] = select[key] === 'true';
+            return acc;
+        }, {}) : undefined;
+        return this.novelService.findAll({
+            take: parsedTake,
+            skip: parsedSkip,
+            select: parsedSelect,
+            include: parsedInclude,
+            ...rest
+        });
+    }
+    async findLastUpdatedChapters() {
+        return this.novelService.findLastUpdatedChaptersToday();
+    }
+    async getDiscoverNovels() {
+        return this.novelService.getDiscoverNovels();
+    }
+    async getTimeRatingNovels() {
+        return this.novelService.getTimeRatingNovels();
+    }
+    async getTopRatingNovels(data) {
+        return this.novelService.getTopRatingNovels(data);
+    }
+    async findChaptersStatsByChapterSlug(slug) {
+        return this.novelService.findChaptersStatsByChapterSlug(slug);
     }
     async createOne(data) {
         console.log(data);
@@ -78,6 +109,9 @@ let NovelController = class NovelController {
     async getRecentlyUpdatedNovels(limit = 10) {
         return this.novelService.getRecentlyUpdatedNovels(limit);
     }
+    async findRecentlyCreatedNovels(limit = 8) {
+        return this.novelService.findRecentlyCreatedNovels(limit);
+    }
     async searchNovels(searchTerm) {
         return this.novelService.searchNovels(searchTerm);
     }
@@ -108,22 +142,59 @@ let NovelController = class NovelController {
     async getNovelsByAlternativeTitle(title) {
         return this.novelService.getNovelsByAlternativeTitle(title);
     }
+    async findOneBySlug(slug) {
+        return this.novelService.findOneBySlug(slug);
+    }
+    async findOneById(id) {
+        return this.novelService.findOneById(id);
+    }
 };
 exports.NovelController = NovelController;
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], NovelController.prototype, "findOneById", null);
-__decorate([
     (0, common_1.Get)(),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('last-updated-chapters-today'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "findLastUpdatedChapters", null);
+__decorate([
+    (0, common_1.Get)('discover'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getDiscoverNovels", null);
+__decorate([
+    (0, common_1.Get)('time-rating'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getTimeRatingNovels", null);
+__decorate([
+    (0, common_1.Get)('top-rating'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "getTopRatingNovels", null);
+__decorate([
+    (0, common_1.Get)('stats/chapters/:slug'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "findChaptersStatsByChapterSlug", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.HttpCode)(common_1.HttpStatus.CREATED),
@@ -261,6 +332,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getRecentlyUpdatedNovels", null);
 __decorate([
+    (0, common_1.Get)('recently-created'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    __param(0, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "findRecentlyCreatedNovels", null);
+__decorate([
     (0, common_1.Get)('search'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     __param(0, (0, common_1.Query)('term')),
@@ -338,6 +417,20 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getNovelsByAlternativeTitle", null);
+__decorate([
+    (0, common_1.Get)('slug/:slug'),
+    __param(0, (0, common_1.Param)('slug')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "findOneBySlug", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "findOneById", null);
 exports.NovelController = NovelController = __decorate([
     (0, common_1.Controller)('novels'),
     __metadata("design:paramtypes", [novel_service_1.NovelService])

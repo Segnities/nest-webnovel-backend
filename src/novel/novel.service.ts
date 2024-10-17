@@ -16,10 +16,46 @@ export class NovelService {
   constructor(
     private prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
-  ) { }
+  ) {}
+
+  async findChaptersStatsByChapterSlug(slug: string) {
+    return this.prisma.novel.findUnique({
+       where: { slug },
+       select: {
+          isAdult: true,
+          title: true,
+          img: true,
+          chapters: {
+             select: {
+                title: true,
+                chapterNumber: true,
+                slug: true,
+             }
+          }
+       }
+    });
+ }
 
   async findOneById(id: number): Promise<Novel> {
-    return this.prisma.novel.findUnique({ where: { id } });
+    return this.prisma.novel.findUnique({
+      where: { id },
+      include: {
+        author: true,
+        alternativeTitles: true,
+        tags: true,
+        chapters: {
+          select: {
+            id: true,
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+            slug: true,
+            views: true,
+            chapterNumber: true,
+          },
+        },
+      },
+    });
   }
   async createOne(data: Prisma.NovelCreateInput): Promise<Novel> {
     const localImages: string[] = [];
@@ -103,11 +139,11 @@ export class NovelService {
         // Compress cover image if it exists
         const coverImageProps = novelData.coverImg
           ? {
-            imageUrl: novelData.coverImg,
-            title: novelData.original_title,
-            width: 1000,
-            height: 450,
-          }
+              imageUrl: novelData.coverImg,
+              title: novelData.original_title,
+              width: 1000,
+              height: 450,
+            }
           : null;
         const coverImage = coverImageProps
           ? await compressAndUploadImage(coverImageProps)
@@ -130,7 +166,9 @@ export class NovelService {
         novels.push(novel);
       }
       // Create many novels in the database
-      const createdNovels = await this.prisma.novel.createManyAndReturn({ data: novels });
+      const createdNovels = await this.prisma.novel.createManyAndReturn({
+        data: novels,
+      });
       return createdNovels;
     } catch (error) {
       await deleteLocalImages(localImages);
@@ -139,7 +177,30 @@ export class NovelService {
   }
 
   async findOneBySlug(slug: string): Promise<Novel> {
-    return this.prisma.novel.findFirst({ where: { slug } });
+    return this.prisma.novel.findUnique({
+      where: { slug },
+      include: {
+        author: true,
+        alternativeTitles: true,
+        country: {
+          select: {
+            title: true,
+          },
+        },
+        tags: true,
+        chapters: {
+          select: {
+            id: true,
+            title: true,
+            createdAt: true,
+            updatedAt: true,
+            slug: true,
+            views: true,
+            chapterNumber: true,
+          },
+        },
+      },
+    });
   }
 
   async findOneByTitle(title: string): Promise<Novel> {
@@ -305,7 +366,24 @@ export class NovelService {
     return this.prisma.novel.findMany({
       take: limit,
       orderBy: { updatedAt: 'desc' },
-      include: { author: true },
+      include: { tags: true, genres: true, author: true, chapters: true },
+    });
+  }
+
+  async findRecentlyCreatedNovels(limit: number = 10) {
+    return this.prisma.novel.findMany({
+      take: limit,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        country: {
+          select: { title: true },
+        },
+        img: true,
+        createdAt: true,
+      },
     });
   }
 
@@ -451,6 +529,131 @@ export class NovelService {
         },
       },
       include: { author: true, alternativeTitles: true },
+    });
+  }
+
+  async getDiscoverNovels() {
+    const top500Novels = await this.prisma.novel.findMany({
+      orderBy: {
+        likes: 'desc', // Change to descending order to get top novels
+      },
+      take: 500,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        country: {
+          select: { title: true },
+        },
+        img: true,
+      },
+    });
+    const shuffled = top500Novels.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 20);
+  }
+
+  async getTimeRatingNovels() {
+    const now = new Date();
+    const weekAgo = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() - 7,
+    );
+    const monthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate(),
+    );
+
+    const weeklyTop = [];
+    const monthlyTop = [];
+
+    const novels = await this.prisma.novel.findMany({
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        country: {
+          select: { title: true },
+        },
+        img: true,
+        createdAt: true,
+      },
+      orderBy: {
+        likes: 'desc',
+      },
+    });
+
+    for (const novel of novels) {
+      const createdAt = new Date(novel.createdAt);
+      if (createdAt >= monthAgo && monthlyTop.length < 10) {
+        monthlyTop.push(novel);
+      }
+      if (createdAt >= weekAgo && weeklyTop.length < 10) {
+        weeklyTop.push(novel);
+      }
+      if (weeklyTop.length >= 10 && monthlyTop.length >= 10) {
+        break;
+      }
+    }
+    return {
+      weeklyTop,
+      monthlyTop,
+      allTimeTop: novels.slice(0, 10),
+    };
+  }
+
+  async getTopRatingNovels({
+    limit,
+    select,
+  }: {
+    limit: number;
+    select: Prisma.NovelSelect;
+  }) {
+    return this.prisma.novel.findMany({
+      take: limit,
+      orderBy: {
+        likes: 'desc',
+      },
+      select,
+    });
+  }
+
+  async findLastUpdatedChaptersToday() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return this.prisma.novel.findMany({
+      where: {
+        chapters: {
+          some: {},
+        },
+      },
+      select: {
+        id: true,
+        img: true,
+        title: true,
+        slug: true,
+        country: {
+          select: {
+            title: true,
+          },
+        },
+        releaseYear: true,
+        chapters: {
+          select: {
+            slug: true,
+            title: true,
+            id: true,
+            chapterNumber: true,
+          },
+          where: {
+            createdAt: {
+              gte: today,
+            },
+          },
+        },
+      },
     });
   }
 }

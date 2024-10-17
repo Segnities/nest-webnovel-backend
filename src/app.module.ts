@@ -30,6 +30,7 @@ import { ReviewModule } from './review/review.module';
 import { FirebaseAdmin } from '@config/firebase.setup';
 import { CommendableTypeModule } from './commendable-type/commendable-type.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ChapterModule } from './chapter/chapter.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     ReviewModule,
     CommendableTypeModule,
     CloudinaryModule,
+    ChapterModule,
   ],
   controllers: [AppController],
   providers: [
