@@ -20,6 +20,23 @@ let NovelService = class NovelService {
         this.prisma = prisma;
         this.cloudinaryService = cloudinaryService;
     }
+    async findChaptersStatsByChapterSlug(slug) {
+        return this.prisma.novel.findUnique({
+            where: { slug },
+            select: {
+                isAdult: true,
+                title: true,
+                img: true,
+                chapters: {
+                    select: {
+                        title: true,
+                        chapterNumber: true,
+                        slug: true,
+                    }
+                }
+            }
+        });
+    }
     async findOneById(id) {
         return this.prisma.novel.findUnique({
             where: { id },
@@ -36,10 +53,9 @@ let NovelService = class NovelService {
                         slug: true,
                         views: true,
                         chapterNumber: true,
-                        _count: true,
                     },
-                }
-            }
+                },
+            },
         });
     }
     async createOne(data) {
@@ -134,7 +150,9 @@ let NovelService = class NovelService {
                 };
                 novels.push(novel);
             }
-            const createdNovels = await this.prisma.novel.createManyAndReturn({ data: novels });
+            const createdNovels = await this.prisma.novel.createManyAndReturn({
+                data: novels,
+            });
             return createdNovels;
         }
         catch (error) {
@@ -143,7 +161,30 @@ let NovelService = class NovelService {
         }
     }
     async findOneBySlug(slug) {
-        return this.prisma.novel.findFirst({ where: { slug } });
+        return this.prisma.novel.findUnique({
+            where: { slug },
+            include: {
+                author: true,
+                alternativeTitles: true,
+                country: {
+                    select: {
+                        title: true,
+                    },
+                },
+                tags: true,
+                chapters: {
+                    select: {
+                        id: true,
+                        title: true,
+                        createdAt: true,
+                        updatedAt: true,
+                        slug: true,
+                        views: true,
+                        chapterNumber: true,
+                    },
+                },
+            },
+        });
     }
     async findOneByTitle(title) {
         return this.prisma.novel.findFirst({ where: { title } });
@@ -294,7 +335,7 @@ let NovelService = class NovelService {
         return this.prisma.novel.findMany({
             take: limit,
             orderBy: { updatedAt: 'desc' },
-            include: { tags: true, genres: true, author: true, chapters: true }
+            include: { tags: true, genres: true, author: true, chapters: true },
         });
     }
     async findRecentlyCreatedNovels(limit = 10) {
@@ -500,13 +541,49 @@ let NovelService = class NovelService {
             allTimeTop: novels.slice(0, 10),
         };
     }
-    async getTopRatingNovels({ limit, select }) {
+    async getTopRatingNovels({ limit, select, }) {
         return this.prisma.novel.findMany({
             take: limit,
             orderBy: {
-                likes: "desc"
+                likes: 'desc',
             },
             select,
+        });
+    }
+    async findLastUpdatedChaptersToday() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return this.prisma.novel.findMany({
+            where: {
+                chapters: {
+                    some: {},
+                },
+            },
+            select: {
+                id: true,
+                img: true,
+                title: true,
+                slug: true,
+                country: {
+                    select: {
+                        title: true,
+                    },
+                },
+                releaseYear: true,
+                chapters: {
+                    select: {
+                        slug: true,
+                        title: true,
+                        id: true,
+                        chapterNumber: true,
+                    },
+                    where: {
+                        createdAt: {
+                            gte: today,
+                        },
+                    },
+                },
+            },
         });
     }
 };

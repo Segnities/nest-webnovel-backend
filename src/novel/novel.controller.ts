@@ -50,8 +50,14 @@ export class NovelController {
       ...rest
     });
   }
+  @Get('last-updated-chapters-today')
+  @HttpCode(HttpStatus.OK)
+  async findLastUpdatedChapters() {
+    return this.novelService.findLastUpdatedChaptersToday();
+  }
 
   @Get('discover')
+  @HttpCode(HttpStatus.OK)
   async getDiscoverNovels() {
     return this.novelService.getDiscoverNovels();
   }
@@ -65,6 +71,14 @@ export class NovelController {
   @HttpCode(HttpStatus.OK)
   async getTopRatingNovels(@Body() data: { limit: number, select: Prisma.NovelSelect }) {
     return this.novelService.getTopRatingNovels(data);
+  }
+
+  @Get('stats/chapters/:slug')
+  @HttpCode(HttpStatus.OK)
+  async findChaptersStatsByChapterSlug(
+    @Param('slug') slug: string,
+  ) {
+    return this.novelService.findChaptersStatsByChapterSlug(slug);
   }
 
   @Post()
@@ -272,6 +286,10 @@ export class NovelController {
     @Param('title') title: string,
   ): Promise<Novel[]> {
     return this.novelService.getNovelsByAlternativeTitle(title);
+  }
+  @Get('slug/:slug')
+  async findOneBySlug(@Param('slug') slug: string) {
+    return this.novelService.findOneBySlug(slug);
   }
   @Get(':id')
   async findOneById(@Param('id', ParseIntPipe) id: number): Promise<Novel> {

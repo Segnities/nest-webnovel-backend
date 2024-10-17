@@ -4,6 +4,22 @@ export declare class NovelController {
     private readonly novelService;
     constructor(novelService: NovelService);
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
+    findLastUpdatedChapters(): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
+        releaseYear: number;
+        country: {
+            title: string;
+        };
+        chapters: {
+            id: number;
+            title: string;
+            slug: string;
+            chapterNumber: number;
+        }[];
+    }[]>;
     getDiscoverNovels(): Promise<{
         id: number;
         title: string;
@@ -86,9 +102,9 @@ export declare class NovelController {
             updatedAt: Date;
             views: number;
             commendableTypeId: number;
-            novelId: number;
             content: string;
             chapterNumber: number;
+            novelId: number;
         }[];
         reviews: {
             id: number;
@@ -166,6 +182,16 @@ export declare class NovelController {
             collectionItems: number;
         };
     }[]>;
+    findChaptersStatsByChapterSlug(slug: string): Promise<{
+        title: string;
+        img: string;
+        isAdult: boolean;
+        chapters: {
+            title: string;
+            slug: string;
+            chapterNumber: number;
+        }[];
+    }>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
     createMany(data: Prisma.NovelCreateManyInput[]): Promise<Novel[]>;
     updateOne(id: number, data: Prisma.NovelUpdateInput): Promise<Novel>;
@@ -205,5 +231,27 @@ export declare class NovelController {
     getNonAdultNovels(): Promise<Novel[]>;
     getNovelsByAuthorName(name: string): Promise<Novel[]>;
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
+    findOneBySlug(slug: string): Promise<{
+        id: number;
+        title: string;
+        original_title: string | null;
+        description: string;
+        slug: string | null;
+        img: string;
+        likes: number;
+        dislikes: number;
+        isAdult: boolean;
+        releaseYear: number | null;
+        coverImg: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        views: number;
+        countryId: number;
+        status: import(".prisma/client").$Enums.NovelStatus;
+        authorId: number;
+        translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+        format: import(".prisma/client").$Enums.NovelFormat;
+        commendableTypeId: number;
+    }>;
     findOneById(id: number): Promise<Novel>;
 }
