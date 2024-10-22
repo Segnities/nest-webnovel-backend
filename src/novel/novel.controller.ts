@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseArrayPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { NovelService } from './novel.service';
 import {
@@ -61,16 +62,27 @@ export class NovelController {
   async getDiscoverNovels() {
     return this.novelService.getDiscoverNovels();
   }
+
   @Get('time-rating')
   @HttpCode(HttpStatus.OK)
   async getTimeRatingNovels() {
     return this.novelService.getTimeRatingNovels();
   }
 
-  @Get('top-rating')
+  /*   @Get('top-rating')
+    @HttpCode(HttpStatus.OK)
+    async getTopRatingNovels(@Body() data: { limit: number, select: Prisma.NovelSelect }) {
+      return this.novelService.getTopRatingNovels(data);
+    } */
+
+  @Get('download/:slug')
   @HttpCode(HttpStatus.OK)
-  async getTopRatingNovels(@Body() data: { limit: number, select: Prisma.NovelSelect }) {
-    return this.novelService.getTopRatingNovels(data);
+  async downloadNovel(@Param('slug') slug: string) {
+    const data = await this.novelService.findDownloadData(slug);
+    if (!data) {
+      throw new NotFoundException();
+    }
+    return data;
   }
 
   @Get('stats/chapters/:slug')

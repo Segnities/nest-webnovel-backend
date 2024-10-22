@@ -16,25 +16,67 @@ export class NovelService {
   constructor(
     private prisma: PrismaService,
     private cloudinaryService: CloudinaryService,
-  ) {}
+  ) { }
 
   async findChaptersStatsByChapterSlug(slug: string) {
     return this.prisma.novel.findUnique({
-       where: { slug },
-       select: {
-          isAdult: true,
-          title: true,
-          img: true,
-          chapters: {
-             select: {
-                title: true,
-                chapterNumber: true,
-                slug: true,
-             }
+      where: { slug },
+      select: {
+        isAdult: true,
+        slug: true,
+        title: true,
+        img: true,
+        chapters: {
+          select: {
+            title: true,
+            chapterNumber: true,
+            slug: true,
           }
-       }
+        }
+      }
     });
- }
+  }
+
+  async findDownloadData(slug: string) {
+    const novel = await this.prisma.novel.findUnique({
+      where: { slug },
+      select: {
+        id: true,
+        coverImg: true,
+        img: true,
+        description: true,
+        format: true,
+        genres: true,
+        createdAt: true,
+        updatedAt: true,
+        releaseYear: true,
+        isAdult: true,
+        country: {
+          select: {
+            title: true,
+          },
+        },
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        chapters: {
+          select: {
+            chapterNumber: true,
+            id: true,
+            slug: true,
+            title: true,
+            content: true,
+          },
+        },
+      }
+    });
+    if (!novel) {
+      throw new NotFoundException('Novel not found');
+    }
+    return novel;
+  }
 
   async findOneById(id: number): Promise<Novel> {
     return this.prisma.novel.findUnique({
@@ -139,11 +181,11 @@ export class NovelService {
         // Compress cover image if it exists
         const coverImageProps = novelData.coverImg
           ? {
-              imageUrl: novelData.coverImg,
-              title: novelData.original_title,
-              width: 1000,
-              height: 450,
-            }
+            imageUrl: novelData.coverImg,
+            title: novelData.original_title,
+            width: 1000,
+            height: 450,
+          }
           : null;
         const coverImage = coverImageProps
           ? await compressAndUploadImage(coverImageProps)
