@@ -43,6 +43,7 @@ let NovelService = class NovelService {
             where: { slug },
             select: {
                 id: true,
+                title: true,
                 coverImg: true,
                 img: true,
                 description: true,

@@ -18,6 +18,7 @@ export declare class NovelService {
     }>;
     findDownloadData(slug: string): Promise<{
         id: number;
+        title: string;
         description: string;
         img: string;
         isAdult: boolean;
