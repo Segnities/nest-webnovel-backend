@@ -28,6 +28,16 @@ export class ChapterController {
       return this.chapterService.findAllChapters();
    }
 
+   @Get('count/:novelSlug')
+   async getChaptersNovelCountBySlug(
+      @Param('novelSlug') novelSlug: string
+   ) {
+      const chaptersCount = await this.chapterService.getChaptersNovelCountBySlug(novelSlug);
+      return {
+         chaptersCount
+      }
+   }
+
    @Get('slug/:slug')
    async findOneBySlug(
       @Param('slug') slug: string,
