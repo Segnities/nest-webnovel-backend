@@ -52,7 +52,7 @@ let NovelController = class NovelController {
         return this.novelService.getTimeRatingNovels();
     }
     async downloadNovel(slug) {
-        const data = await this.novelService.findDownloadData(slug);
+        const data = await this.novelService.getDownloadData(slug);
         if (!data) {
             throw new common_1.NotFoundException();
         }

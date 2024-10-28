@@ -38,8 +38,23 @@ let NovelService = class NovelService {
             }
         });
     }
-    async findDownloadData(slug) {
-        const novel = await this.prisma.novel.findUnique({
+    async getDownloadData(slug) {
+        const chapters_stats = await this.prisma.novel.findUnique({
+            where: { slug },
+            select: {
+                chapters: {
+                    select: {
+                        id: true,
+                        title: true,
+                        chapterNumber: true,
+                        slug: true,
+                        createdAt: true,
+                        updatedAt: true
+                    }
+                }
+            }
+        });
+        const download_data = await this.prisma.novel.findUnique({
             where: { slug },
             select: {
                 id: true,
@@ -53,6 +68,9 @@ let NovelService = class NovelService {
                 updatedAt: true,
                 releaseYear: true,
                 isAdult: true,
+                status: true,
+                slug: true,
+                translationStatus: true,
                 country: {
                     select: {
                         title: true,
@@ -70,14 +88,16 @@ let NovelService = class NovelService {
                         slug: true,
                         title: true,
                         content: true,
+                        createdAt: true,
+                        updatedAt: true,
                     },
                 },
             }
         });
-        if (!novel) {
+        if (!download_data) {
             throw new common_1.NotFoundException('Novel not found');
         }
-        return novel;
+        return { download_data, chapters_stats };
     }
     async findOneById(id) {
         return this.prisma.novel.findUnique({

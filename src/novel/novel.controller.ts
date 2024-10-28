@@ -78,7 +78,7 @@ export class NovelController {
   @Get('download/:slug')
   @HttpCode(HttpStatus.OK)
   async downloadNovel(@Param('slug') slug: string) {
-    const data = await this.novelService.findDownloadData(slug);
+    const data = await this.novelService.getDownloadData(slug);
     if (!data) {
       throw new NotFoundException();
     }

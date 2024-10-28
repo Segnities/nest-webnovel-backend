@@ -44,33 +44,50 @@ export declare class NovelController {
         }[];
     }>;
     downloadNovel(slug: string): Promise<{
-        id: number;
-        title: string;
-        description: string;
-        img: string;
-        isAdult: boolean;
-        releaseYear: number;
-        coverImg: string;
-        createdAt: Date;
-        updatedAt: Date;
-        format: import(".prisma/client").$Enums.NovelFormat;
-        country: {
-            title: string;
-        };
-        author: {
-            name: string;
-        };
-        genres: {
+        download_data: {
             id: number;
             title: string;
-        }[];
-        chapters: {
-            id: number;
-            title: string;
+            description: string;
             slug: string;
-            content: string;
-            chapterNumber: number;
-        }[];
+            img: string;
+            isAdult: boolean;
+            releaseYear: number;
+            coverImg: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.NovelStatus;
+            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+            format: import(".prisma/client").$Enums.NovelFormat;
+            country: {
+                title: string;
+            };
+            author: {
+                name: string;
+            };
+            genres: {
+                id: number;
+                title: string;
+            }[];
+            chapters: {
+                id: number;
+                title: string;
+                slug: string;
+                createdAt: Date;
+                updatedAt: Date;
+                content: string;
+                chapterNumber: number;
+            }[];
+        };
+        chapters_stats: {
+            chapters: {
+                id: number;
+                title: string;
+                slug: string;
+                createdAt: Date;
+                updatedAt: Date;
+                chapterNumber: number;
+            }[];
+        };
     }>;
     findChaptersStatsByChapterSlug(slug: string): Promise<{
         title: string;
