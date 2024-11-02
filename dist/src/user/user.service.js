@@ -18,32 +18,12 @@ let UserService = class UserService {
         this.prisma = prisma;
         this.admin = admin;
     }
-    async createUserWithFirebase(data) {
-        const { email, password, firstName, lastName, role, username } = data;
-        const app = this.admin.setup();
-        try {
-            const createdUser = await app.auth().createUser({
-                email,
-                password,
-                displayName: `${firstName} ${lastName}`,
-            });
-            await app.auth().setCustomUserClaims(createdUser.uid, { role });
-            await this.prisma.user.create({
-                data: {
-                    email,
-                    firstName,
-                    lastName,
-                    roleId: 1,
-                    img: 'no-image',
-                    password,
-                    username,
-                },
-            });
-            return createdUser;
-        }
-        catch (error) {
-            throw new common_1.BadRequestException(error.message);
-        }
+    async isUsernameHasDuplicate(username) {
+        const user = await this.prisma.user.findUnique({
+            where: { username },
+            select: { id: true }
+        });
+        return { hasDuplicate: !!user };
     }
     async createUser(data) {
         return this.prisma.user.create({ data });
@@ -171,18 +151,6 @@ let UserService = class UserService {
             where: { id: userId },
             select: {
                 team: true,
-            },
-        });
-    }
-    async getUserPermissions(userId) {
-        return this.prisma.user.findUnique({
-            where: { id: userId },
-            select: {
-                role: {
-                    include: {
-                        permissions: true,
-                    },
-                },
             },
         });
     }

@@ -1,5 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { Role, Permission, Prisma } from '@prisma/client';
+import { Role, Prisma } from '@prisma/client';
 export declare class RoleService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -9,11 +9,6 @@ export declare class RoleService {
     getRoleByName(name: string): Promise<Role | null>;
     updateRole(id: number, data: Prisma.RoleUpdateInput): Promise<Role>;
     deleteRole(id: number): Promise<Role>;
-    getRoleWithPermissions(id: number): Promise<Role & {
-        permissions: Permission[];
-    }>;
-    addPermissionToRole(roleId: number, permissionData: Prisma.PermissionCreateInput): Promise<Permission>;
-    removePermissionFromRole(roleId: number, permissionId: number): Promise<Permission>;
     getUsersWithRole(roleId: number): Promise<{
         id: number;
         username: string;

@@ -16,19 +16,18 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const client_1 = require("@prisma/client");
-const CreateUserDto_1 = require("./dto/CreateUserDto");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
-    }
-    async signup(createUserDto) {
-        return this.userService.createUserWithFirebase(createUserDto);
     }
     async createUser(createUserDto) {
         return this.userService.createUser(createUserDto);
     }
     async getUserById(id) {
         return this.userService.getUserById(id);
+    }
+    async isUsernameHasDuplicate(data) {
+        return this.userService.isUsernameHasDuplicate(data.username);
     }
     async getUserByEmail(email) {
         return this.userService.getUserByEmail(email);
@@ -60,9 +59,6 @@ let UserController = class UserController {
     async getUserAuthorSubscriptions(userId) {
         return this.userService.getUserAuthorSubscriptions(userId);
     }
-    async getUserPermissions(userId) {
-        return this.userService.getUserPermissions(userId);
-    }
     async getUserNovelRatings(userId) {
         return this.userService.getUserNovelRatings(userId);
     }
@@ -74,13 +70,6 @@ let UserController = class UserController {
     }
 };
 exports.UserController = UserController;
-__decorate([
-    (0, common_1.Post)('signup'),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [CreateUserDto_1.CreateUserDto]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "signup", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
@@ -95,6 +84,13 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Get)('username/duplicate'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "isUsernameHasDuplicate", null);
 __decorate([
     (0, common_1.Get)('email/:email'),
     __param(0, (0, common_1.Param)('email')),
@@ -166,13 +162,6 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserAuthorSubscriptions", null);
-__decorate([
-    (0, common_1.Get)(':id/permissions'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "getUserPermissions", null);
 __decorate([
     (0, common_1.Get)(':id/novel-ratings'),
     __param(0, (0, common_1.Param)('id')),

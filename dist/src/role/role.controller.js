@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoleController = void 0;
 const common_1 = require("@nestjs/common");
 const role_service_1 = require("./role.service");
-const client_1 = require("@prisma/client");
 let RoleController = class RoleController {
     constructor(roleService) {
         this.roleService = roleService;
@@ -37,15 +36,6 @@ let RoleController = class RoleController {
     }
     async deleteRole(id) {
         return this.roleService.deleteRole(Number(id));
-    }
-    async getRoleWithPermissions(id) {
-        return this.roleService.getRoleWithPermissions(Number(id));
-    }
-    async addPermissionToRole(id, permissionData) {
-        return this.roleService.addPermissionToRole(Number(id), permissionData);
-    }
-    async removePermissionFromRole(roleId, permissionId) {
-        return this.roleService.removePermissionFromRole(Number(roleId), Number(permissionId));
     }
     async getUsersWithRole(id) {
         return this.roleService.getUsersWithRole(Number(id));
@@ -97,29 +87,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], RoleController.prototype, "deleteRole", null);
-__decorate([
-    (0, common_1.Get)(':id/permissions'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], RoleController.prototype, "getRoleWithPermissions", null);
-__decorate([
-    (0, common_1.Post)(':id/permissions'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", Promise)
-], RoleController.prototype, "addPermissionToRole", null);
-__decorate([
-    (0, common_1.Delete)(':roleId/permissions/:permissionId'),
-    __param(0, (0, common_1.Param)('roleId')),
-    __param(1, (0, common_1.Param)('permissionId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
-    __metadata("design:returntype", Promise)
-], RoleController.prototype, "removePermissionFromRole", null);
 __decorate([
     (0, common_1.Get)(':id/users'),
     __param(0, (0, common_1.Param)('id')),

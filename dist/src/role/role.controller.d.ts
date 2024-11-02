@@ -1,5 +1,5 @@
 import { RoleService } from './role.service';
-import { Role, Permission, Prisma } from '@prisma/client';
+import { Role } from '@prisma/client';
 export declare class RoleController {
     private readonly roleService;
     constructor(roleService: RoleService);
@@ -15,11 +15,6 @@ export declare class RoleController {
         description?: string;
     }): Promise<Role>;
     deleteRole(id: string): Promise<Role>;
-    getRoleWithPermissions(id: string): Promise<Role & {
-        permissions: Permission[];
-    }>;
-    addPermissionToRole(id: string, permissionData: Prisma.PermissionCreateInput): Promise<Permission>;
-    removePermissionFromRole(roleId: string, permissionId: string): Promise<Permission>;
     getUsersWithRole(id: string): Promise<{
         id: number;
         username: string;
