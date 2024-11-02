@@ -37,7 +37,6 @@ export class UserService {
           lastName,
           roleId: 1,
           img: 'no-image',
-          password,
           username,
         },
       });
@@ -186,19 +185,6 @@ export class UserService {
       where: { id: userId },
       select: {
         team: true,
-      },
-    });
-  }
-
-  async getUserPermissions(userId: number) {
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        role: {
-          include: {
-            permissions: true,
-          },
-        },
       },
     });
   }

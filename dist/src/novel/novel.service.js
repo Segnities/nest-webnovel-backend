@@ -179,6 +179,9 @@ let NovelService = class NovelService {
         try {
             const novels = [];
             for (const novelData of data) {
+                if (!novelData.img) {
+                    throw new Error(`Invalid image URL for novel: ${novelData.original_title}`);
+                }
                 const novelImageProps = {
                     imageUrl: novelData.img,
                     title: novelData.original_title,
@@ -598,7 +601,7 @@ let NovelService = class NovelService {
             }
         }
         return {
-            weeklyTop,
+            weeklyTop: novels.slice(0, 10),
             monthlyTop,
             allTimeTop: novels.slice(0, 10),
         };

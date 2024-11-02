@@ -5,14 +5,14 @@ export declare class NovelController {
     constructor(novelService: NovelService);
     findAll(args: Prisma.NovelFindManyArgs): Promise<Novel[]>;
     findLastUpdatedChapters(): Promise<{
-        id: number;
-        title: string;
-        slug: string;
-        img: string;
-        releaseYear: number;
         country: {
             title: string;
         };
+        id: number;
+        img: string;
+        title: string;
+        slug: string;
+        releaseYear: number;
         chapters: {
             id: number;
             title: string;
@@ -21,58 +21,67 @@ export declare class NovelController {
         }[];
     }[]>;
     getDiscoverNovels(): Promise<{
-        id: number;
-        title: string;
-        slug: string;
-        img: string;
         country: {
             title: string;
         };
+        id: number;
+        img: string;
+        title: string;
+        slug: string;
     }[]>;
     getTimeRatingNovels(): Promise<{
-        weeklyTop: any[];
-        monthlyTop: any[];
-        allTimeTop: {
-            id: number;
-            title: string;
-            slug: string;
-            img: string;
-            createdAt: Date;
+        weeklyTop: {
             country: {
                 title: string;
             };
+            id: number;
+            createdAt: Date;
+            img: string;
+            title: string;
+            slug: string;
+        }[];
+        monthlyTop: any[];
+        allTimeTop: {
+            country: {
+                title: string;
+            };
+            id: number;
+            createdAt: Date;
+            img: string;
+            title: string;
+            slug: string;
         }[];
     }>;
     downloadNovel(slug: string): Promise<{
         download_data: {
-            id: number;
-            title: string;
-            description: string;
-            slug: string;
-            img: string;
-            isAdult: boolean;
-            releaseYear: number;
-            coverImg: string;
-            createdAt: Date;
-            updatedAt: Date;
-            status: import(".prisma/client").$Enums.NovelStatus;
-            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
-            format: import(".prisma/client").$Enums.NovelFormat;
             country: {
                 title: string;
             };
             author: {
                 name: string;
             };
+            id: number;
+            createdAt: Date;
+            img: string;
+            title: string;
+            description: string;
+            slug: string;
+            isAdult: boolean;
+            releaseYear: number;
+            coverImg: string;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.NovelStatus;
+            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+            format: import(".prisma/client").$Enums.NovelFormat;
             genres: {
                 id: number;
                 title: string;
             }[];
             chapters: {
                 id: number;
+                createdAt: Date;
                 title: string;
                 slug: string;
-                createdAt: Date;
                 updatedAt: Date;
                 content: string;
                 chapterNumber: number;
@@ -81,18 +90,18 @@ export declare class NovelController {
         chapters_stats: {
             chapters: {
                 id: number;
+                createdAt: Date;
                 title: string;
                 slug: string;
-                createdAt: Date;
                 updatedAt: Date;
                 chapterNumber: number;
             }[];
         };
     }>;
     findChaptersStatsByChapterSlug(slug: string): Promise<{
+        img: string;
         title: string;
         slug: string;
-        img: string;
         isAdult: boolean;
         chapters: {
             title: string;
@@ -118,14 +127,14 @@ export declare class NovelController {
     getMostViewedNovels(limit?: number): Promise<Novel[]>;
     getRecentlyUpdatedNovels(limit?: number): Promise<Novel[]>;
     findRecentlyCreatedNovels(limit?: number): Promise<{
-        id: number;
-        title: string;
-        slug: string;
-        img: string;
-        createdAt: Date;
         country: {
             title: string;
         };
+        id: number;
+        createdAt: Date;
+        img: string;
+        title: string;
+        slug: string;
     }[]>;
     searchNovels(searchTerm: string): Promise<Novel[]>;
     getNovelWithChapters(id: number): Promise<Novel & {
@@ -141,24 +150,24 @@ export declare class NovelController {
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
     findOneBySlug(slug: string): Promise<{
         id: number;
+        createdAt: Date;
+        authorId: number;
+        img: string;
         title: string;
         original_title: string | null;
         description: string;
         slug: string | null;
-        img: string;
         likes: number;
         dislikes: number;
         isAdult: boolean;
         releaseYear: number | null;
         coverImg: string | null;
-        createdAt: Date;
         updatedAt: Date;
         views: number;
-        countryId: number;
         status: import(".prisma/client").$Enums.NovelStatus;
-        authorId: number;
         translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
         format: import(".prisma/client").$Enums.NovelFormat;
+        countryId: number;
         commendableTypeId: number;
     }>;
     findOneById(id: number): Promise<Novel>;
