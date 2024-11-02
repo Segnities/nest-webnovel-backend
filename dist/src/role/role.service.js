@@ -34,25 +34,6 @@ let RoleService = class RoleService {
     async deleteRole(id) {
         return this.prisma.role.delete({ where: { id } });
     }
-    async getRoleWithPermissions(id) {
-        return this.prisma.role.findUnique({
-            where: { id },
-            include: { permissions: true },
-        });
-    }
-    async addPermissionToRole(roleId, permissionData) {
-        return this.prisma.permission.create({
-            data: {
-                ...permissionData,
-                role: { connect: { id: roleId } },
-            },
-        });
-    }
-    async removePermissionFromRole(roleId, permissionId) {
-        return this.prisma.permission.delete({
-            where: { id: permissionId, roleId },
-        });
-    }
     async getUsersWithRole(roleId) {
         return this.prisma.user.findMany({
             where: { roleId },

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   User,
@@ -10,41 +10,21 @@ import {
   Comment,
 } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
-import { CreateUserDto } from './dto/CreateUserDto';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record';
+/* import { CreateUserDto } from './dto/CreateUserDto';
+import { UserRecord } from 'firebase-admin/lib/auth/user-record'; */
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
     private readonly admin: FirebaseAdmin,
-  ) {}
-  async createUserWithFirebase(data: CreateUserDto): Promise<UserRecord> {
-    const { email, password, firstName, lastName, role, username } = data;
-    const app = this.admin.setup();
-
-    try {
-      const createdUser = await app.auth().createUser({
-        email,
-        password,
-        displayName: `${firstName} ${lastName}`,
-      });
-      await app.auth().setCustomUserClaims(createdUser.uid, { role });
-      await this.prisma.user.create({
-        data: {
-          email,
-          firstName,
-          lastName,
-          roleId: 1,
-          img: 'no-image',
-          password,
-          username,
-        },
-      });
-      return createdUser;
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+  ) { }
+  async isUsernameHasDuplicate(username: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: { id: true }
+    });
+    return { hasDuplicate: !!user };
   }
   async createUser(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
@@ -186,19 +166,6 @@ export class UserService {
       where: { id: userId },
       select: {
         team: true,
-      },
-    });
-  }
-
-  async getUserPermissions(userId: number) {
-    return this.prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        role: {
-          include: {
-            permissions: true,
-          },
-        },
       },
     });
   }

@@ -20,8 +20,19 @@ export class ChapterService {
          skipDuplicates: true,
       });
    }
+
    async findChapterById(id: number): Promise<Chapter | null> {
       return this.prisma.chapter.findUnique({ where: { id } });
+   }
+
+   async getChaptersNovelCountBySlug(novelSlug: string): Promise<number> {
+      return this.prisma.chapter.count({
+         where: {
+            novel: {
+               slug: novelSlug,
+            },
+         },
+      });
    }
 
    async findBySlug(slug: string) {
@@ -36,8 +47,6 @@ export class ChapterService {
          }
       })
    }
-
-   
 
    async findAllChapters(): Promise<Chapter[]> {
       return this.prisma.chapter.findMany();

@@ -6,20 +6,14 @@ import {
   Delete,
   Body,
   Param,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, Prisma } from '@prisma/client';
-import { CreateUserDto } from './dto/CreateUserDto';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Post('signup')
-  async signup(@Body() createUserDto: CreateUserDto): Promise<UserRecord> {
-    return this.userService.createUserWithFirebase(createUserDto);
-  }
+  constructor(private readonly userService: UserService) { }
 
   @Post()
   async createUser(
@@ -28,10 +22,17 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+
   @Get(':id')
   async getUserById(@Param('id') id: number): Promise<User | null> {
     return this.userService.getUserById(id);
   }
+
+  @Get('username/duplicate')
+  async isUsernameHasDuplicate(@Query() data: { username: string }) {
+    return this.userService.isUsernameHasDuplicate(data.username);
+  }
+
 
   @Get('email/:email')
   async getUserByEmail(@Param('email') email: string): Promise<User | null> {
@@ -86,10 +87,6 @@ export class UserController {
     return this.userService.getUserAuthorSubscriptions(userId);
   }
 
-  @Get(':id/permissions')
-  async getUserPermissions(@Param('id') userId: number) {
-    return this.userService.getUserPermissions(userId);
-  }
 
   @Get(':id/novel-ratings')
   async getUserNovelRatings(@Param('id') userId: number) {

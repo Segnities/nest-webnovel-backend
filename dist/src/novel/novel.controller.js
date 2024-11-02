@@ -51,8 +51,12 @@ let NovelController = class NovelController {
     async getTimeRatingNovels() {
         return this.novelService.getTimeRatingNovels();
     }
-    async getTopRatingNovels(data) {
-        return this.novelService.getTopRatingNovels(data);
+    async downloadNovel(slug) {
+        const data = await this.novelService.getDownloadData(slug);
+        if (!data) {
+            throw new common_1.NotFoundException();
+        }
+        return data;
     }
     async findChaptersStatsByChapterSlug(slug) {
         return this.novelService.findChaptersStatsByChapterSlug(slug);
@@ -180,13 +184,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "getTimeRatingNovels", null);
 __decorate([
-    (0, common_1.Get)('top-rating'),
+    (0, common_1.Get)('download/:slug'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Param)('slug')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "getTopRatingNovels", null);
+], NovelController.prototype, "downloadNovel", null);
 __decorate([
     (0, common_1.Get)('stats/chapters/:slug'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

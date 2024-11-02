@@ -8,7 +8,7 @@ import {
   Param,
 } from '@nestjs/common';
 import { RoleService } from './role.service';
-import { Role, Permission, Prisma } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 @Controller('role')
 export class RoleController {
@@ -47,32 +47,6 @@ export class RoleController {
   @Delete(':id')
   async deleteRole(@Param('id') id: string): Promise<Role> {
     return this.roleService.deleteRole(Number(id));
-  }
-
-  @Get(':id/permissions')
-  async getRoleWithPermissions(
-    @Param('id') id: string,
-  ): Promise<Role & { permissions: Permission[] }> {
-    return this.roleService.getRoleWithPermissions(Number(id));
-  }
-
-  @Post(':id/permissions')
-  async addPermissionToRole(
-    @Param('id') id: string,
-    @Body() permissionData: Prisma.PermissionCreateInput,
-  ): Promise<Permission> {
-    return this.roleService.addPermissionToRole(Number(id), permissionData);
-  }
-
-  @Delete(':roleId/permissions/:permissionId')
-  async removePermissionFromRole(
-    @Param('roleId') roleId: string,
-    @Param('permissionId') permissionId: string,
-  ): Promise<Permission> {
-    return this.roleService.removePermissionFromRole(
-      Number(roleId),
-      Number(permissionId),
-    );
   }
 
   @Get(':id/users')

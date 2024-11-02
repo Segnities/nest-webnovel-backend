@@ -8,12 +8,59 @@ export declare class NovelService {
     findChaptersStatsByChapterSlug(slug: string): Promise<{
         img: string;
         title: string;
+        slug: string;
         isAdult: boolean;
         chapters: {
             title: string;
             slug: string;
             chapterNumber: number;
         }[];
+    }>;
+    getDownloadData(slug: string): Promise<{
+        download_data: {
+            country: {
+                title: string;
+            };
+            author: {
+                name: string;
+            };
+            id: number;
+            createdAt: Date;
+            img: string;
+            title: string;
+            description: string;
+            slug: string;
+            isAdult: boolean;
+            releaseYear: number;
+            coverImg: string;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.NovelStatus;
+            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+            format: import(".prisma/client").$Enums.NovelFormat;
+            genres: {
+                id: number;
+                title: string;
+            }[];
+            chapters: {
+                id: number;
+                createdAt: Date;
+                title: string;
+                slug: string;
+                updatedAt: Date;
+                content: string;
+                chapterNumber: number;
+            }[];
+        };
+        chapters_stats: {
+            chapters: {
+                id: number;
+                createdAt: Date;
+                title: string;
+                slug: string;
+                updatedAt: Date;
+                chapterNumber: number;
+            }[];
+        };
     }>;
     findOneById(id: number): Promise<Novel>;
     createOne(data: Prisma.NovelCreateInput): Promise<Novel>;
@@ -71,7 +118,16 @@ export declare class NovelService {
         slug: string;
     }[]>;
     getTimeRatingNovels(): Promise<{
-        weeklyTop: any[];
+        weeklyTop: {
+            country: {
+                title: string;
+            };
+            id: number;
+            createdAt: Date;
+            img: string;
+            title: string;
+            slug: string;
+        }[];
         monthlyTop: any[];
         allTimeTop: {
             country: {

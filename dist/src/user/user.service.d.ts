@@ -1,13 +1,13 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma, News, Novel, UserRating, ContinueReading, Comment } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
-import { CreateUserDto } from './dto/CreateUserDto';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record';
 export declare class UserService {
     private prisma;
     private readonly admin;
     constructor(prisma: PrismaService, admin: FirebaseAdmin);
-    createUserWithFirebase(data: CreateUserDto): Promise<UserRecord>;
+    isUsernameHasDuplicate(username: string): Promise<{
+        hasDuplicate: boolean;
+    }>;
     createUser(data: Prisma.UserCreateInput): Promise<User>;
     getUserById(id: number): Promise<User | null>;
     getUserByEmail(email: string): Promise<User | null>;
@@ -16,72 +16,72 @@ export declare class UserService {
     getUserReviews(userId: number): Promise<({
         novel: {
             id: number;
-            createdAt: Date;
-            authorId: number;
             img: string;
+            isAdult: boolean;
+            createdAt: Date;
+            updatedAt: Date;
             title: string;
+            likes: number;
+            views: number;
+            commendableTypeId: number;
             original_title: string | null;
             description: string;
             slug: string | null;
-            likes: number;
             dislikes: number;
-            isAdult: boolean;
             releaseYear: number | null;
             coverImg: string | null;
-            updatedAt: Date;
-            views: number;
+            countryId: number;
             status: import(".prisma/client").$Enums.NovelStatus;
+            authorId: number;
             translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
             format: import(".prisma/client").$Enums.NovelFormat;
-            countryId: number;
-            commendableTypeId: number;
         };
     } & {
         id: number;
         createdAt: Date;
-        userId: number;
-        title: string;
-        likes: number;
         updatedAt: Date;
-        views: number;
-        commendableTypeId: number;
-        novelId: number;
+        title: string;
         body: string;
+        likes: number;
+        views: number;
+        userId: number;
+        novelId: number;
+        commendableTypeId: number;
     })[]>;
     getUserBookmarks(userId: number): Promise<({
         chapter: {
             novel: {
                 id: number;
-                createdAt: Date;
-                authorId: number;
                 img: string;
+                isAdult: boolean;
+                createdAt: Date;
+                updatedAt: Date;
                 title: string;
+                likes: number;
+                views: number;
+                commendableTypeId: number;
                 original_title: string | null;
                 description: string;
                 slug: string | null;
-                likes: number;
                 dislikes: number;
-                isAdult: boolean;
                 releaseYear: number | null;
                 coverImg: string | null;
-                updatedAt: Date;
-                views: number;
+                countryId: number;
                 status: import(".prisma/client").$Enums.NovelStatus;
+                authorId: number;
                 translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
                 format: import(".prisma/client").$Enums.NovelFormat;
-                countryId: number;
-                commendableTypeId: number;
             };
         } & {
             id: number;
             createdAt: Date;
-            title: string;
-            slug: string;
-            likes: number;
             updatedAt: Date;
+            title: string;
+            likes: number;
             views: number;
-            commendableTypeId: number;
             novelId: number;
+            commendableTypeId: number;
+            slug: string;
             content: string;
             chapterNumber: number;
         };
@@ -92,56 +92,42 @@ export declare class UserService {
     })[]>;
     getUserNotifications(userId: number): Promise<{
         id: number;
-        createdAt: Date;
-        userId: number;
-        authorId: number | null;
         img: string;
-        title: string;
+        createdAt: Date;
         updatedAt: Date;
+        title: string;
+        userId: number;
+        novelId: number | null;
+        authorId: number | null;
         message: string;
+        typeId: number;
         relatedEntityType: import(".prisma/client").$Enums.NotificationRelatedEntity;
         relatedEntityId: number;
         notificationStatus: import(".prisma/client").$Enums.NotificationMessageStatus;
-        metadata: Prisma.JsonValue | null;
-        typeId: number;
-        novelId: number | null;
         commentId: number | null;
         reviewId: number | null;
+        metadata: Prisma.JsonValue | null;
         notificationGroupId: number | null;
     }[]>;
     getUserComments(userId: number): Promise<Comment[]>;
     getUserNews(userId: number): Promise<News[]>;
     getUserNovelSubscriptions(userId: number): Promise<Novel[]>;
     getUserAuthorSubscriptions(userId: number): Promise<{
-        name: string;
         id: number;
         img: string;
+        name: string;
     }[]>;
     updateUserRole(userId: number, roleId: number): Promise<User>;
     getUserRatings(userId: number): Promise<UserRating[]>;
     getContinueReadingList(userId: number): Promise<ContinueReading[]>;
     getUserTeam(userId: number): Promise<{
         team: {
-            name: string;
             id: number;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
             chapters_count: number;
             books_count: number;
-        };
-    }>;
-    getUserPermissions(userId: number): Promise<{
-        role: {
-            permissions: {
-                name: string;
-                id: number;
-                description: string | null;
-                roleId: number;
-            }[];
-        } & {
-            name: string;
-            id: number;
-            description: string | null;
         };
     }>;
     getUserNovelRatings(userId: number): Promise<({
@@ -154,8 +140,8 @@ export declare class UserService {
     } & {
         id: number;
         createdAt: Date;
-        userId: number;
         updatedAt: Date;
+        userId: number;
         novelId: number;
         isLiked: boolean;
     })[]>;

@@ -25,6 +25,7 @@ let NovelService = class NovelService {
             where: { slug },
             select: {
                 isAdult: true,
+                slug: true,
                 title: true,
                 img: true,
                 chapters: {
@@ -36,6 +37,67 @@ let NovelService = class NovelService {
                 }
             }
         });
+    }
+    async getDownloadData(slug) {
+        const chapters_stats = await this.prisma.novel.findUnique({
+            where: { slug },
+            select: {
+                chapters: {
+                    select: {
+                        id: true,
+                        title: true,
+                        chapterNumber: true,
+                        slug: true,
+                        createdAt: true,
+                        updatedAt: true
+                    }
+                }
+            }
+        });
+        const download_data = await this.prisma.novel.findUnique({
+            where: { slug },
+            select: {
+                id: true,
+                title: true,
+                coverImg: true,
+                img: true,
+                description: true,
+                format: true,
+                genres: true,
+                createdAt: true,
+                updatedAt: true,
+                releaseYear: true,
+                isAdult: true,
+                status: true,
+                slug: true,
+                translationStatus: true,
+                country: {
+                    select: {
+                        title: true,
+                    },
+                },
+                author: {
+                    select: {
+                        name: true,
+                    },
+                },
+                chapters: {
+                    select: {
+                        chapterNumber: true,
+                        id: true,
+                        slug: true,
+                        title: true,
+                        content: true,
+                        createdAt: true,
+                        updatedAt: true,
+                    },
+                },
+            }
+        });
+        if (!download_data) {
+            throw new common_1.NotFoundException('Novel not found');
+        }
+        return { download_data, chapters_stats };
     }
     async findOneById(id) {
         return this.prisma.novel.findUnique({
@@ -117,6 +179,9 @@ let NovelService = class NovelService {
         try {
             const novels = [];
             for (const novelData of data) {
+                if (!novelData.img) {
+                    throw new Error(`Invalid image URL for novel: ${novelData.original_title}`);
+                }
                 const novelImageProps = {
                     imageUrl: novelData.img,
                     title: novelData.original_title,
@@ -536,7 +601,7 @@ let NovelService = class NovelService {
             }
         }
         return {
-            weeklyTop,
+            weeklyTop: novels.slice(0, 10),
             monthlyTop,
             allTimeTop: novels.slice(0, 10),
         };

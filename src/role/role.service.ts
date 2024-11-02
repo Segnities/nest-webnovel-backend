@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Role, Permission, Prisma } from '@prisma/client';
+import { Role, Prisma } from '@prisma/client';
 
 @Injectable()
 export class RoleService {
@@ -28,36 +28,6 @@ export class RoleService {
 
   async deleteRole(id: number): Promise<Role> {
     return this.prisma.role.delete({ where: { id } });
-  }
-
-  async getRoleWithPermissions(
-    id: number,
-  ): Promise<Role & { permissions: Permission[] }> {
-    return this.prisma.role.findUnique({
-      where: { id },
-      include: { permissions: true },
-    });
-  }
-
-  async addPermissionToRole(
-    roleId: number,
-    permissionData: Prisma.PermissionCreateInput,
-  ): Promise<Permission> {
-    return this.prisma.permission.create({
-      data: {
-        ...permissionData,
-        role: { connect: { id: roleId } },
-      },
-    });
-  }
-
-  async removePermissionFromRole(
-    roleId: number,
-    permissionId: number,
-  ): Promise<Permission> {
-    return this.prisma.permission.delete({
-      where: { id: permissionId, roleId },
-    });
   }
 
   async getUsersWithRole(
