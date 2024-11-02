@@ -11,13 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
 const class_validator_1 = require("class-validator");
-var Role;
-(function (Role) {
-    Role["SYSTEM"] = "SYSTEM";
-    Role["ADMIN"] = "ADMIN";
-    Role["MODERATOR"] = "MODERATOR";
-    Role["DEFAULT_USER"] = "DEFAULT_USER";
-})(Role || (Role = {}));
 class CreateUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
@@ -28,37 +21,12 @@ __decorate([
 ], CreateUserDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(8),
-    (0, class_validator_1.MaxLength)(20),
-    (0, class_validator_1.Matches)(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,20}$/, {
-        message: 'password too weak',
-    }),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(20),
-    (0, class_validator_1.IsAlpha)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "firstName", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(20),
-    (0, class_validator_1.IsAlpha)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "lastName", void 0);
-__decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.MinLength)(2),
-    (0, class_validator_1.MaxLength)(30),
-    (0, class_validator_1.IsAlpha)(),
+    (0, class_validator_1.MinLength)(3),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "username", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEnum)(Role, { each: true }),
-    __metadata("design:type", Array)
-], CreateUserDto.prototype, "role", void 0);
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "fuid", void 0);
 //# sourceMappingURL=CreateUserDto.js.map

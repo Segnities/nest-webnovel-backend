@@ -13,6 +13,7 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const firebase_setup_1 = require("../../config/firebase.setup");
+const role_1 = require("../../constants/role");
 let UserService = class UserService {
     constructor(prisma, admin) {
         this.prisma = prisma;
@@ -26,7 +27,18 @@ let UserService = class UserService {
         return { hasDuplicate: !!user };
     }
     async createUser(data) {
-        return this.prisma.user.create({ data });
+        return this.prisma.user.create({
+            data: {
+                email: data.email,
+                username: data.username,
+                fuid: data.fuid,
+                role: {
+                    connect: {
+                        id: role_1.DEFAULT_ROLE.id
+                    }
+                }
+            }
+        });
     }
     async getUserById(id) {
         return this.prisma.user.findUnique({

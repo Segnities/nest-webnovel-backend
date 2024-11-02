@@ -1,6 +1,7 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { User, Prisma, News, Novel, UserRating, ContinueReading, Comment } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
+import { CreateUserDto } from './dto/CreateUserDto';
 export declare class UserService {
     private prisma;
     private readonly admin;
@@ -8,7 +9,7 @@ export declare class UserService {
     isUsernameHasDuplicate(username: string): Promise<{
         hasDuplicate: boolean;
     }>;
-    createUser(data: Prisma.UserCreateInput): Promise<User>;
+    createUser(data: CreateUserDto): Promise<User>;
     getUserById(id: number): Promise<User | null>;
     getUserByEmail(email: string): Promise<User | null>;
     updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User>;

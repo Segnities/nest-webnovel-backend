@@ -1,9 +1,10 @@
 import { UserService } from './user.service';
 import { User, Prisma } from '@prisma/client';
+import { CreateUserDto } from './dto/CreateUserDto';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    createUser(createUserDto: Prisma.UserCreateInput): Promise<User>;
+    createUser(createUserDto: CreateUserDto): Promise<User>;
     getUserById(id: number): Promise<User | null>;
     isUsernameHasDuplicate(data: {
         username: string;

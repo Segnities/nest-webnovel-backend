@@ -10,8 +10,8 @@ import {
   Comment,
 } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
-/* import { CreateUserDto } from './dto/CreateUserDto';
-import { UserRecord } from 'firebase-admin/lib/auth/user-record'; */
+import { CreateUserDto } from './dto/CreateUserDto';
+import { DEFAULT_ROLE } from 'constants/role';
 
 @Injectable()
 export class UserService {
@@ -26,8 +26,19 @@ export class UserService {
     });
     return { hasDuplicate: !!user };
   }
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({ data });
+  async createUser(data: CreateUserDto): Promise<User> {
+    return this.prisma.user.create({
+      data: {
+        email: data.email,
+        username: data.username,
+        fuid: data.fuid,
+        role: {
+          connect: {
+            id: DEFAULT_ROLE.id
+          }
+        }
+      }
+    });
   }
 
   async getUserById(id: number): Promise<User | null> {
