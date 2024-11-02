@@ -10,6 +10,12 @@ export declare class UserService {
         hasDuplicate: boolean;
     }>;
     createUser(data: CreateUserDto): Promise<User>;
+    getAllUsers(): Promise<{
+        id: number;
+        fuid: string;
+        username: string;
+        email: string;
+    }[]>;
     getUserById(id: number): Promise<User | null>;
     getUserByEmail(email: string): Promise<User | null>;
     updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User>;

@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, Prisma } from '@prisma/client';
@@ -23,9 +24,14 @@ export class UserController {
     return this.userService.createUser(createUserDto);
   }
 
+  @Get('all')
+  async getAllUsers() {
+    return this.userService.getAllUsers();
+  }
+
 
   @Get(':id')
-  async getUserById(@Param('id') id: number): Promise<User | null> {
+  async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
     return this.userService.getUserById(id);
   }
 

@@ -5,6 +5,12 @@ export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
     createUser(createUserDto: CreateUserDto): Promise<User>;
+    getAllUsers(): Promise<{
+        id: number;
+        fuid: string;
+        username: string;
+        email: string;
+    }[]>;
     getUserById(id: number): Promise<User | null>;
     isUsernameHasDuplicate(data: {
         username: string;
