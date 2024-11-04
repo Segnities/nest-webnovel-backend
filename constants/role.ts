@@ -7,10 +7,10 @@ export enum UserRole {
 
 // src/common/constants/role.constants.ts
 export const ROLE_IDS = {
-   [UserRole.SYSTEM]: 1,
-   [UserRole.ADMIN]: 2,
-   [UserRole.MODERATOR]: 3,
-   [UserRole.DEFAULT_USER]: 4,
+   [UserRole.DEFAULT_USER]: 1,
+   [UserRole.SYSTEM]: 2,
+   [UserRole.ADMIN]: 3,
+   [UserRole.MODERATOR]: 4,
 } as const;
 
 export const DEFAULT_ROLE = {
