@@ -29,16 +29,17 @@ export class UserController {
     return this.userService.getAllUsers();
   }
 
+  @Get('user/unique')
+  async checkUserUnique(@Query() data: { username: string, email: string }) {
+    return this.userService.checkUserUnique(data.username, data.email);
+  }
+
 
   @Get(':id')
   async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
     return this.userService.getUserById(id);
   }
 
-  @Get('username/duplicate')
-  async isUsernameHasDuplicate(@Query() data: { username: string }) {
-    return this.userService.isUsernameHasDuplicate(data.username);
-  }
 
 
   @Get('email/:email')

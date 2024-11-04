@@ -19,12 +19,15 @@ let UserService = class UserService {
         this.prisma = prisma;
         this.admin = admin;
     }
-    async isUsernameHasDuplicate(username) {
-        const user = await this.prisma.user.findUnique({
-            where: { username },
-            select: { id: true }
-        });
-        return { hasDuplicate: !!user };
+    async checkUserUnique(username, email) {
+        const [usernameCheck, emailCheck] = await Promise.all([
+            this.prisma.user.findUnique({ where: { username } }),
+            this.prisma.user.findUnique({ where: { email } }),
+        ]);
+        return {
+            usernameUnique: !Boolean(usernameCheck),
+            emailUnique: !Boolean(emailCheck),
+        };
     }
     async createUser(data) {
         return this.prisma.user.create({
@@ -34,10 +37,10 @@ let UserService = class UserService {
                 fuid: data.fuid,
                 role: {
                     connect: {
-                        id: role_1.DEFAULT_ROLE.id
-                    }
-                }
-            }
+                        id: role_1.DEFAULT_ROLE.id,
+                    },
+                },
+            },
         });
     }
     async getAllUsers() {

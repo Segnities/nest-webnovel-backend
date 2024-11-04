@@ -27,11 +27,11 @@ let UserController = class UserController {
     async getAllUsers() {
         return this.userService.getAllUsers();
     }
+    async checkUserUnique(data) {
+        return this.userService.checkUserUnique(data.username, data.email);
+    }
     async getUserById(id) {
         return this.userService.getUserById(id);
-    }
-    async isUsernameHasDuplicate(data) {
-        return this.userService.isUsernameHasDuplicate(data.username);
     }
     async getUserByEmail(email) {
         return this.userService.getUserByEmail(email);
@@ -88,19 +88,19 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getAllUsers", null);
 __decorate([
+    (0, common_1.Get)('user/unique'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "checkUserUnique", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserById", null);
-__decorate([
-    (0, common_1.Get)('username/duplicate'),
-    __param(0, (0, common_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UserController.prototype, "isUsernameHasDuplicate", null);
 __decorate([
     (0, common_1.Get)('email/:email'),
     __param(0, (0, common_1.Param)('email')),

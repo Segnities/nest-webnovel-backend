@@ -19,13 +19,17 @@ export class UserService {
     private prisma: PrismaService,
     private readonly admin: FirebaseAdmin,
   ) { }
-  async isUsernameHasDuplicate(username: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { username },
-      select: { id: true }
-    });
-    return { hasDuplicate: !!user };
+  async checkUserUnique(username: string, email: string) {
+    const [usernameCheck, emailCheck] = await Promise.all([
+      this.prisma.user.findUnique({ where: { username } }),
+      this.prisma.user.findUnique({ where: { email } }),
+    ]);
+    return {
+      usernameUnique: !Boolean(usernameCheck),
+      emailUnique: !Boolean(emailCheck),
+    };
   }
+
   async createUser(data: CreateUserDto): Promise<User> {
     return this.prisma.user.create({
       data: {
@@ -34,10 +38,10 @@ export class UserService {
         fuid: data.fuid,
         role: {
           connect: {
-            id: DEFAULT_ROLE.id
-          }
-        }
-      }
+            id: DEFAULT_ROLE.id,
+          },
+        },
+      },
     });
   }
 

@@ -6,8 +6,9 @@ export declare class UserService {
     private prisma;
     private readonly admin;
     constructor(prisma: PrismaService, admin: FirebaseAdmin);
-    isUsernameHasDuplicate(username: string): Promise<{
-        hasDuplicate: boolean;
+    checkUserUnique(username: string, email: string): Promise<{
+        usernameUnique: boolean;
+        emailUnique: boolean;
     }>;
     createUser(data: CreateUserDto): Promise<User>;
     getAllUsers(): Promise<{

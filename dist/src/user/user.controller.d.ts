@@ -11,12 +11,14 @@ export declare class UserController {
         username: string;
         email: string;
     }[]>;
-    getUserById(id: number): Promise<User | null>;
-    isUsernameHasDuplicate(data: {
+    checkUserUnique(data: {
         username: string;
+        email: string;
     }): Promise<{
-        hasDuplicate: boolean;
+        usernameUnique: boolean;
+        emailUnique: boolean;
     }>;
+    getUserById(id: number): Promise<User | null>;
     getUserByEmail(email: string): Promise<User | null>;
     updateUser(id: number, updateUserDto: Prisma.UserUpdateInput): Promise<User>;
     deleteUser(id: number): Promise<User>;
