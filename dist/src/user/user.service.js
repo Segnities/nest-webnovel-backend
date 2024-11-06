@@ -157,20 +157,6 @@ let UserService = class UserService {
             },
         });
     }
-    async getContinueReadingList(userId) {
-        return this.prisma.continueReading.findMany({
-            where: { userId },
-            include: {
-                novel: true,
-                lastChapter: true,
-            },
-            orderBy: {
-                novel: {
-                    updatedAt: 'desc',
-                },
-            },
-        });
-    }
     async getUserTeam(userId) {
         return this.prisma.user.findUnique({
             where: { id: userId },

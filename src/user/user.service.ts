@@ -6,7 +6,6 @@ import {
   News,
   Novel,
   UserRating,
-  ContinueReading,
   Comment,
 } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
@@ -168,21 +167,6 @@ export class UserService {
       where: { userId },
       include: {
         novel: true,
-      },
-    });
-  }
-
-  async getContinueReadingList(userId: number): Promise<ContinueReading[]> {
-    return this.prisma.continueReading.findMany({
-      where: { userId },
-      include: {
-        novel: true,
-        lastChapter: true,
-      },
-      orderBy: {
-        novel: {
-          updatedAt: 'desc',
-        },
       },
     });
   }
