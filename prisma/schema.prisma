@@ -236,7 +236,6 @@ model Novel {
   chapters          Chapter[]
   reviews           Review[]
   usersRatings      UserRating[]
-  continueReading   ContinueReading[]
   novelSubscription NovelSubscription[]
   notifications     Notification[]
   collectionItems   CollectionItem[]
@@ -247,13 +246,10 @@ model Novel {
 
 model ContinueReading {
   id                 Int     @id @default(autoincrement())
-  progressPercentage Float
   userId             Int
   user               User    @relation(fields: [userId], references: [id])
   lastChapterId      Int
   lastChapter        Chapter @relation(fields: [lastChapterId], references: [id])
-  novelId            Int
-  novel              Novel   @relation(fields: [novelId], references: [id])
 
   @@map("continue_reading")
 }
