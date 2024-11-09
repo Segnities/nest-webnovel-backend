@@ -21,6 +21,17 @@ export class ChapterService {
       });
    }
 
+   async getIdBySlug(slug: string) {
+      return this.prisma.chapter.findUnique({
+         where: {
+            slug
+         },
+         select: {
+            id: true
+         }
+      })
+   }
+
    async findChapterById(id: number): Promise<Chapter | null> {
       return this.prisma.chapter.findUnique({ where: { id } });
    }
