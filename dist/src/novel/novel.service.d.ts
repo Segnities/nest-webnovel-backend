@@ -150,13 +150,6 @@ export declare class NovelService {
             userId: number;
             novelId: number;
         }[];
-        continueReading: {
-            id: number;
-            userId: number;
-            novelId: number;
-            progressPercentage: number;
-            lastChapterId: number;
-        }[];
         commendableType: {
             name: string;
             id: number;
@@ -203,7 +196,6 @@ export declare class NovelService {
             chapters: number;
             reviews: number;
             usersRatings: number;
-            continueReading: number;
             novelSubscription: number;
             notifications: number;
             collectionItems: number;

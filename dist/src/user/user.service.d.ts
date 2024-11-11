@@ -1,14 +1,36 @@
 import { PrismaService } from '../prisma/prisma.service';
-import { User, Prisma, News, Novel, UserRating, ContinueReading, Comment } from '@prisma/client';
+import { User, Prisma, News, Novel, UserRating, Comment } from '@prisma/client';
 import { FirebaseAdmin } from '@config/firebase.setup';
+import { CreateUserDto } from './dto/CreateUserDto';
 export declare class UserService {
     private prisma;
     private readonly admin;
     constructor(prisma: PrismaService, admin: FirebaseAdmin);
-    isUsernameHasDuplicate(username: string): Promise<{
-        hasDuplicate: boolean;
+    checkUserUnique(username: string, email: string): Promise<{
+        usernameUnique: boolean;
+        emailUnique: boolean;
     }>;
-    createUser(data: Prisma.UserCreateInput): Promise<User>;
+    createUser(data: CreateUserDto): Promise<User>;
+    getByFirebaseUid(fuid: string): Promise<{
+        id: number;
+        fuid: string | null;
+        username: string;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        img: string | null;
+        isAdult: boolean | null;
+        createdAt: Date;
+        updatedAt: Date;
+        roleId: number;
+        teamId: number | null;
+    }>;
+    getAllUsers(): Promise<{
+        id: number;
+        fuid: string;
+        username: string;
+        email: string;
+    }[]>;
     getUserById(id: number): Promise<User | null>;
     getUserByEmail(email: string): Promise<User | null>;
     updateUser(id: number, data: Prisma.UserUpdateInput): Promise<User>;
@@ -119,7 +141,6 @@ export declare class UserService {
     }[]>;
     updateUserRole(userId: number, roleId: number): Promise<User>;
     getUserRatings(userId: number): Promise<UserRating[]>;
-    getContinueReadingList(userId: number): Promise<ContinueReading[]>;
     getUserTeam(userId: number): Promise<{
         team: {
             id: number;

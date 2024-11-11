@@ -7,9 +7,11 @@ import {
   Body,
   Param,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User, Prisma } from '@prisma/client';
+import { CreateUserDto } from './dto/CreateUserDto';
 
 @Controller('users')
 export class UserController {
@@ -17,27 +19,38 @@ export class UserController {
 
   @Post()
   async createUser(
-    @Body() createUserDto: Prisma.UserCreateInput,
+    @Body() createUserDto: CreateUserDto,
   ): Promise<User> {
     return this.userService.createUser(createUserDto);
   }
 
+  @Get('all')
+  async getAllUsers() {
+    return this.userService.getAllUsers();
+  }
+ 
+  @Get('user/unique')
+  async checkUserUnique(@Query() data: { username: string, email: string }) {
+    return this.userService.checkUserUnique(data.username, data.email);
+  }
+
 
   @Get(':id')
-  async getUserById(@Param('id') id: number): Promise<User | null> {
+  async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User | null> {
     return this.userService.getUserById(id);
   }
 
-  @Get('username/duplicate')
-  async isUsernameHasDuplicate(@Query() data: { username: string }) {
-    return this.userService.isUsernameHasDuplicate(data.username);
-  }
 
 
   @Get('email/:email')
   async getUserByEmail(@Param('email') email: string): Promise<User | null> {
     return this.userService.getUserByEmail(email);
   }
+  @Get('user/:fuid')
+  async getByFirebaseUid(@Param('fuid') fuid: string) {
+    return this.userService.getByFirebaseUid(fuid);
+  }
+
 
   @Put(':id')
   async updateUser(

@@ -16,12 +16,16 @@ exports.ContinueReadingController = void 0;
 const common_1 = require("@nestjs/common");
 const continue_reading_service_1 = require("./continue-reading.service");
 const client_1 = require("@prisma/client");
+const CreateContinueReadingDto_1 = require("./dto/CreateContinueReadingDto");
 let ContinueReadingController = class ContinueReadingController {
     constructor(continueReadingService) {
         this.continueReadingService = continueReadingService;
     }
     async createContinueReading(data) {
         return this.continueReadingService.createContinueReading(data);
+    }
+    async createOrUpdateProgress(data) {
+        return this.continueReadingService.createOrUpdateReadingProgress(data);
     }
     async getContinueReadingById(id) {
         return this.continueReadingService.getContinueReadingById(id);
@@ -35,24 +39,22 @@ let ContinueReadingController = class ContinueReadingController {
     async getContinueReadingByUserId(userId) {
         return this.continueReadingService.getContinueReadingByUserId(userId);
     }
-    async updateProgress(userId, novelId, progressPercentage) {
-        return this.continueReadingService.updateProgress(userId, novelId, progressPercentage);
-    }
-    async getUsersReadingNovel(novelId) {
-        return this.continueReadingService.getUsersReadingNovel(novelId);
-    }
-    async countUsersReadingNovel(novelId) {
-        return this.continueReadingService.countUsersReadingNovel(novelId);
-    }
 };
 exports.ContinueReadingController = ContinueReadingController;
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [CreateContinueReadingDto_1.CreateContinueReadingDto]),
     __metadata("design:returntype", Promise)
 ], ContinueReadingController.prototype, "createContinueReading", null);
+__decorate([
+    (0, common_1.Post)('progress'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [CreateContinueReadingDto_1.CreateContinueReadingDto]),
+    __metadata("design:returntype", Promise)
+], ContinueReadingController.prototype, "createOrUpdateProgress", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
@@ -70,41 +72,18 @@ __decorate([
 ], ContinueReadingController.prototype, "updateContinueReading", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ContinueReadingController.prototype, "deleteContinueReading", null);
 __decorate([
     (0, common_1.Get)('user/:userId'),
-    __param(0, (0, common_1.Param)('userId')),
+    __param(0, (0, common_1.Param)('userId', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], ContinueReadingController.prototype, "getContinueReadingByUserId", null);
-__decorate([
-    (0, common_1.Put)('progress'),
-    __param(0, (0, common_1.Body)('userId')),
-    __param(1, (0, common_1.Body)('novelId')),
-    __param(2, (0, common_1.Body)('progressPercentage')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, Number]),
-    __metadata("design:returntype", Promise)
-], ContinueReadingController.prototype, "updateProgress", null);
-__decorate([
-    (0, common_1.Get)('novel/:novelId/users'),
-    __param(0, (0, common_1.Param)('novelId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], ContinueReadingController.prototype, "getUsersReadingNovel", null);
-__decorate([
-    (0, common_1.Get)('novel/:novelId/count'),
-    __param(0, (0, common_1.Param)('novelId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", Promise)
-], ContinueReadingController.prototype, "countUsersReadingNovel", null);
 exports.ContinueReadingController = ContinueReadingController = __decorate([
     (0, common_1.Controller)('continue-reading'),
     __metadata("design:paramtypes", [continue_reading_service_1.ContinueReadingService])

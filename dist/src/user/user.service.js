@@ -13,20 +13,52 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const firebase_setup_1 = require("../../config/firebase.setup");
+const role_1 = require("../../constants/role");
 let UserService = class UserService {
     constructor(prisma, admin) {
         this.prisma = prisma;
         this.admin = admin;
     }
-    async isUsernameHasDuplicate(username) {
-        const user = await this.prisma.user.findUnique({
-            where: { username },
-            select: { id: true }
-        });
-        return { hasDuplicate: !!user };
+    async checkUserUnique(username, email) {
+        const [usernameCheck, emailCheck] = await Promise.all([
+            this.prisma.user.findUnique({ where: { username } }),
+            this.prisma.user.findUnique({ where: { email } }),
+        ]);
+        return {
+            usernameUnique: !Boolean(usernameCheck),
+            emailUnique: !Boolean(emailCheck),
+        };
     }
     async createUser(data) {
-        return this.prisma.user.create({ data });
+        return this.prisma.user.create({
+            data: {
+                email: data.email,
+                username: data.username,
+                fuid: data.fuid,
+                role: {
+                    connect: {
+                        id: role_1.DEFAULT_ROLE.id,
+                    },
+                },
+            },
+        });
+    }
+    async getByFirebaseUid(fuid) {
+        return this.prisma.user.findFirst({
+            where: {
+                fuid,
+            },
+        });
+    }
+    async getAllUsers() {
+        return this.prisma.user.findMany({
+            select: {
+                id: true,
+                fuid: true,
+                email: true,
+                username: true,
+            },
+        });
     }
     async getUserById(id) {
         return this.prisma.user.findUnique({
@@ -129,20 +161,6 @@ let UserService = class UserService {
             where: { userId },
             include: {
                 novel: true,
-            },
-        });
-    }
-    async getContinueReadingList(userId) {
-        return this.prisma.continueReading.findMany({
-            where: { userId },
-            include: {
-                novel: true,
-                lastChapter: true,
-            },
-            orderBy: {
-                novel: {
-                    updatedAt: 'desc',
-                },
             },
         });
     }

@@ -1,16 +1,63 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ContinueReading, Prisma } from '@prisma/client';
+import { CreateContinueReadingDto } from './dto/CreateContinueReadingDto';
 
 @Injectable()
 export class ContinueReadingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async createContinueReading(
-    data: Prisma.ContinueReadingCreateInput,
+    data: CreateContinueReadingDto,
   ): Promise<ContinueReading> {
     return this.prisma.continueReading.create({
-      data,
+      data: {
+        user: {
+          connect: {
+            id: data.userId,
+          },
+        },
+        lastChapter: {
+          connect: {
+            id: data.lastChapterId,
+          },
+        },
+      },
+    });
+  }
+
+  async createOrUpdateReadingProgress(data: CreateContinueReadingDto): Promise<ContinueReading> {
+    const record = await this.prisma.chapter.findFirst({
+      where: {
+        id: data.lastChapterId,
+      },
+      include: {
+        novel: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    const slotNovelId = record.novel.id;
+    const slot = await this.prisma.continueReading.findFirst({
+      where: {
+        lastChapter: {
+          novelId: slotNovelId,
+        },
+        userId: data.userId,
+      },
+    });
+    if (!slot) {
+      return this.createContinueReading(data);
+    }
+    return this.prisma.continueReading.update({
+      where: {
+        id: slot.id,
+      },
+      data: {
+        lastChapterId: data.lastChapterId,
+      },
     });
   }
 
@@ -55,36 +102,6 @@ export class ContinueReadingService {
   async getContinueReadingByUserId(userId: number): Promise<ContinueReading[]> {
     return this.prisma.continueReading.findMany({
       where: { userId },
-    });
-  }
-
-  async updateProgress(
-    userId: number,
-    novelId: number,
-    progressPercentage: number,
-  ): Promise<ContinueReading> {
-    const continueReading = await this.prisma.continueReading.findFirst({
-      where: { userId, novelId },
-    });
-    if (!continueReading) {
-      throw new NotFoundException(
-        `ContinueReading entry not found for user ID ${userId} and novel ID ${novelId}`,
-      );
-    }
-    return this.prisma.continueReading.update({
-      where: { id: continueReading.id },
-      data: { progressPercentage },
-    });
-  }
-  async getUsersReadingNovel(novelId: number): Promise<ContinueReading[]> {
-    return this.prisma.continueReading.findMany({
-      where: { novelId },
-    });
-  }
-
-  async countUsersReadingNovel(novelId: number): Promise<number> {
-    return this.prisma.continueReading.count({
-      where: { novelId },
     });
   }
 }

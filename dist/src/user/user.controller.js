@@ -16,6 +16,7 @@ exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const client_1 = require("@prisma/client");
+const CreateUserDto_1 = require("./dto/CreateUserDto");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -23,14 +24,20 @@ let UserController = class UserController {
     async createUser(createUserDto) {
         return this.userService.createUser(createUserDto);
     }
+    async getAllUsers() {
+        return this.userService.getAllUsers();
+    }
+    async checkUserUnique(data) {
+        return this.userService.checkUserUnique(data.username, data.email);
+    }
     async getUserById(id) {
         return this.userService.getUserById(id);
     }
-    async isUsernameHasDuplicate(data) {
-        return this.userService.isUsernameHasDuplicate(data.username);
-    }
     async getUserByEmail(email) {
         return this.userService.getUserByEmail(email);
+    }
+    async getByFirebaseUid(fuid) {
+        return this.userService.getByFirebaseUid(fuid);
     }
     async updateUser(id, updateUserDto) {
         return this.userService.updateUser(id, updateUserDto);
@@ -74,23 +81,29 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [CreateUserDto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Get)('all'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "getUserById", null);
+], UserController.prototype, "getAllUsers", null);
 __decorate([
-    (0, common_1.Get)('username/duplicate'),
+    (0, common_1.Get)('user/unique'),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "isUsernameHasDuplicate", null);
+], UserController.prototype, "checkUserUnique", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getUserById", null);
 __decorate([
     (0, common_1.Get)('email/:email'),
     __param(0, (0, common_1.Param)('email')),
@@ -98,6 +111,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserByEmail", null);
+__decorate([
+    (0, common_1.Get)('user/:fuid'),
+    __param(0, (0, common_1.Param)('fuid')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getByFirebaseUid", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),

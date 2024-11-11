@@ -6,9 +6,11 @@ import {
   Delete,
   Param,
   Body,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ContinueReadingService } from './continue-reading.service';
 import { ContinueReading, Prisma } from '@prisma/client';
+import { CreateContinueReadingDto } from './dto/CreateContinueReadingDto';
 
 @Controller('continue-reading')
 export class ContinueReadingController {
@@ -18,9 +20,16 @@ export class ContinueReadingController {
 
   @Post()
   async createContinueReading(
-    @Body() data: Prisma.ContinueReadingCreateInput,
+    @Body() data: CreateContinueReadingDto,
   ): Promise<ContinueReading> {
     return this.continueReadingService.createContinueReading(data);
+  }
+
+  @Post('progress')
+  async createOrUpdateProgress(
+    @Body() data: CreateContinueReadingDto
+  ) {
+    return this.continueReadingService.createOrUpdateReadingProgress(data);
   }
 
   @Get(':id')
@@ -40,42 +49,16 @@ export class ContinueReadingController {
 
   @Delete(':id')
   async deleteContinueReading(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<ContinueReading> {
     return this.continueReadingService.deleteContinueReading(id);
   }
 
   @Get('user/:userId')
   async getContinueReadingByUserId(
-    @Param('userId') userId: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ): Promise<ContinueReading[]> {
     return this.continueReadingService.getContinueReadingByUserId(userId);
   }
 
-  @Put('progress')
-  async updateProgress(
-    @Body('userId') userId: number,
-    @Body('novelId') novelId: number,
-    @Body('progressPercentage') progressPercentage: number,
-  ): Promise<ContinueReading> {
-    return this.continueReadingService.updateProgress(
-      userId,
-      novelId,
-      progressPercentage,
-    );
-  }
-
-  @Get('novel/:novelId/users')
-  async getUsersReadingNovel(
-    @Param('novelId') novelId: number,
-  ): Promise<ContinueReading[]> {
-    return this.continueReadingService.getUsersReadingNovel(novelId);
-  }
-
-  @Get('novel/:novelId/count')
-  async countUsersReadingNovel(
-    @Param('novelId') novelId: number,
-  ): Promise<number> {
-    return this.continueReadingService.countUsersReadingNovel(novelId);
-  }
 }
