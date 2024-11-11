@@ -38,6 +38,123 @@ let NovelService = class NovelService {
             }
         });
     }
+    async searchByAuthor(authorName, page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        const whereCondition = {
+            author: {
+                name: { contains: authorName, mode: 'insensitive' },
+            },
+        };
+        const [novels, total] = await Promise.all([
+            this.prisma.novel.findMany({
+                where: whereCondition,
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    img: true,
+                    author: {
+                        select: {
+                            id: true,
+                            name: true
+                        },
+                    },
+                },
+                take: limit,
+                skip,
+                orderBy: { views: 'desc' },
+            }),
+            this.prisma.novel.count({ where: whereCondition }),
+        ]);
+        return {
+            data: novels,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async searchByYear(year, page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        const whereCondition = {
+            releaseYear: year,
+        };
+        const [novels, total] = await Promise.all([
+            this.prisma.novel.findMany({
+                where: whereCondition,
+                select: {
+                    id: true,
+                    title: true,
+                    releaseYear: true,
+                    slug: true,
+                    img: true,
+                    author: {
+                        select: { name: true },
+                    },
+                },
+                take: limit,
+                skip,
+                orderBy: { views: 'desc' },
+            }),
+            this.prisma.novel.count({ where: whereCondition }),
+        ]);
+        return {
+            data: novels,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async searchByTitle(searchTerm, page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        const whereCondition = {
+            OR: [
+                { title: { contains: searchTerm, mode: 'insensitive' } },
+                {
+                    alternativeTitles: {
+                        some: {
+                            title: { contains: searchTerm, mode: 'insensitive' },
+                        },
+                    },
+                },
+            ],
+        };
+        const [novels, total] = await Promise.all([
+            this.prisma.novel.findMany({
+                where: whereCondition,
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    img: true,
+                    alternativeTitles: {
+                        select: { title: true },
+                    },
+                    author: {
+                        select: { name: true },
+                    },
+                },
+                take: limit,
+                skip,
+                orderBy: { views: 'desc' },
+            }),
+            this.prisma.novel.count({ where: whereCondition }),
+        ]);
+        return {
+            data: novels,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
     async getDownloadData(slug) {
         const chapters_stats = await this.prisma.novel.findUnique({
             where: { slug },
@@ -417,19 +534,6 @@ let NovelService = class NovelService {
                 img: true,
                 createdAt: true,
             },
-        });
-    }
-    async searchNovels(searchTerm) {
-        return this.prisma.novel.findMany({
-            where: {
-                OR: [
-                    { title: { contains: searchTerm, mode: 'insensitive' } },
-                    { original_title: { contains: searchTerm, mode: 'insensitive' } },
-                    { description: { contains: searchTerm, mode: 'insensitive' } },
-                    { author: { name: { contains: searchTerm, mode: 'insensitive' } } },
-                ],
-            },
-            include: { author: true, tags: true, genres: true },
         });
     }
     async getNovelWithChapters(novelId) {
