@@ -116,8 +116,14 @@ let NovelController = class NovelController {
     async findRecentlyCreatedNovels(limit = 8) {
         return this.novelService.findRecentlyCreatedNovels(limit);
     }
-    async searchNovels(searchTerm) {
-        return this.novelService.searchNovels(searchTerm);
+    async searchByTitle(searchTerm, page = 1, limit = 20) {
+        return await this.novelService.searchByTitle(searchTerm, page, limit);
+    }
+    async searchByYear(year, page = 1, limit = 20) {
+        return await this.novelService.searchByYear(parseInt(year), page, limit);
+    }
+    async searchByAuthor(authorName, page = 1, limit = 20) {
+        return await this.novelService.searchByAuthor(authorName, page, limit);
     }
     async getNovelWithChapters(id) {
         return this.novelService.getNovelWithChapters(id);
@@ -344,13 +350,32 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "findRecentlyCreatedNovels", null);
 __decorate([
-    (0, common_1.Get)('search'),
-    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
-    __param(0, (0, common_1.Query)('term')),
+    (0, common_1.Get)('search/title'),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('page', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Number, Number]),
     __metadata("design:returntype", Promise)
-], NovelController.prototype, "searchNovels", null);
+], NovelController.prototype, "searchByTitle", null);
+__decorate([
+    (0, common_1.Get)('search/releaseYear'),
+    __param(0, (0, common_1.Query)('year', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)('page', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "searchByYear", null);
+__decorate([
+    (0, common_1.Get)('search/author'),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('page', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "searchByAuthor", null);
 __decorate([
     (0, common_1.Get)(':id/chapters'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),

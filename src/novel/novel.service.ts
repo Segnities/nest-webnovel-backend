@@ -10,7 +10,7 @@ import {
 } from '@prisma/client';
 import compressAndUploadImage from 'utils/compressAndUploadImage';
 import { deleteLocalImages } from 'utils/deleteLocalImages';
-
+import { SearchResponse } from 'global_types/search';
 @Injectable()
 export class NovelService {
   constructor(
@@ -36,7 +36,129 @@ export class NovelService {
       }
     });
   }
+  async searchByAuthor(authorName: string, page = 1, limit = 20): Promise<SearchResponse> {
+    const skip = (page - 1) * limit;
 
+    const whereCondition: Prisma.NovelWhereInput = {
+      author: {
+        name: { contains: authorName, mode: 'insensitive' },
+      },
+    };
+
+    const [novels, total] = await Promise.all([
+      this.prisma.novel.findMany({
+        where: whereCondition,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          img: true,
+          author: {
+            select: { 
+              id: true,
+              name: true 
+            },
+          },
+        },
+        take: limit,
+        skip,
+        orderBy: { views: 'desc' },
+      }),
+      this.prisma.novel.count({ where: whereCondition }),
+    ]);
+
+    return {
+      data: novels,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+  async searchByYear(year: number, page = 1, limit = 20): Promise<SearchResponse> {
+    const skip = (page - 1) * limit;
+
+    const whereCondition: Prisma.NovelWhereInput = {
+      releaseYear: year,
+    };
+
+    const [novels, total] = await Promise.all([
+      this.prisma.novel.findMany({
+        where: whereCondition,
+        select: {
+          id: true,
+          title: true,
+          releaseYear: true,
+          slug: true,
+          img: true,
+          author: {
+            select: { name: true },
+          },
+        },
+        take: limit,
+        skip,
+        orderBy: { views: 'desc' },
+      }),
+      this.prisma.novel.count({ where: whereCondition }),
+    ]);
+
+    return {
+      data: novels,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+  async searchByTitle(searchTerm: string, page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const whereCondition: Prisma.NovelWhereInput = {
+      OR: [
+        { title: { contains: searchTerm, mode: 'insensitive' } },
+        {
+          alternativeTitles: {
+            some: {
+              title: { contains: searchTerm, mode: 'insensitive' },
+            },
+          },
+        },
+      ],
+    };
+    const [novels, total] = await Promise.all([
+      this.prisma.novel.findMany({
+        where: whereCondition,
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          img: true,
+          alternativeTitles: {
+            select: { title: true },
+          },
+          author: {
+            select: { name: true },
+          },
+        },
+        take: limit,
+        skip,
+        orderBy: { views: 'desc' },
+      }),
+      this.prisma.novel.count({ where: whereCondition }),
+    ]);
+    return {
+      data: novels,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
   async getDownloadData(slug: string) {
     const chapters_stats = await this.prisma.novel.findUnique({
       where: { slug },
@@ -450,20 +572,6 @@ export class NovelService {
         img: true,
         createdAt: true,
       },
-    });
-  }
-
-  async searchNovels(searchTerm: string): Promise<Novel[]> {
-    return this.prisma.novel.findMany({
-      where: {
-        OR: [
-          { title: { contains: searchTerm, mode: 'insensitive' } },
-          { original_title: { contains: searchTerm, mode: 'insensitive' } },
-          { description: { contains: searchTerm, mode: 'insensitive' } },
-          { author: { name: { contains: searchTerm, mode: 'insensitive' } } },
-        ],
-      },
-      include: { author: true, tags: true, genres: true },
     });
   }
 

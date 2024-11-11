@@ -1,14 +1,15 @@
 import { CloudinaryService } from '@/cloudinary/cloudinary.service';
 import { PrismaService } from '@/prisma/prisma.service';
 import { Prisma, Novel, NovelStatus, NovelFormat, NovelTranslationStatus } from '@prisma/client';
+import { SearchResponse } from 'global_types/search';
 export declare class NovelService {
     private prisma;
     private cloudinaryService;
     constructor(prisma: PrismaService, cloudinaryService: CloudinaryService);
     findChaptersStatsByChapterSlug(slug: string): Promise<{
-        img: string;
         title: string;
         slug: string;
+        img: string;
         isAdult: boolean;
         chapters: {
             title: string;
@@ -16,36 +17,58 @@ export declare class NovelService {
             chapterNumber: number;
         }[];
     }>;
+    searchByAuthor(authorName: string, page?: number, limit?: number): Promise<SearchResponse>;
+    searchByYear(year: number, page?: number, limit?: number): Promise<SearchResponse>;
+    searchByTitle(searchTerm: string, page?: number, limit?: number): Promise<{
+        data: {
+            id: number;
+            title: string;
+            slug: string;
+            img: string;
+            author: {
+                name: string;
+            };
+            alternativeTitles: {
+                title: string;
+            }[];
+        }[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
     getDownloadData(slug: string): Promise<{
         download_data: {
+            id: number;
+            title: string;
+            description: string;
+            slug: string;
+            img: string;
+            isAdult: boolean;
+            releaseYear: number;
+            coverImg: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.NovelStatus;
+            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
+            format: import(".prisma/client").$Enums.NovelFormat;
             country: {
                 title: string;
             };
             author: {
                 name: string;
             };
-            id: number;
-            createdAt: Date;
-            img: string;
-            title: string;
-            description: string;
-            slug: string;
-            isAdult: boolean;
-            releaseYear: number;
-            coverImg: string;
-            updatedAt: Date;
-            status: import(".prisma/client").$Enums.NovelStatus;
-            translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
-            format: import(".prisma/client").$Enums.NovelFormat;
             genres: {
                 id: number;
                 title: string;
             }[];
             chapters: {
                 id: number;
-                createdAt: Date;
                 title: string;
                 slug: string;
+                createdAt: Date;
                 updatedAt: Date;
                 content: string;
                 chapterNumber: number;
@@ -54,9 +77,9 @@ export declare class NovelService {
         chapters_stats: {
             chapters: {
                 id: number;
-                createdAt: Date;
                 title: string;
                 slug: string;
+                createdAt: Date;
                 updatedAt: Date;
                 chapterNumber: number;
             }[];
@@ -87,16 +110,15 @@ export declare class NovelService {
     getMostViewedNovels(limit?: number): Promise<Novel[]>;
     getRecentlyUpdatedNovels(limit?: number): Promise<Novel[]>;
     findRecentlyCreatedNovels(limit?: number): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
+        createdAt: Date;
         country: {
             title: string;
         };
-        id: number;
-        createdAt: Date;
-        img: string;
-        title: string;
-        slug: string;
     }[]>;
-    searchNovels(searchTerm: string): Promise<Novel[]>;
     getNovelWithChapters(novelId: number): Promise<Novel & {
         chapters: any[];
     }>;
@@ -109,111 +131,74 @@ export declare class NovelService {
     getNovelsByAuthorName(authorName: string): Promise<Novel[]>;
     getNovelsByAlternativeTitle(title: string): Promise<Novel[]>;
     getDiscoverNovels(): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
         country: {
             title: string;
         };
-        id: number;
-        img: string;
-        title: string;
-        slug: string;
     }[]>;
     getTimeRatingNovels(): Promise<{
         weeklyTop: {
+            id: number;
+            title: string;
+            slug: string;
+            img: string;
+            createdAt: Date;
             country: {
                 title: string;
             };
-            id: number;
-            createdAt: Date;
-            img: string;
-            title: string;
-            slug: string;
         }[];
         monthlyTop: any[];
         allTimeTop: {
+            id: number;
+            title: string;
+            slug: string;
+            img: string;
+            createdAt: Date;
             country: {
                 title: string;
             };
-            id: number;
-            createdAt: Date;
-            img: string;
-            title: string;
-            slug: string;
         }[];
     }>;
     getTopRatingNovels({ limit, select, }: {
         limit: number;
         select: Prisma.NovelSelect;
     }): Promise<{
-        novelSubscription: {
-            id: number;
-            createdAt: Date;
-            userId: number;
-            novelId: number;
-        }[];
-        commendableType: {
-            name: string;
-            id: number;
-        };
-        country: {
-            id: number;
-            title: string;
-        };
-        author: {
-            name: string;
-            id: number;
-            img: string;
-        };
         id: number;
-        createdAt: Date;
-        authorId: number;
-        img: string;
-        notifications: {
-            id: number;
-            createdAt: Date;
-            userId: number;
-            authorId: number | null;
-            img: string;
-            title: string;
-            updatedAt: Date;
-            message: string;
-            relatedEntityType: import(".prisma/client").$Enums.NotificationRelatedEntity;
-            relatedEntityId: number;
-            notificationStatus: import(".prisma/client").$Enums.NotificationMessageStatus;
-            metadata: Prisma.JsonValue | null;
-            typeId: number;
-            novelId: number | null;
-            commentId: number | null;
-            reviewId: number | null;
-            notificationGroupId: number | null;
-        }[];
-        _count: {
-            country: number;
-            author: number;
-            commendableType: number;
-            tags: number;
-            genres: number;
-            alternativeTitles: number;
-            chapters: number;
-            reviews: number;
-            usersRatings: number;
-            novelSubscription: number;
-            notifications: number;
-            collectionItems: number;
-        };
         title: string;
         original_title: string;
         description: string;
         slug: string;
+        img: string;
         likes: number;
         dislikes: number;
         isAdult: boolean;
         releaseYear: number;
         coverImg: string;
+        createdAt: Date;
         updatedAt: Date;
         views: number;
+        countryId: number;
         status: import(".prisma/client").$Enums.NovelStatus;
+        authorId: number;
         translationStatus: import(".prisma/client").$Enums.NovelTranslationStatus;
         format: import(".prisma/client").$Enums.NovelFormat;
+        commendableTypeId: number;
+        country: {
+            id: number;
+            title: string;
+        };
+        author: {
+            id: number;
+            img: string;
+            name: string;
+        };
+        commendableType: {
+            id: number;
+            name: string;
+        };
         tags: {
             id: number;
             title: string;
@@ -229,57 +214,94 @@ export declare class NovelService {
         }[];
         chapters: {
             id: number;
-            createdAt: Date;
             title: string;
             slug: string;
             likes: number;
+            createdAt: Date;
             updatedAt: Date;
             views: number;
             commendableTypeId: number;
-            novelId: number;
             content: string;
             chapterNumber: number;
+            novelId: number;
         }[];
         reviews: {
             id: number;
-            createdAt: Date;
-            userId: number;
             title: string;
             likes: number;
+            createdAt: Date;
             updatedAt: Date;
             views: number;
             commendableTypeId: number;
             novelId: number;
             body: string;
+            userId: number;
         }[];
         usersRatings: {
             id: number;
             createdAt: Date;
-            userId: number;
             updatedAt: Date;
             novelId: number;
+            userId: number;
             isLiked: boolean;
+        }[];
+        novelSubscription: {
+            id: number;
+            createdAt: Date;
+            novelId: number;
+            userId: number;
+        }[];
+        notifications: {
+            id: number;
+            title: string;
+            img: string;
+            createdAt: Date;
+            updatedAt: Date;
+            authorId: number | null;
+            novelId: number | null;
+            userId: number;
+            message: string;
+            typeId: number;
+            relatedEntityType: import(".prisma/client").$Enums.NotificationRelatedEntity;
+            relatedEntityId: number;
+            notificationStatus: import(".prisma/client").$Enums.NotificationMessageStatus;
+            commentId: number | null;
+            reviewId: number | null;
+            metadata: Prisma.JsonValue | null;
+            notificationGroupId: number | null;
         }[];
         collectionItems: {
             id: number;
             createdAt: Date;
-            userId: number;
             updatedAt: Date;
             novelId: number;
+            userId: number;
             collectionId: number;
         }[];
-        countryId: number;
-        commendableTypeId: number;
+        _count: {
+            country: number;
+            author: number;
+            commendableType: number;
+            tags: number;
+            genres: number;
+            alternativeTitles: number;
+            chapters: number;
+            reviews: number;
+            usersRatings: number;
+            novelSubscription: number;
+            notifications: number;
+            collectionItems: number;
+        };
     }[]>;
     findLastUpdatedChaptersToday(): Promise<{
+        id: number;
+        title: string;
+        slug: string;
+        img: string;
+        releaseYear: number;
         country: {
             title: string;
         };
-        id: number;
-        img: string;
-        title: string;
-        slug: string;
-        releaseYear: number;
         chapters: {
             id: number;
             title: string;

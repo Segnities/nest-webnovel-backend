@@ -230,10 +230,31 @@ export class NovelController {
     return this.novelService.findRecentlyCreatedNovels(limit);
   }
 
-  @Get('search')
-  @HttpCode(HttpStatus.OK)
-  async searchNovels(@Query('term') searchTerm: string): Promise<Novel[]> {
-    return this.novelService.searchNovels(searchTerm);
+  @Get('search/title')
+  async searchByTitle(
+    @Query('q') searchTerm: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 20,
+  ) {
+    return await this.novelService.searchByTitle(searchTerm, page, limit);
+  }
+
+  @Get('search/releaseYear')
+  async searchByYear(
+    @Query('year', ParseIntPipe) year: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 20,
+  ) {
+    return await this.novelService.searchByYear(parseInt(year), page, limit);
+  }
+
+  @Get('search/author')
+  async searchByAuthor(
+    @Query('q') authorName: string,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 20,
+  ) {
+    return await this.novelService.searchByAuthor(authorName, page, limit);
   }
 
   @Get(':id/chapters')
