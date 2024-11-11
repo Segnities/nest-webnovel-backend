@@ -45,6 +45,7 @@ export class ContinueReadingService {
         lastChapter: {
           novelId: slotNovelId,
         },
+        userId: data.userId,
       },
     });
     if (!slot) {
