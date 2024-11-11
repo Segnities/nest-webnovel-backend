@@ -79,7 +79,7 @@ enum NotificationRelatedEntity {
 
 model User {
   id                       Int                        @id @default(autoincrement())
-  fuid                     String?
+  fuid                     String?                    @unique
   username                 String                     @unique
   email                    String                     @unique @db.VarChar(50)
   firstName                String?                    @db.VarChar(50)

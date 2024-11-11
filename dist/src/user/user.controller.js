@@ -36,6 +36,9 @@ let UserController = class UserController {
     async getUserByEmail(email) {
         return this.userService.getUserByEmail(email);
     }
+    async getByFirebaseUid(fuid) {
+        return this.userService.getByFirebaseUid(fuid);
+    }
     async updateUser(id, updateUserDto) {
         return this.userService.updateUser(id, updateUserDto);
     }
@@ -108,6 +111,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserByEmail", null);
+__decorate([
+    (0, common_1.Get)('user/:fuid'),
+    __param(0, (0, common_1.Param)('fuid')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getByFirebaseUid", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),

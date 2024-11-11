@@ -28,7 +28,7 @@ export class UserController {
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
-
+ 
   @Get('user/unique')
   async checkUserUnique(@Query() data: { username: string, email: string }) {
     return this.userService.checkUserUnique(data.username, data.email);
@@ -46,6 +46,11 @@ export class UserController {
   async getUserByEmail(@Param('email') email: string): Promise<User | null> {
     return this.userService.getUserByEmail(email);
   }
+  @Get('user/:fuid')
+  async getByFirebaseUid(@Param('fuid') fuid: string) {
+    return this.userService.getByFirebaseUid(fuid);
+  }
+
 
   @Put(':id')
   async updateUser(

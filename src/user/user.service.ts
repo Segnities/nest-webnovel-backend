@@ -44,6 +44,14 @@ export class UserService {
     });
   }
 
+  async getByFirebaseUid(fuid: string) {
+    return this.prisma.user.findFirst({
+      where: {
+        fuid,
+      },
+    });
+  }
+
   async getAllUsers() {
     return this.prisma.user.findMany({
       select: {
