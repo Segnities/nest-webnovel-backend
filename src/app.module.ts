@@ -31,6 +31,7 @@ import { FirebaseAdmin } from '@config/firebase.setup';
 import { CommendableTypeModule } from './commendable-type/commendable-type.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ChapterModule } from './chapter/chapter.module';
+import { NotificationTypeModule } from './notification-type/notification-type.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { ChapterModule } from './chapter/chapter.module';
     CommendableTypeModule,
     CloudinaryModule,
     ChapterModule,
+    NotificationTypeModule,
   ],
   controllers: [AppController],
   providers: [
