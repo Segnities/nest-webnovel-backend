@@ -12,9 +12,76 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NotificationService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const firebase_config_1 = require("../firebase.config");
 let NotificationService = class NotificationService {
-    constructor(prisma) {
+    constructor(prisma, firebaseAdminService) {
         this.prisma = prisma;
+        this.firebaseAdminService = firebaseAdminService;
+    }
+    async sendPushNotification({ token, title, body, icon }) {
+        try {
+            const admin = this.firebaseAdminService.getAdmin();
+            const response = await admin.messaging().send({
+                token,
+                webpush: {
+                    notification: {
+                        title,
+                        body,
+                        icon,
+                    },
+                },
+            });
+            return response;
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    async sendNotificationToMultipleTokens({ tokens, title, body, icon, }) {
+        const message = {
+            notification: {
+                title,
+                body,
+                icon,
+            },
+            tokens,
+        };
+        try {
+            const admin = this.firebaseAdminService.getAdmin();
+            const response = await admin.messaging().sendEachForMulticast(message);
+            console.log("Successfully sent messages:", response);
+            return {
+                success: true,
+                message: `Successfully sent ${response.successCount} messages; ${response.failureCount} failed.`,
+            };
+        }
+        catch (error) {
+            console.log("Error sending messages:", error);
+            return { success: false, message: "Failed to send notifications" };
+        }
+    }
+    async sendTopicNotification({ topic, title, body, icon, }) {
+        const message = {
+            notification: {
+                title,
+                body,
+                icon,
+                badge: icon,
+                vibrate: [200, 100, 200],
+                requireInteraction: true,
+            },
+            topic,
+        };
+        try {
+            const admin = this.firebaseAdminService ``.getAdmin();
+            const response = await admin.messaging().send(message);
+            console.log("Successfully sent message:", response);
+            return { success: true, message: "Topic notification sent successfully" };
+        }
+        catch (error) {
+            console.log("Error sending message:", error);
+            return { success: false, message: "Failed to send topic notification" };
+        }
     }
     async createNotification(data) {
         return this.prisma.notification.create({ data });
@@ -54,6 +121,7 @@ let NotificationService = class NotificationService {
 exports.NotificationService = NotificationService;
 exports.NotificationService = NotificationService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        firebase_config_1.FirebaseAdminService])
 ], NotificationService);
 //# sourceMappingURL=notification.service.js.map

@@ -11,13 +11,12 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const prisma_service_1 = require("../prisma/prisma.service");
 const user_controller_1 = require("./user.controller");
-const firebase_setup_1 = require("../../config/firebase.setup");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
 exports.UserModule = UserModule = __decorate([
     (0, common_1.Module)({
-        providers: [user_service_1.UserService, prisma_service_1.PrismaService, firebase_setup_1.FirebaseAdmin],
+        providers: [user_service_1.UserService, prisma_service_1.PrismaService],
         controllers: [user_controller_1.UserController],
     })
 ], UserModule);

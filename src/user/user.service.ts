@@ -8,7 +8,6 @@ import {
   UserRating,
   Comment,
 } from '@prisma/client';
-import { FirebaseAdmin } from '@config/firebase.setup';
 import { CreateUserDto } from './dto/CreateUserDto';
 import { DEFAULT_ROLE } from 'constants/role';
 
@@ -16,7 +15,6 @@ import { DEFAULT_ROLE } from 'constants/role';
 export class UserService {
   constructor(
     private prisma: PrismaService,
-    private readonly admin: FirebaseAdmin,
   ) { }
   async checkUserUnique(username: string, email: string) {
     const [usernameCheck, emailCheck] = await Promise.all([

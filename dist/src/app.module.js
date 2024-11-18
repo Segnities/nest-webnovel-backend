@@ -29,17 +29,17 @@ const novel_subscription_module_1 = require("./novel-subscription/novel-subscrip
 const user_notification_settings_module_1 = require("./user-notification-settings/user-notification-settings.module");
 const role_module_1 = require("./role/role.module");
 const team_module_1 = require("./team/team.module");
-const auth_module_1 = require("./auth/auth.module");
 const bookmark_module_1 = require("./bookmark/bookmark.module");
 const comment_module_1 = require("./comment/comment.module");
 const continue_reading_module_1 = require("./continue-reading/continue-reading.module");
 const news_module_1 = require("./news/news.module");
 const notification_group_module_1 = require("./notification-group/notification-group.module");
 const review_module_1 = require("./review/review.module");
-const firebase_setup_1 = require("../config/firebase.setup");
 const commendable_type_module_1 = require("./commendable-type/commendable-type.module");
 const cloudinary_module_1 = require("./cloudinary/cloudinary.module");
 const chapter_module_1 = require("./chapter/chapter.module");
+const notification_type_module_1 = require("./notification-type/notification-type.module");
+const firebase_config_1 = require("./firebase.config");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -60,7 +60,6 @@ exports.AppModule = AppModule = __decorate([
             user_notification_settings_module_1.UserNotificationSettingsModule,
             role_module_1.RoleModule,
             team_module_1.TeamModule,
-            auth_module_1.AuthModule,
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 envFilePath: '.env',
@@ -74,6 +73,7 @@ exports.AppModule = AppModule = __decorate([
             commendable_type_module_1.CommendableTypeModule,
             cloudinary_module_1.CloudinaryModule,
             chapter_module_1.ChapterModule,
+            notification_type_module_1.NotificationTypeModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
@@ -82,7 +82,7 @@ exports.AppModule = AppModule = __decorate([
             tag_service_1.TagService,
             genre_service_1.GenreService,
             country_service_1.CountryService,
-            firebase_setup_1.FirebaseAdmin,
+            firebase_config_1.FirebaseAdminService,
         ],
     })
 ], AppModule);

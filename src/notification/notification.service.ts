@@ -7,10 +7,92 @@ import {
   Prisma,
   UserNotificationSettings,
 } from '@prisma/client';
+import { FirebaseAdminService } from '@/firebase.config';
+import { MultipleDeviceNotificationDto, NotificationDto, TopicNotificationDto } from './dto/notification.dto';
 
 @Injectable()
 export class NotificationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private firebaseAdminService: FirebaseAdminService,
+  ) { }
+
+  async sendPushNotification({ token, title, body, icon }: NotificationDto) {
+    try {
+      const admin = this.firebaseAdminService.getAdmin();
+      const response = await admin.messaging().send({
+        token,
+        webpush: {
+          notification: {
+            title,
+            body,
+            icon,
+          },
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async sendNotificationToMultipleTokens({
+    tokens,
+    title,
+    body,
+    icon,
+  }: MultipleDeviceNotificationDto) {
+    const message = {
+      notification: {
+        title,
+        body,
+        icon,
+      },
+      tokens,
+    };
+
+    try {
+      const admin = this.firebaseAdminService.getAdmin();
+      const response = await admin.messaging().sendEachForMulticast(message);
+      console.log("Successfully sent messages:", response);
+      return {
+        success: true,
+        message: `Successfully sent ${response.successCount} messages; ${response.failureCount} failed.`,
+      };
+    } catch (error) {
+      console.log("Error sending messages:", error);
+      return { success: false, message: "Failed to send notifications" };
+    }
+  }
+
+  async sendTopicNotification({
+    topic,
+    title,
+    body,
+    icon,
+  }: TopicNotificationDto) {
+    const message = {
+      notification: {
+        title,
+        body,
+        icon,
+        badge: icon,
+        vibrate: [200, 100, 200],
+        requireInteraction: true,
+      },
+      topic,
+    };
+
+    try {
+      const admin = this.firebaseAdminService``.getAdmin();
+      const response = await admin.messaging().send(message);
+      console.log("Successfully sent message:", response);
+      return { success: true, message: "Topic notification sent successfully" };
+    } catch (error) {
+      console.log("Error sending message:", error);
+      return { success: false, message: "Failed to send topic notification" };
+    }
+  }
 
   async createNotification(
     data: Prisma.NotificationCreateInput,

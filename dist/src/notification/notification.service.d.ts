@@ -1,8 +1,20 @@
 import { PrismaService } from '../prisma/prisma.service';
 import { Notification, NotificationMessageStatus, NotificationRelatedEntity, Prisma, UserNotificationSettings } from '@prisma/client';
+import { FirebaseAdminService } from '@/firebase.config';
+import { MultipleDeviceNotificationDto, NotificationDto, TopicNotificationDto } from './dto/notification.dto';
 export declare class NotificationService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private firebaseAdminService;
+    constructor(prisma: PrismaService, firebaseAdminService: FirebaseAdminService);
+    sendPushNotification({ token, title, body, icon }: NotificationDto): Promise<string>;
+    sendNotificationToMultipleTokens({ tokens, title, body, icon, }: MultipleDeviceNotificationDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+    sendTopicNotification({ topic, title, body, icon, }: TopicNotificationDto): Promise<{
+        success: boolean;
+        message: string;
+    }>;
     createNotification(data: Prisma.NotificationCreateInput): Promise<Notification>;
     getNotificationsByUser(userId: number, status?: NotificationMessageStatus): Promise<Notification[]>;
     updateNotificationStatus(id: number, status: NotificationMessageStatus): Promise<Notification>;

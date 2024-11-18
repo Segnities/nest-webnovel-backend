@@ -12,12 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const firebase_setup_1 = require("../../config/firebase.setup");
 const role_1 = require("../../constants/role");
 let UserService = class UserService {
-    constructor(prisma, admin) {
+    constructor(prisma) {
         this.prisma = prisma;
-        this.admin = admin;
     }
     async checkUserUnique(username, email) {
         const [usernameCheck, emailCheck] = await Promise.all([
@@ -209,7 +207,6 @@ let UserService = class UserService {
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        firebase_setup_1.FirebaseAdmin])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

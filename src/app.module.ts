@@ -20,18 +20,17 @@ import { NovelSubscriptionModule } from './novel-subscription/novel-subscription
 import { UserNotificationSettingsModule } from './user-notification-settings/user-notification-settings.module';
 import { RoleModule } from './role/role.module';
 import { TeamModule } from './team/team.module';
-import { AuthModule } from './auth/auth.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { CommentModule } from './comment/comment.module';
 import { ContinueReadingModule } from './continue-reading/continue-reading.module';
 import { NewsModule } from './news/news.module';
 import { NotificationGroupModule } from './notification-group/notification-group.module';
 import { ReviewModule } from './review/review.module';
-import { FirebaseAdmin } from '@config/firebase.setup';
 import { CommendableTypeModule } from './commendable-type/commendable-type.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ChapterModule } from './chapter/chapter.module';
 import { NotificationTypeModule } from './notification-type/notification-type.module';
+import { FirebaseAdminService } from './firebase.config';
 
 @Module({
   imports: [
@@ -49,7 +48,6 @@ import { NotificationTypeModule } from './notification-type/notification-type.mo
     UserNotificationSettingsModule,
     RoleModule,
     TeamModule,
-    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -72,7 +70,7 @@ import { NotificationTypeModule } from './notification-type/notification-type.mo
     TagService,
     GenreService,
     CountryService,
-    FirebaseAdmin,
+    FirebaseAdminService,
   ],
 })
 export class AppModule {}

@@ -16,9 +16,35 @@ exports.NotificationController = void 0;
 const common_1 = require("@nestjs/common");
 const notification_service_1 = require("./notification.service");
 const client_1 = require("@prisma/client");
+const swagger_1 = require("@nestjs/swagger");
+const notification_dto_1 = require("./dto/notification.dto");
 let NotificationController = class NotificationController {
     constructor(notificationService) {
         this.notificationService = notificationService;
+    }
+    async sendNotification(body) {
+        return this.notificationService.sendPushNotification({
+            token: body.token,
+            title: body.title,
+            body: body.body,
+            icon: body.icon,
+        });
+    }
+    async sendMultipleNotifications(body) {
+        return this.notificationService.sendNotificationToMultipleTokens({
+            tokens: body.tokens,
+            title: body.title,
+            body: body.body,
+            icon: body.icon,
+        });
+    }
+    async sendTopicNotification(body) {
+        return this.notificationService.sendTopicNotification({
+            topic: body.topic,
+            title: body.title,
+            body: body.body,
+            icon: body.icon,
+        });
     }
     async createNotification(createNotificationDto) {
         return this.notificationService.createNotification(createNotificationDto);
@@ -43,6 +69,36 @@ let NotificationController = class NotificationController {
     }
 };
 exports.NotificationController = NotificationController;
+__decorate([
+    (0, common_1.Post)("send-notification"),
+    (0, swagger_1.ApiOperation)({ summary: "Send a push notification to a single device" }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "Notification sent successfully" }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], NotificationController.prototype, "sendNotification", null);
+__decorate([
+    (0, common_1.Post)("send-multiple-notifications"),
+    (0, swagger_1.ApiOperation)({ summary: "Send push notifications to multiple devices" }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: "Notifications sent successfully" }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [notification_dto_1.MultipleDeviceNotificationDto]),
+    __metadata("design:returntype", Promise)
+], NotificationController.prototype, "sendMultipleNotifications", null);
+__decorate([
+    (0, common_1.Post)("send-topic-notification"),
+    (0, swagger_1.ApiOperation)({ summary: "Send a push notification to a topic" }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: "Topic notification sent successfully",
+    }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [notification_dto_1.TopicNotificationDto]),
+    __metadata("design:returntype", Promise)
+], NotificationController.prototype, "sendTopicNotification", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

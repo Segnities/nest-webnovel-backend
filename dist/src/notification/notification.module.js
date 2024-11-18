@@ -11,12 +11,13 @@ const common_1 = require("@nestjs/common");
 const notification_service_1 = require("./notification.service");
 const notification_controller_1 = require("./notification.controller");
 const prisma_service_1 = require("../prisma/prisma.service");
+const firebase_config_1 = require("../firebase.config");
 let NotificationModule = class NotificationModule {
 };
 exports.NotificationModule = NotificationModule;
 exports.NotificationModule = NotificationModule = __decorate([
     (0, common_1.Module)({
-        providers: [notification_service_1.NotificationService, prisma_service_1.PrismaService],
+        providers: [notification_service_1.NotificationService, prisma_service_1.PrismaService, firebase_config_1.FirebaseAdminService],
         controllers: [notification_controller_1.NotificationController],
     })
 ], NotificationModule);

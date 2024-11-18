@@ -8,11 +8,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
-const firebase_setup_1 = require("../../config/firebase.setup");
+const firebase_setup_1 = require("@config/firebase.setup");
 let FirebaseAuthGuard = class FirebaseAuthGuard {
     constructor(reflector, admin) {
         this.reflector = reflector;
@@ -38,7 +39,6 @@ let FirebaseAuthGuard = class FirebaseAuthGuard {
 exports.FirebaseAuthGuard = FirebaseAuthGuard;
 exports.FirebaseAuthGuard = FirebaseAuthGuard = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [core_1.Reflector,
-        firebase_setup_1.FirebaseAdmin])
+    __metadata("design:paramtypes", [core_1.Reflector, typeof (_a = typeof firebase_setup_1.FirebaseAdmin !== "undefined" && firebase_setup_1.FirebaseAdmin) === "function" ? _a : Object])
 ], FirebaseAuthGuard);
 //# sourceMappingURL=firebase-auth.guard.js.map
