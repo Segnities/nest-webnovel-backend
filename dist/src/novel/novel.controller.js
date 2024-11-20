@@ -120,10 +120,13 @@ let NovelController = class NovelController {
         return await this.novelService.searchByTitle(searchTerm, page, limit);
     }
     async searchByYear(year, page = 1, limit = 20) {
-        return await this.novelService.searchByYear(parseInt(year), page, limit);
+        return await this.novelService.searchByYear(year, page, limit);
+    }
+    async searchByCombined(q, dir, limit = 20) {
+        return this.novelService.searchByCombinedConditions(q, limit, dir);
     }
     async searchByAuthor(authorName, page = 1, limit = 20) {
-        return await this.novelService.searchByAuthor(authorName, page, limit);
+        return this.novelService.searchByAuthor(authorName, page, limit);
     }
     async getNovelWithChapters(id) {
         return this.novelService.getNovelWithChapters(id);
@@ -364,9 +367,18 @@ __decorate([
     __param(1, (0, common_1.Query)('page', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:paramtypes", [Number, Number, Number]),
     __metadata("design:returntype", Promise)
 ], NovelController.prototype, "searchByYear", null);
+__decorate([
+    (0, common_1.Get)('search/combined'),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('dir')),
+    __param(2, (0, common_1.Query)('limit', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], NovelController.prototype, "searchByCombined", null);
 __decorate([
     (0, common_1.Get)('search/author'),
     __param(0, (0, common_1.Query)('q')),

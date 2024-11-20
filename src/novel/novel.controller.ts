@@ -241,11 +241,20 @@ export class NovelController {
 
   @Get('search/releaseYear')
   async searchByYear(
-    @Query('year', ParseIntPipe) year: string,
+    @Query('year', ParseIntPipe) year: number,
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 20,
   ) {
-    return await this.novelService.searchByYear(parseInt(year), page, limit);
+    return await this.novelService.searchByYear(year, page, limit);
+  }
+
+  @Get('search/combined')
+  async searchByCombined(
+    @Query('q') q: string,
+    @Query('dir') dir: 'asc' | 'desc',
+    @Query('limit', ParseIntPipe) limit: number = 20,
+  ) {
+    return this.novelService.searchByCombinedConditions(q, limit, dir);
   }
 
   @Get('search/author')
@@ -254,7 +263,7 @@ export class NovelController {
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 20,
   ) {
-    return await this.novelService.searchByAuthor(authorName, page, limit);
+    return this.novelService.searchByAuthor(authorName, page, limit);
   }
 
   @Get(':id/chapters')

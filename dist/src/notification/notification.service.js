@@ -73,7 +73,7 @@ let NotificationService = class NotificationService {
             topic,
         };
         try {
-            const admin = this.firebaseAdminService ``.getAdmin();
+            const admin = this.firebaseAdminService.getAdmin();
             const response = await admin.messaging().send(message);
             console.log("Successfully sent message:", response);
             return { success: true, message: "Topic notification sent successfully" };

@@ -15,6 +15,8 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const common_1 = require("@nestjs/common");
 const compressAndUploadImage_1 = require("../../utils/compressAndUploadImage");
 const deleteLocalImages_1 = require("../../utils/deleteLocalImages");
+const selectNovel_1 = require("./types/selectNovel");
+const whereNovel_1 = require("./types/whereNovel");
 let NovelService = class NovelService {
     constructor(prisma, cloudinaryService) {
         this.prisma = prisma;
@@ -38,13 +40,78 @@ let NovelService = class NovelService {
             }
         });
     }
-    async searchByAuthor(authorName, page = 1, limit = 20) {
-        const skip = (page - 1) * limit;
-        const whereCondition = {
-            author: {
-                name: { contains: authorName, mode: 'insensitive' },
+    async searchByCombinedConditions(searchTerm, limit = 20, orderDirection = 'desc') {
+        const novelWhere = (0, whereNovel_1.buildTitleSearchCondition)(searchTerm);
+        const authorWhere = (0, whereNovel_1.buildAuthorSearchCondition)(searchTerm);
+        const yearWhere = (0, whereNovel_1.buildYearSearchCondition)(searchTerm);
+        const [novels, novelTotal, authors, authorTotal, novelsByYear, novelsByYearTotal] = await Promise.all([
+            this.prisma.novel.findMany({
+                where: novelWhere,
+                select: selectNovel_1.selectMinimalNovelSetup,
+                take: limit,
+                orderBy: { title: orderDirection },
+            }),
+            this.prisma.novel.count({
+                where: novelWhere,
+            }),
+            this.prisma.novel.findMany({
+                where: authorWhere,
+                select: {
+                    id: true,
+                    title: true,
+                    slug: true,
+                    img: true,
+                    author: {
+                        select: {
+                            id: true,
+                            name: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    author: {
+                        name: orderDirection,
+                    },
+                },
+                take: limit,
+            }),
+            this.prisma.novel.count({
+                where: authorWhere,
+            }),
+            this.prisma.novel.findMany({
+                where: yearWhere,
+                select: selectNovel_1.selectMinimalNovelSetup,
+                orderBy: {
+                    releaseYear: orderDirection,
+                },
+            }),
+            this.prisma.novel.count({
+                where: yearWhere,
+            })
+        ]);
+        const maxTotal = Math.max(novelTotal, authorTotal, novelsByYearTotal);
+        return {
+            novels: {
+                data: novels,
+                total: novelTotal,
+            },
+            authors: {
+                data: authors,
+                total: authorTotal,
+            },
+            year: {
+                data: novelsByYear,
+                total: novelsByYearTotal,
+            },
+            pagination: {
+                limit,
+                totalPages: Math.ceil(maxTotal / limit),
             },
         };
+    }
+    async searchByAuthor(authorName, page = 1, limit = 20) {
+        const skip = (page - 1) * limit;
+        const whereCondition = (0, whereNovel_1.buildAuthorSearchCondition)(authorName);
         const [novels, total] = await Promise.all([
             this.prisma.novel.findMany({
                 where: whereCondition,
@@ -56,7 +123,7 @@ let NovelService = class NovelService {
                     author: {
                         select: {
                             id: true,
-                            name: true
+                            name: true,
                         },
                     },
                 },
@@ -78,9 +145,7 @@ let NovelService = class NovelService {
     }
     async searchByYear(year, page = 1, limit = 20) {
         const skip = (page - 1) * limit;
-        const whereCondition = {
-            releaseYear: year,
-        };
+        const whereCondition = (0, whereNovel_1.buildYearSearchCondition)(year);
         const [novels, total] = await Promise.all([
             this.prisma.novel.findMany({
                 where: whereCondition,
@@ -112,33 +177,11 @@ let NovelService = class NovelService {
     }
     async searchByTitle(searchTerm, page = 1, limit = 20) {
         const skip = (page - 1) * limit;
-        const whereCondition = {
-            OR: [
-                { title: { contains: searchTerm, mode: 'insensitive' } },
-                {
-                    alternativeTitles: {
-                        some: {
-                            title: { contains: searchTerm, mode: 'insensitive' },
-                        },
-                    },
-                },
-            ],
-        };
+        const whereCondition = (0, whereNovel_1.buildTitleSearchCondition)(searchTerm);
         const [novels, total] = await Promise.all([
             this.prisma.novel.findMany({
                 where: whereCondition,
-                select: {
-                    id: true,
-                    title: true,
-                    slug: true,
-                    img: true,
-                    alternativeTitles: {
-                        select: { title: true },
-                    },
-                    author: {
-                        select: { name: true },
-                    },
-                },
+                select: selectNovel_1.selectMinimalNovelSetup,
                 take: limit,
                 skip,
                 orderBy: { views: 'desc' },
@@ -658,15 +701,7 @@ let NovelService = class NovelService {
                 likes: 'desc',
             },
             take: 500,
-            select: {
-                id: true,
-                title: true,
-                slug: true,
-                country: {
-                    select: { title: true },
-                },
-                img: true,
-            },
+            select: selectNovel_1.selectMinimalNovelSetup,
         });
         const shuffled = top500Novels.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, 20);
