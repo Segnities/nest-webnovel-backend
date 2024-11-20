@@ -152,13 +152,8 @@ export declare class NovelService {
         authors: {
             data: {
                 id: number;
-                title: string;
-                slug: string;
                 img: string;
-                author: {
-                    id: number;
-                    name: string;
-                };
+                name: string;
             }[];
             total: number;
         };

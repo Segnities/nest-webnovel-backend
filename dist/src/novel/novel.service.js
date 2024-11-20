@@ -42,7 +42,7 @@ let NovelService = class NovelService {
     }
     async searchByCombinedConditions(searchTerm, limit = 20, orderDirection = 'desc') {
         const novelWhere = (0, whereNovel_1.buildTitleSearchCondition)(searchTerm);
-        const authorWhere = (0, whereNovel_1.buildAuthorSearchCondition)(searchTerm);
+        const authorWhere = (0, whereNovel_1.buildAuthorCondition)(searchTerm);
         const yearWhere = (0, whereNovel_1.buildYearSearchCondition)(searchTerm);
         const [novels, novelTotal, authors, authorTotal, novelsByYear, novelsByYearTotal] = await Promise.all([
             this.prisma.novel.findMany({
@@ -54,28 +54,19 @@ let NovelService = class NovelService {
             this.prisma.novel.count({
                 where: novelWhere,
             }),
-            this.prisma.novel.findMany({
+            this.prisma.author.findMany({
                 where: authorWhere,
                 select: {
                     id: true,
-                    title: true,
-                    slug: true,
+                    name: true,
                     img: true,
-                    author: {
-                        select: {
-                            id: true,
-                            name: true,
-                        },
-                    },
                 },
                 orderBy: {
-                    author: {
-                        name: orderDirection,
-                    },
+                    name: orderDirection,
                 },
                 take: limit,
             }),
-            this.prisma.novel.count({
+            this.prisma.author.count({
                 where: authorWhere,
             }),
             this.prisma.novel.findMany({

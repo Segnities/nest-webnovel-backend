@@ -12,7 +12,7 @@ import compressAndUploadImage from 'utils/compressAndUploadImage';
 import { deleteLocalImages } from 'utils/deleteLocalImages';
 import { SearchResponse } from 'global_types/search';
 import { selectMinimalNovelSetup } from './types/selectNovel';
-import { buildAuthorSearchCondition, buildTitleSearchCondition, buildYearSearchCondition } from './types/whereNovel';
+import { buildAuthorCondition, buildAuthorSearchCondition, buildTitleSearchCondition, buildYearSearchCondition } from './types/whereNovel';
 @Injectable()
 export class NovelService {
   constructor(
@@ -40,10 +40,9 @@ export class NovelService {
   }
   async searchByCombinedConditions(searchTerm: string, limit: number = 20, orderDirection: 'asc' | 'desc' = 'desc') {
     const novelWhere = buildTitleSearchCondition(searchTerm);
-    const authorWhere = buildAuthorSearchCondition(searchTerm);
+    const authorWhere = buildAuthorCondition(searchTerm);
     const yearWhere = buildYearSearchCondition(searchTerm);
     const [novels, novelTotal, authors, authorTotal, novelsByYear, novelsByYearTotal] = await Promise.all([
-      // Пошук новел
       this.prisma.novel.findMany({
         where: novelWhere,
         select: selectMinimalNovelSetup,
@@ -53,28 +52,19 @@ export class NovelService {
       this.prisma.novel.count({
         where: novelWhere,
       }),
-      this.prisma.novel.findMany({
+      this.prisma.author.findMany({
         where: authorWhere,
         select: {
           id: true,
-          title: true,
-          slug: true,
+          name: true,
           img: true,
-          author: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
         },
         orderBy: {
-          author: {
-            name: orderDirection,
-          },
+          name: orderDirection,
         },
         take: limit,
       }),
-      this.prisma.novel.count({
+      this.prisma.author.count({
         where: authorWhere,
       }),
       this.prisma.novel.findMany({

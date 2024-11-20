@@ -49,6 +49,30 @@ function buildTitleSearchCondition(searchTerm: string): Prisma.NovelWhereInput {
    };
 }
 
+function buildAuthorCondition(searchTerm: string): Prisma.AuthorWhereInput {
+   const normalizedTerm = searchTerm.toLowerCase().trim();
+   const terms = normalizedTerm.split(' ').filter(term => term.length > 0);
+
+   return {
+      OR: [
+         {
+            name: {
+               contains: normalizedTerm,
+               mode: 'insensitive',
+            },
+         },
+         {
+            AND: terms.map(term => ({
+               name: {
+                  contains: term,
+                  mode: 'insensitive',
+               },
+            })),
+         },
+      ],
+   };
+}
+
 function buildAuthorSearchCondition(authorName: string): Prisma.NovelWhereInput {
    const normalizedName = normalizeSearchTerm(authorName);
    const terms = normalizedName.split(' ').filter(term => term.length > 0);
@@ -93,5 +117,6 @@ export {
    buildAuthorSearchCondition,
    buildYearSearchCondition,
    buildCombinedSearchCondition,
+   buildAuthorCondition,
    SearchParams
 };
